@@ -1,0 +1,34 @@
+<h1>REGISTER</h1>
+<form action="/register" method="POST">
+
+<!--name section-->
+<div>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required>
+</div>
+
+<!--email section-->
+<div>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+</div>
+
+<!-- the error type will be included here to be popped out -->
+<% if (error && error === 'email-exists') { %>
+    <p style="color: red;">Email already exists. Please choose a different email.</p>
+<% } else if (error && error === 'unknown') { %>
+    <p style="color: red;">An unknown error occurred. Please try again later.</p>
+<% } %>
+
+<!--password section-->
+<div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+</div>
+
+<!--create a button-->
+<button type="submit">Register</button>
+</form>
+
+<!--anchor the register page to login page-->
+<a href="/login"> Login </a>
