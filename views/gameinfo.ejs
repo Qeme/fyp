@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match History</title>
+</head>
+<body>
+    <h1>Match History</h1>
+    <ul id="matchHistory">
+        <% matches.forEach(match => { %>
+            <li>Match ID: <%= match.match_id %>, Match Date: <%= new Date(match.start_time * 1000).toLocaleString() %></li>
+        <% }); %>
+    </ul>
+
+    <script src="/gameAPI/dota.js"></script>
+</body>
+</html>

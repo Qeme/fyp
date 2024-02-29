@@ -59,6 +59,23 @@
             }
         </script>
         
+        <!-- testing -->
+        
+        
+        <button id="redirectButton">Redirect to Another Page</button>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            const redirectButton = document.getElementById('redirectButton');
+        
+            redirectButton.addEventListener('click', function() {
+                // Redirect to another page
+                window.location.href = 'gameinfo.ejs';
+            });
+        });
+
+        </script>  
+
     </body>
 
 <% } else { %>
