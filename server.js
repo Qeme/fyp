@@ -138,6 +138,21 @@ app.post('/update-roles', checkAuthenticated,async (req, res) => {
     }
 });
 
+app.get('/matches',checkAuthenticated,async (req,res)=>{
+
+const API_KEY = process.env.API_KEY;
+const STEAM_ID = process.env.STEAM_ID;
+const GAME_ID = process.env.DOTA_ID;
+
+const url = `http://api.steampowered.com/IDOTA2Match_${GAME_ID}/GetMatchHistory/V001/?key=${API_KEY}&account_id=${STEAM_ID}`;
+
+//fetch the received data to the variable response
+const response = await fetch(url);
+const data = await response.json();
+
+res.render('gameinfo.ejs',{matches: data.result.matches})
+})
+
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
 // app.delete('/logout',(req,res)=>{

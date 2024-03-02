@@ -10,9 +10,15 @@
     <ul id="matchHistory">
         <% matches.forEach(match => { %>
             <li>Match ID: <%= match.match_id %>, Match Date: <%= new Date(match.start_time * 1000).toLocaleString() %></li>
+            <li>Players:
+                <ul>
+                    <% match.players.forEach(player => { %>
+                        <li>Player: <%= player.account_id %></li>
+                    <% }); %>
+                </ul>
+            </li>
         <% }); %>
     </ul>
 
-    <script src="/gameAPI/dota.js"></script>
 </body>
 </html>
