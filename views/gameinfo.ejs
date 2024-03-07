@@ -8,11 +8,15 @@
 <body>
     <h1>Match History</h1>
     <ul id="matchHistory">
+        <!-- get the matches object from the server.js -->
+        <!-- loops it to get each of the matches + info -->
         <% matches.forEach(match => { %>
             <li>Match ID: <%= match.match_id %>, Match Date: <%= new Date(match.start_time * 1000).toLocaleString() %></li>
             <li>Players:
                 <ul>
+                    <!-- if you want to get the player stat, go for each match->players -->
                     <% match.players.forEach(player => { %>
+                        <!-- each player has acc -->
                         <li>Player: <%= player.account_id %></li>
                     <% }); %>
                 </ul>
