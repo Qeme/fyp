@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const API_KEY = process.env.API_KEY;
 const STEAM_ID = process.env.STEAM_ID;

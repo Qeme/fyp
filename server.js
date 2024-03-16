@@ -1,19 +1,21 @@
 //only for process env not for production env
 if(process.env.NODE_ENV !== 'production'){
-    require('dotenv').config()
+    dotenv.config();
 }
+  
 
 //extract the modules
-const express = require("express")
+import express from "express"
 const app = express()
-const bcrypt = require("bcrypt")
-const passport = require("passport")
-const flash = require("express-flash")
-const session = require("express-session")
-const methodOverride = require("method-override")
+import bcrypt from "bcrypt"
+import passport from "passport"
+import flash from "express-flash"
+import session from "express-session"
+import methodOverride from "method-override"
+import dotenv from 'dotenv';
 
-const initializePassport = require('./passport-config')
-const collection = require('./config')
+import initializePassport from './passport-config.js'
+import collection from './config.js'
 
 //pass the passport modules to other function at other file
 initializePassport(

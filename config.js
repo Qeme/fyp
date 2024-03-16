@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 const connect = mongoose.connect("mongodb://localhost:27017/esms")
 
 //check the connection if is it connected or not
@@ -36,4 +36,4 @@ const LoginSchema = new mongoose.Schema({
 const collection = new mongoose.model("users",LoginSchema)
 
 //export the module to be used inside server.js
-module.exports = collection
+export default collection

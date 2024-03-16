@@ -1,5 +1,5 @@
 // we put the cookies into jar within the request
-let request = require('request-promise')
+import request from 'request-promise'
 const cookieJar = request.jar()
 request = request.defaults({jar: true})
 

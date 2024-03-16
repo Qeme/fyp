@@ -2,7 +2,9 @@
   "name": "fyp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "exports": "./index.js",
+  "type":"module",
+  "node": ">=16",
   "scripts": {
     "devStart": "nodemon server.js"
   },
