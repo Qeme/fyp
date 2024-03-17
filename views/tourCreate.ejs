@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Tournament</title>
+</head>
+<body>
+    <h1>Tournament Creation Form</h1>
+
+    <form action="/createTour" method="POST">
+        <label for="tname">Tournament name:</label>
+        <input type="text" id="tname" name="tname"><br>
+        
+        <label for="game">Game name:</label>
+        <input type="text" id="game" name="game"><br>
+
+        <div>
+            <label for="Platform">Platform Types:</label><br>
+            <input type="radio" id="online" name="platform" value="online">
+            <label for="online">Online</label><br>
+
+            <input type="radio" id="physical" name="platform" value="physical">
+            <label for="physical">Physical</label><br>
+        </div>
+
+        <label for="venue">Venue:</label>
+        <input type="text" id="venue" name="venue"><br><br>
+
+        <!-- <div>
+            <label for="stages">Stages:</label><br>
+            <input type="checkbox" id="stage1" name="stage1" value="stage 1">
+            <label for="stage1"> Stage 1</label><br>
+        </div>
+        
+        <div>
+            <label for="format">Format:</label><br>
+            <input type="radio" id="single" name="stage1" value="single-elimination">
+            <label for="single">Single Elimination</label><br>
+            <input type="radio" id="double" name="stage1" value="double-elimination">
+            <label for="double">Double Elimination</label><br>
+            <input type="radio" id="step" name="stage1" value="stepladder">
+            <label for="step">Stepladder</label><br>
+            <input type="radio" id="swiss" name="stage1" value="swiss">
+            <label for="swiss">Swiss</label><br>
+            <input type="radio" id="robin" name="stage1" value="round-robin">
+            <label for="robin">Round Robin</label><br>
+            <input type="radio" id="doublerobin" name="stage1" value="double-round-robin">
+            <label for="doublerobin">Double Round Robin</label><br>
+        </div>
+        
+        
+        <div>
+            <input type="checkbox" id="stage2" name="stage2" value="stage 2">
+            <label for="stage2"> Stage 2</label><br>
+        </div>
+        
+        <div>
+            <label for="format">Format:</label><br>
+            <input type="radio" id="single" name="stage2" value="single-elimination">
+            <label for="single">Single Elimination</label><br>
+            <input type="radio" id="double" name="stage2" value="double-elimination">
+            <label for="double">Double Elimination</label><br>
+            <input type="radio" id="step" name="stage2" value="stepladder">
+            <label for="step">Stepladder</label><br>
+        </div>         -->
+        
+
+        <div>
+            <label for="regitime">Open Registeration Date:</label>
+            <input type="date" id="regitime" name="regitime"><br>
+
+            <label for="closetime">Close Registration Date:</label>
+            <input type="date" id="closetime" name="closetime"><br>
+
+            <label for="starttour">Tournament Start Date:</label>
+            <input type="date" id="starttour" name="starttour"><br>
+
+            <label for="endtour">Tournament End Date:</label>
+            <input type="date" id="endtour" name="endtour"><br>
+        </div><br>
+
+        <label for="checkIn">Check In (in minutes):</label>
+        <input type="number" id="checkIn" name="checkIn" min="0" max="1440">
+
+        <label for="rules">Rules:</label><br>
+        <textarea id="rules" name="rules" rows="4" cols="50"></textarea><br><br>
+
+        <label for="regulation">Regulation:</label><br>
+        <textarea id="regulation" name="regulation" rows="4" cols="50"></textarea><br><br>
+        
+        <div>
+            <label for="competitor">Competitor Ticket Price (RM):</label>
+            <input type="number" id="competitor" name="competitor" min="0">
+
+            <label for="viewer">Viewer Ticket Price (RM):</label>
+            <input type="number" id="viewer" name="viewer" min="0">
+        </div>
+
+        <!-- <label for="qr">Select QR Image/PDF File:</label><br>
+        <input type="file" id="qr" name="qr" accept="image/*, .pdf"><br><br> -->
+    
+        <input type="submit" value="Create Tournament">
+
+    </form>
+    
+</body>
+</html>

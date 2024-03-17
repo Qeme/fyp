@@ -13,15 +13,16 @@ import flash from "express-flash"
 import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
+import TournamentOrganizer from 'tournament-organizer';
 
 import initializePassport from './passport-config.js'
-import collection from './config.js'
+import {userinfo,tourinfo} from './config.js'
 
 //pass the passport modules to other function at other file
 initializePassport(
     passport,
-    async email => await collection.findOne({ email: email }), // Asynchronously fetch user by email
-    async id => await collection.findById(id) // Asynchronously fetch user by ID
+    async email => await userinfo.findOne({ email: email }), // Asynchronously fetch user by email
+    async id => await userinfo.findById(id) // Asynchronously fetch user by ID
 )
 
 //render engine
@@ -82,7 +83,7 @@ app.post('/register', checkNotAuthenticated, async (req,res)=>{
     try{
 
         // Check if the email already exists in the database
-        const existingUser = await collection.findOne({ email: req.body.email });
+        const existingUser = await userinfo.findOne({ email: req.body.email });
         
         if(existingUser) {
             // If the email already exists, redirect the user to the registration page with an error message
@@ -101,7 +102,7 @@ app.post('/register', checkNotAuthenticated, async (req,res)=>{
         }
 
         //transfer all the data to the database
-        const userdata = await collection.insertMany([data])
+        const userdata = await userinfo.insertMany([data])
 
         //after all settle, redirect user to login page
         res.redirect('/login')
@@ -163,6 +164,69 @@ try{
         console.error(error)
 }
 
+})
+
+//get tournament info page
+app.get('/createTour',checkAuthenticated,(req,res)=>{
+    res.render('tourCreate.ejs')
+})
+
+app.post('/createTour',checkAuthenticated,(req,res)=>{
+
+    const { tname, game, platform, venue, stage1, stage2, regitime, closetime, starttour, endtour, checkIn, rules, regulation, competitor, viewer } = req.body;
+
+    const newTournament = new tourinfo({
+        name: tname,
+        game: game,
+        platform: platform,
+        venue: venue,
+        // stageOne: {
+        //     consolation: false, 
+        //     format: stage1.format,
+        //     initialRound: stage1.initialRound,
+        //     maxPlayers: stage1.maxPlayers,
+        //     rounds: stage1.rounds
+        // },
+        // stageTwo: {
+        //     consolation: stage2 && stage2.consolation ? true : false,
+        //     format: stage2 ? stage2.format : null,
+        //     advance: stage2 ? {
+        //         method: stage2.advance.method,
+        //         value: stage2.advance.value
+        //     } : null
+        // },
+        register: {
+            open: regitime,
+            close: closetime
+        },
+        running: {
+            start: starttour,
+            end: endtour
+        },
+        checkin: checkIn,
+        notification: {
+            rules: rules,
+            regulation: regulation
+        },
+        ticket: {
+            competitor: competitor,
+            viewer: viewer
+        }
+    });
+
+    newTournament.save()
+        .then(savedTournament => {
+            console.log('Tournament created successfully:', savedTournament);
+            const org = new TournamentOrganizer()
+            org.createTournament(savedTournament.name,'',savedTournament.id)
+            console.log(org.tournaments)
+            res.status(200).send('Tournament created successfully');
+        })
+        .catch(error => {
+            console.error('Error creating tournament:', error);
+            res.status(500).send('Error creating tournament');
+        });
+    
 })
 
 //this logout gave error because req.logout is asynchronous
