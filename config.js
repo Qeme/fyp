@@ -165,6 +165,7 @@ const TournamentSchema = new mongoose.Schema({
                 default: 0
             },
             tiebreaks: [{
+                //is it necessary to provide the user to not insert anything?????
                 type: String,
                 enum: ["median buchholz", "solkoff", "sonneborn berger", "cumulative", "versus", "game win percentage", "opponent game win percentage", "opponent match win percentage", "opponent opponent match win percentage"],
                 required: false,

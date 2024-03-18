@@ -275,6 +275,21 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
     
 })
 
+app.get('/tournamentinfo', checkAuthenticated, async (req, res) => {
+    try {
+        const user = await req.user;
+        
+        // .find({}) to find all the value in the array and pass it to tournaments
+        // inside {} is the condition to be met
+        const tournaments = await tourinfo.find({ 'meta.organizer' : user.email });
+        
+        res.render('tournamentinfo.ejs', { tournaments });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
 // app.delete('/logout',(req,res)=>{

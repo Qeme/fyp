@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Information</title>
+</head>
+<body>
+    <h1>Tournament Information</h1>
+
+    <h3>Setup Status:</h3>
+    <ul>
+        <% tournaments.filter(tournament => tournament.setting.status === 'setup').forEach(tournament => { %>
+            <li>
+                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>
+            </li>
+        <% }); %>
+    </ul>
+
+    <h3>Stage-One Status:</h3>
+    <ul>
+        <% tournaments.filter(tournament => tournament.setting.status === 'stage-one').forEach(tournament => { %>
+            <li>
+                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>
+            </li>
+        <% }); %>
+    </ul>
+
+
+    <h3>Stage-Two Status:</h3>
+    <ul>
+        <% tournaments.filter(tournament => tournament.setting.status === 'stage-two').forEach(tournament => { %>
+            <li>
+                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>
+            </li>
+        <% }); %>
+    </ul>
+
+
+    <h3>Complete Status:</h3>
+    <ul>
+        <% tournaments.filter(tournament => tournament.setting.status === 'complete').forEach(tournament => { %>
+            <li>
+                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>
+            </li>
+        <% }); %>
+    </ul>
+    
+
+</body>
+</html>
