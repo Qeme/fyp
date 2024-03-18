@@ -27,25 +27,25 @@
         <label for="venue">Venue:</label>
         <input type="text" id="venue" name="venue"><br><br>
 
-        <!-- <div>
+        <div>
             <label for="stages">Stages:</label><br>
             <input type="checkbox" id="stage1" name="stage1" value="stage 1">
             <label for="stage1"> Stage 1</label><br>
         </div>
         
-        <div>
+        <div id="format1Section" style="display: none;">
             <label for="format">Format:</label><br>
-            <input type="radio" id="single" name="stage1" value="single-elimination">
+            <input type="radio" id="single" name="format1" value="single-elimination">
             <label for="single">Single Elimination</label><br>
-            <input type="radio" id="double" name="stage1" value="double-elimination">
+            <input type="radio" id="double" name="format1" value="double-elimination">
             <label for="double">Double Elimination</label><br>
-            <input type="radio" id="step" name="stage1" value="stepladder">
+            <input type="radio" id="step" name="format1" value="stepladder">
             <label for="step">Stepladder</label><br>
-            <input type="radio" id="swiss" name="stage1" value="swiss">
+            <input type="radio" id="swiss" name="format1" value="swiss">
             <label for="swiss">Swiss</label><br>
-            <input type="radio" id="robin" name="stage1" value="round-robin">
+            <input type="radio" id="robin" name="format1" value="round-robin">
             <label for="robin">Round Robin</label><br>
-            <input type="radio" id="doublerobin" name="stage1" value="double-round-robin">
+            <input type="radio" id="doublerobin" name="format1" value="double-round-robin">
             <label for="doublerobin">Double Round Robin</label><br>
         </div>
         
@@ -55,15 +55,15 @@
             <label for="stage2"> Stage 2</label><br>
         </div>
         
-        <div>
+        <div id="format2Section" style="display: none;">
             <label for="format">Format:</label><br>
-            <input type="radio" id="single" name="stage2" value="single-elimination">
+            <input type="radio" id="single" name="format2" value="single-elimination">
             <label for="single">Single Elimination</label><br>
-            <input type="radio" id="double" name="stage2" value="double-elimination">
+            <input type="radio" id="double" name="format2" value="double-elimination">
             <label for="double">Double Elimination</label><br>
-            <input type="radio" id="step" name="stage2" value="stepladder">
+            <input type="radio" id="step" name="format2" value="stepladder">
             <label for="step">Stepladder</label><br>
-        </div>         -->
+        </div>        
         
 
         <div>
@@ -97,12 +97,98 @@
             <input type="number" id="viewer" name="viewer" min="0">
         </div>
 
+        <div>
+            <h4>Scoring Matches Value</h4>
+            <label for="colored">Order Matters:</label>
+            <select id="colored" name="colored">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select><br>
+
+            <label for="sorting">Sorting Method (when players seeded):</label>
+            <select id="sorting" name="sorting">
+                <option value="none">Not applied</option>
+                <option value="ascending">Ascending</option>
+                <option value="descending">Descending</option>
+            </select><br>
+
+            <label for="round">Number of rounds (for each match):</label>
+            <input type="number" id="round" name="round" min="1"><br>
+
+            <label for="bestOf">Best Of (indicates the winner):</label>
+            <input type="number" id="bestOf" name="bestOf" min="1"><br>
+
+            <label for="bye">Bye Point:</label>
+            <input type="number" id="bye" name="bye"><br>
+
+            <label for="draw">Draw Point:</label>
+            <input type="number" id="draw" name="draw"><br>
+
+            <label for="loss">Loss Point:</label>
+            <input type="number" id="loss" name="loss"><br>
+
+            <label for="win">Win Point:</label>
+            <input type="number" id="win" name="win"><br>
+
+            <label for="tiebreaks">Tiebreaker Method:</label>
+            <select id="tiebreaks" name="tiebreaks">
+                <option value="null">Not applied</option>
+                <option value="median buchholz">Median Buchholz</option>
+                <option value="solkoff">Solkoff</option>
+                <option value="sonneborn berger">Sonneborn Berger</option>
+                <option value="cumulative">Cumulative</option>
+                <option value="versus">Versus</option>
+                <option value="game win percentage">Game Win Percentage</option>
+                <option value="opponent game win percentage">Opponent Game Win Percentage</option>
+                <option value="opponent match win percentage">Opponent Match Win Percentage</option>
+                <option value="opponent opponent match win percentage">Opponent Opponent Match Win Percentage</option>
+            </select><br>
+
+        </div>
         <!-- <label for="qr">Select QR Image/PDF File:</label><br>
         <input type="file" id="qr" name="qr" accept="image/*, .pdf"><br><br> -->
-    
+        
+
         <input type="submit" value="Create Tournament">
+        <button type="reset" value="Reset">Reset</button>
+        
 
     </form>
+    <script>
+        document.getElementById('stage1').addEventListener('change', function() {
+        const format1Section = document.getElementById('format1Section');
+        const format1Radios = format1Section.querySelectorAll('input[type="radio"]');
+        if (this.checked) {
+            format1Section.style.display = 'block';
+            format1Radios.forEach(radio => {
+                radio.disabled = false;
+            });
+        } else {
+            format1Section.style.display = 'none';
+            format1Radios.forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+    });
+
+    document.getElementById('stage2').addEventListener('change', function() {
+        const format2Section = document.getElementById('format2Section');
+        const format2Radios = format2Section.querySelectorAll('input[type="radio"]');
+        if (this.checked) {
+            format2Section.style.display = 'block';
+            format2Radios.forEach(radio => {
+                radio.disabled = false;
+            });
+        } else {
+            format2Section.style.display = 'none';
+            format2Radios.forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+    });
+
     
+
+    </script>
 </body>
 </html>

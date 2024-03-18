@@ -14,6 +14,8 @@ import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
 import TournamentOrganizer from 'tournament-organizer';
+const org = new TournamentOrganizer()
+let tournament
 
 import initializePassport from './passport-config.js'
 import {userinfo,tourinfo} from './config.js'
@@ -171,55 +173,99 @@ app.get('/createTour',checkAuthenticated,(req,res)=>{
     res.render('tourCreate.ejs')
 })
 
-app.post('/createTour',checkAuthenticated,(req,res)=>{
+app.post('/createTour',checkAuthenticated, async (req,res)=>{
 
-    const { tname, game, platform, venue, stage1, stage2, regitime, closetime, starttour, endtour, checkIn, rules, regulation, competitor, viewer } = req.body;
+    const {
+        tname,
+        game,
+        platform,
+        venue,
+        format1,
+        format2,
+        regitime,
+        closetime,
+        starttour,
+        endtour,
+        checkIn,
+        rules,
+        regulation,
+        competitor,
+        viewer,
+        round,
+        colored,
+        sorting,
+        bestOf,
+        bye,
+        draw,
+        loss,
+        tiebreaks,
+        win
+    } = req.body;
+
+    //get the info of the user details like email
+    const user = await req.user
 
     const newTournament = new tourinfo({
         name: tname,
-        game: game,
-        platform: platform,
-        venue: venue,
-        // stageOne: {
-        //     consolation: false, 
-        //     format: stage1.format,
-        //     initialRound: stage1.initialRound,
-        //     maxPlayers: stage1.maxPlayers,
-        //     rounds: stage1.rounds
-        // },
-        // stageTwo: {
-        //     consolation: stage2 && stage2.consolation ? true : false,
-        //     format: stage2 ? stage2.format : null,
-        //     advance: stage2 ? {
-        //         method: stage2.advance.method,
-        //         value: stage2.advance.value
-        //     } : null
-        // },
-        register: {
-            open: regitime,
-            close: closetime
+        setting:{
+            stageOne: { 
+                format: format1
+            },
+            stageTwo: {
+                format: format2
+            },
+            round: round,
+            colored: colored,
+            sorting: sorting,
+            scoring:{
+                bestOf: bestOf,
+                bye: bye,
+                draw: draw,
+                loss: loss,
+                tiebreaks: tiebreaks,
+                win: win
+            }
         },
-        running: {
-            start: starttour,
-            end: endtour
-        },
-        checkin: checkIn,
-        notification: {
-            rules: rules,
-            regulation: regulation
-        },
-        ticket: {
-            competitor: competitor,
-            viewer: viewer
+        meta: {
+            organizer: user.email,
+            game: game,
+            platform: platform,
+            venue: venue,
+            register: {
+                open: regitime,
+                close: closetime
+            },
+            running: {
+                start: starttour,
+                end: endtour
+            },
+            checkin: checkIn,
+            notification: {
+                rules: rules,
+                regulation: regulation
+            },
+            ticket: {
+                competitor: competitor,
+                viewer: viewer
+            }
         }
+
+        
     });
 
     newTournament.save()
         .then(savedTournament => {
-            console.log('Tournament created successfully:', savedTournament);
-            const org = new TournamentOrganizer()
-            org.createTournament(savedTournament.name,'',savedTournament.id)
-            console.log(org.tournaments)
+            console.log('Tournament created successfully!',savedTournament);
+            //create tournament based on the organizer identity
+            // const settings = {
+            //     meta: savedTournament.meta,
+            //     stageOne: savedTournament.stageOne,
+            //     stageTwo: savedTournament.stageTwo
+            // }
+            // tournament = org.createTournament(savedTournament.name,settings,savedTournament.id)
+            // for (let i = 0; i < tournament.length; i++) {
+            //     console.log(tournament[i])
+            // }
             res.status(200).send('Tournament created successfully');
         })
         .catch(error => {
