@@ -1,49 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Tournament Name</title>
-</head>
-<body>
-    <h1>Change Tournament Name</h1>
-    <form id="tournamentForm">
-        <label for="tournamentName">New Tournament Name:</label>
-        <input type="text" id="tournamentName" name="tournamentName" required>
-        <button type="submit">Submit</button>
-    </form>
-
-    <script>
-        document.getElementById("tournamentForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-            const tournamentName = document.getElementById("tournamentName").value;
-
-            // Make a PUT request to update the tournament name
-            fetch('/tournamentinfo/:id', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name: tournamentName }) // Send the new tournament name in JSON format
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Redirect to tournamentinfo.ejs upon successful update
-                    window.location.href = '/tournamentinfo.ejs';
-                } else {
-                    throw new Error('Error updating tournament name');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Handle any errors and display an appropriate message to the user
-                alert('Error updating tournament name. Please try again later.');
-            });
-        });
-    </script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,20 +19,33 @@
                 <!-- the id mention here must point to meta->game then works -->
                 <label for="meta.game">Game:</label>
                 <input type="text" id="meta.game" name="meta.game" value="<%= tournament.meta.game %>"><br>
-                <!-- <label for="platform">Platform:</label>
-                <input type="text" id="platform" name="platform" value="<%= tournament.meta.platform %>"><br>
-                <label for="venue">Venue:</label>
-                <input type="text" id="venue" name="venue" value="<%= tournament.meta.venue %>"><br>
-                <label for="registerOpen">Registration Period (Open):</label>
-                <input type="date" id="registerOpen" name="registerOpen" value="<%= tournament.meta.register.open %>"><br>
-                <label for="registerClose">Registration Period (Close):</label>
-                <input type="date" id="registerClose" name="registerClose" value="<%= tournament.meta.register.close %>"><br>
-                <label for="runningStart">Running Period (Start):</label>
-                <input type="date" id="runningStart" name="runningStart" value="<%= tournament.meta.running.start %>"><br>
-                <label for="runningEnd">Running Period (End):</label>
-                <input type="date" id="runningEnd" name="runningEnd" value="<%= tournament.meta.running.end %>"><br>
-                <label for="checkin">Check-in Required:</label>
-                <input type="checkbox" id="checkin" name="checkin" <%= tournament.meta.checkin ? 'checked' : '' %>><br>
+                <label for="meta.platform">Platform:</label>
+                <select id="meta.platform" name="meta.platform">
+                    <!-- if the value is already online -> it will show the option is online in drop down -->
+                    <option value="online" <%= tournament.meta.platform === 'online' ? 'selected' : '' %>>Online</option>
+                    <option value="offline" <%= tournament.meta.platform === 'offline' ? 'selected' : '' %>>Offline</option>
+                </select><br>
+                <label for="meta.venue">Venue:</label>
+                <input type="text" id="meta.venue" name="meta.venue" value="<%= tournament.meta.venue %>"><br>
+                <!-- open 2024-02-22T00:00:00.000+00:00 (date data from mongodb)
+                    .toISOString() converts the date object to a string in the ISO format (YYYY-MM-DDTHH:mm:ss.sssZ)
+                    .split('T')[0] splits the string at the "T" character and takes the first part, which represents the date (YYYY-MM-DD). -->
+                <label for="meta.register.open">Registration Open:</label>
+                <input type="date" id="meta.register.open" name="meta.register.open" value="<%= tournament.meta.register.open.toISOString().split('T')[0] %>"><br>
+                <label for="meta.register.close">Registration Close:</label>
+                <input type="date" id="meta.register.close" name="meta.register.close" value="<%= tournament.meta.register.close.toISOString().split('T')[0] %>"><br>
+                <label for="meta.running.start">Running Open:</label>
+                <input type="date" id="meta.running.start" name="meta.running.start" value="<%= tournament.meta.running.start.toISOString().split('T')[0] %>"><br>
+                <label for="meta.running.end">Running Close:</label>
+                <input type="date" id="meta.running.end" name="meta.running.end" value="<%= tournament.meta.running.end.toISOString().split('T')[0] %>"><br>
+                <label for="meta.checkin">Check-In (in minutes):</label>
+                <input type="number" id="meta.checkin" name="meta.checkin" value="<%= tournament.meta.checkin %>"><br>
+                <h3>Ticket: </h3>
+                <label for="meta.ticket.competitor">Competitor:</label>
+                <input type="number" id="meta.ticket.competitor" name="meta.ticket.competitor" value="<%= tournament.meta.ticket.competitor %>"><br>
+                <label for="meta.ticket.viewer">Viewer:</label>
+                <input type="number" id="meta.ticket.viewer" name="meta.ticket.viewer" value="<%= tournament.meta.ticket.viewer %>"><br>
+                <!-- <input type="checkbox" id="checkin" name="checkin" <%= tournament.meta.checkin ? 'checked' : '' %>><br>
                 <label for="competitorTicket">Competitor Ticket Price:</label>
                 <input type="number" id="competitorTicket" name="competitorTicket" value="<%= tournament.meta.ticket.competitor %>"><br>
                 <label for="viewerTicket">Viewer Ticket Price:</label>

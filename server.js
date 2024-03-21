@@ -333,6 +333,20 @@ app.put('/tournamentinfo/:id', async (req, res) => {
     }
 });
 
+// PUT endpoint to update tournament information
+app.delete('/tournamentinfo/:id', async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        // Perform the delete operation using the tournament ID
+        await tourinfo.findByIdAndDelete(id);
+
+        res.redirect('/tournamentinfo')
+    } catch (error) {
+        res.status(500).send('Error deleting tournament');
+    }
+});
+
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
 // app.delete('/logout',(req,res)=>{

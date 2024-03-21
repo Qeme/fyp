@@ -20,6 +20,10 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete">
+                </form>                
             </li>
         <% }); %>
     </ul>
@@ -37,6 +41,10 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete">
+                </form>
             </li>
         <% }); %>
     </ul>
@@ -54,6 +62,10 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete">
+                </form>
             </li>
         <% }); %>
     </ul>
@@ -71,6 +83,10 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" value="Delete">
+                </form>
             </li>
         <% }); %>
     </ul>
