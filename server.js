@@ -34,6 +34,7 @@ app.set('view engine', 'ejs');
 //Middleware functions are functions that have access to the request object (req)
 //plus the response object (res), and the next middleware function in the application's request-response cycle
 app.use(express.json())
+//allow the system to grab the data from form and pass it to req.body
 app.use(express.urlencoded({ extended: false }))
 app.use(flash())
 app.use(session({
@@ -289,6 +290,48 @@ app.get('/tournamentinfo', checkAuthenticated, async (req, res) => {
     }
 });
 
+//later when the user clicks on the update button for certain tournament, it will redirect user to update page
+//the way it works is that the user clicks, the id is grabbed, then we find the tournament based on the id
+app.get('/tournamentinfo/:id',checkAuthenticated,async (req,res)=>{
+    try{
+        // Used to access parameters defined within the route path, such as /tournamentinfo/:id.
+        // The parameters are part of the route URL itself.
+        // They are accessed using the key-value pairs in the req.params object.
+        const { id } = req.params
+        const tournament = await tourinfo.findById(id)
+        res.render('fulltourifno.ejs',{tournament})
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
+app.get('/editTour', checkAuthenticated, async (req, res) => {
+    try {
+        // Used to access query parameters passed in the URL query string, such as /editTour?id=123.
+        // The parameters are appended to the URL using a question mark (?) and are key-value pairs separated by an ampersand (&).
+        // They are accessed using the key-value pairs in the req.query object.
+        const { id } = req.query;
+        const tournament = await tourinfo.findById(id);
+        res.render('editTourForm.ejs', { tournament });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// PUT endpoint to update tournament information
+app.put('/tournamentinfo/:id', async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const updatedTournamentData = req.body; // Extract the updated tournament data from the request body
+
+        // Perform the update operation using the tournament ID and updated data
+        const updatedTournament = await tourinfo.findByIdAndUpdate(id, updatedTournamentData, { new: true });
+
+        res.redirect('/tournamentinfo')
+    } catch (error) {
+        res.status(500).send('Error updating tournament');
+    }
+});
 
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"

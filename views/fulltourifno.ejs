@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Information</title>
+</head>
+<body>
+    <h1>Tournament Information</h1>
+    <div class="tournament-info">
+        <h2><%= tournament.name %></h2>
+        <div class="meta-info">
+            <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
+            <strong>Game:</strong> <%= tournament.meta.game %><br>
+            <strong>Platform:</strong> <%= tournament.meta.platform %><br>
+            <strong>Venue:</strong> <%= tournament.meta.venue %><br>
+            <strong>Registration Period:</strong> <%= new Date(tournament.meta.register.open).toLocaleDateString() %> to <%= new Date(tournament.meta.register.close).toLocaleDateString() %><br>
+            <strong>Running Period:</strong> <%= new Date(tournament.meta.running.start).toLocaleDateString() %> to <%= new Date(tournament.meta.running.end).toLocaleDateString() %><br>
+            <strong>Check-in Required:</strong> <%= tournament.meta.checkin ? 'Yes' : 'No' %><br>
+            <strong>Competitor Ticket Price:</strong> RM <%= tournament.meta.ticket.competitor %><br>
+            <strong>Viewer Ticket Price:</strong> RM <%= tournament.meta.ticket.viewer %><br>
+            <strong>Notification Rules:</strong> <%= tournament.meta.notification.rules %><br>
+            <strong>Regulation:</strong> <%= tournament.meta.notification.regulation %><br>
+        </div>
+        <div class="setting-info">
+            <h3>Settings</h3>
+            <strong>Stage One:</strong> <%= tournament.setting.stageOne.format %> format<br>
+            <strong>Initial Round:</strong> <%= tournament.setting.stageOne.initialRound %><br>
+            <strong>Max Players:</strong> <%= tournament.setting.stageOne.maxPlayers %><br>
+            <strong>Scoring Points:</strong> 
+            <ul>
+                <li>Win: <%= tournament.setting.scoring.win %> points</li>
+                <li>Loss: <%= tournament.setting.scoring.loss %> points</li>
+                <li>Draw: <%= tournament.setting.scoring.draw %> points</li>
+                <li>Bye: <%= tournament.setting.scoring.bye %> points</li>
+                <li>Best of: <%= tournament.setting.scoring.bestOf %> rounds</li>
+                <li>Tiebreaks: <%= tournament.setting.scoring.tiebreaks.join(', ') %></li>
+            </ul>
+            <strong>Status:</strong> <%= tournament.setting.status %><br>
+        </div>
+    </div>
+</body>
+</html>

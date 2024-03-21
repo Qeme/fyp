@@ -1,8 +1,5 @@
 <% if (user) { %>
     <h1>Holla <%= user.name %> </h1>
-    <form action="/logout?_method=DELETE" method="POST">
-        <button type="submit">Log Out</button>
-    </form>
 
     <body>
         <button onclick="assignOrganizer()">Create Tournament</button>
@@ -14,9 +11,8 @@
 
         <li><a href="/createTour">Create Tournament</a></li>
 
-        <li><a href="/tournamentinfo">Tournament Informations</a></li>
+        <li><a href="/tournamentinfo">Tournament Informations</a></li><br>
 
-    
         <script>
             function assignOrganizer() {
                 // Send a POST request to the server to add the "organizer" role
@@ -66,25 +62,12 @@
                 });
             }
 
-        </script>
-        
-        <!-- testing
-        
-        
-        <button id="redirectButton">Redirect to Another Page</button>
-        
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            const redirectButton = document.getElementById('redirectButton');
-        
-            redirectButton.addEventListener('click', function() {
-                // Redirect to another page
-                window.location.href = 'gameinfo.ejs';
-            });
-        }); -->
-
         </script>  
-
+    
+        <form action="/logout?_method=DELETE" method="POST">
+            <button type="submit">Log Out</button>
+        </form>
+        
     </body>
 
 <% } else { %>

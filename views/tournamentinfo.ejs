@@ -12,22 +12,31 @@
     <ul>
         <% tournaments.filter(tournament => tournament.setting.status === 'setup').forEach(tournament => { %>
             <li>
-                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>ID:</strong> <a href="/tournamentinfo/<%= tournament.id %>"><%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
-                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
+
+                <!-- Pass tournament ID to Edit button -->
+                <a href="/editTour?id=<%= tournament.id %>">
+                    <input type="button" value="Edit">
+                </a>
             </li>
         <% }); %>
     </ul>
+
 
     <h3>Stage-One Status:</h3>
     <ul>
         <% tournaments.filter(tournament => tournament.setting.status === 'stage-one').forEach(tournament => { %>
             <li>
-                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>ID:</strong> <a href="/tournamentinfo/<%= tournament.id %>"><%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
-                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
+
+                <!-- Pass tournament ID to Edit button -->
+                <a href="/editTour?id=<%= tournament.id %>">
+                    <input type="button" value="Edit">
+                </a>
             </li>
         <% }); %>
     </ul>
@@ -37,10 +46,14 @@
     <ul>
         <% tournaments.filter(tournament => tournament.setting.status === 'stage-two').forEach(tournament => { %>
             <li>
-                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>ID:</strong> <a href="/tournamentinfo/<%= tournament.id %>"><%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
-                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
+
+                <!-- Pass tournament ID to Edit button -->
+                <a href="/editTour?id=<%= tournament.id %>">
+                    <input type="button" value="Edit">
+                </a>
             </li>
         <% }); %>
     </ul>
@@ -50,10 +63,14 @@
     <ul>
         <% tournaments.filter(tournament => tournament.setting.status === 'complete').forEach(tournament => { %>
             <li>
-                <strong>ID:</strong> <%= tournament.id %><br>
+                <strong>ID:</strong> <a href="/tournamentinfo/<%= tournament.id %>"><%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
-                <strong>Organizer:</strong> <%= tournament.meta.organizer %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
+
+                <!-- Pass tournament ID to Edit button -->
+                <a href="/editTour?id=<%= tournament.id %>">
+                    <input type="button" value="Edit">
+                </a>
             </li>
         <% }); %>
     </ul>
