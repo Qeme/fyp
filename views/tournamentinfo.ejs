@@ -20,6 +20,9 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <a href="/completeTour?id=<%= tournament.id %>">
+                    <input type="button" value="complete">
+                </a>
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="submit" value="Delete">

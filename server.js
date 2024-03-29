@@ -2,7 +2,6 @@
 if(process.env.NODE_ENV !== 'production'){
     dotenv.config();
 }
-  
 
 //extract the modules
 import express from "express"
@@ -57,7 +56,37 @@ app.use(methodOverride('_method'))
 //need to use async funct because it takes time to grab the data from mongodb
 app.get('/',async (req, res) => {
     // console.log(await req.user)
-    res.render('index', { user: await req.user });
+    let user = await req.user
+    res.render('index', { user: user });
+
+    //do for loop to create back the tournaments that he had created before org.createTournament()
+    const tourlist = await tourinfo.find({ 'meta.organizer': user.email });
+    console.log(tourlist.length)
+    if (tourlist.length > 0) {
+        // Loop through each tournament and create it
+        for (let tour of tourlist) {
+            org.createTournament(tour.name,{
+                stageOne:{
+                    format: tour.setting.stageOne.format
+                },
+                stageTwo:{
+                    format: tour.setting.stageTwo.format
+                },
+                round: tour.setting.round,
+                colored: tour.setting.colored,
+                sorting: tour.setting.sorting,
+                scoring:tour.setting.scoring,
+                meta: tour.meta
+            },tour.id);
+
+        }
+    }
+
+    org.tournaments.forEach(tournament => {
+            // Access the ID of each tournament and log it to the console
+            console.log(tournament.id);
+        });
+
 });
 
 
@@ -256,17 +285,31 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
 
     newTournament.save()
         .then(savedTournament => {
-            console.log('Tournament created successfully!',savedTournament);
+            //console.log('Tournament created successfully!',savedTournament);
             //create tournament based on the organizer identity
-            // const settings = {
-            //     meta: savedTournament.meta,
-            //     stageOne: savedTournament.stageOne,
-            //     stageTwo: savedTournament.stageTwo
-            // }
-            // tournament = org.createTournament(savedTournament.name,settings,savedTournament.id)
-            // for (let i = 0; i < tournament.length; i++) {
-            //     console.log(tournament[i])
-            // }
+            tournament = org.createTournament(savedTournament.name,
+                {
+                stageOne:{
+                    format: savedTournament.setting.stageOne.format
+                },
+                stageTwo:{
+                    format: savedTournament.setting.stageTwo.format
+                },
+                round: savedTournament.setting.round,
+                colored: savedTournament.setting.colored,
+                sorting: savedTournament.setting.sorting,
+                scoring:savedTournament.setting.scoring,
+                meta: savedTournament.meta
+                },
+                savedTournament.id)
+            //tournament = org.reloadTournament(newTournament)
+            addPlayer('Amani')
+            endingTour()
+            //console.log(tournament)
+            let x = org.tournaments
+            for (let i = 0; i < x.length; i++) {
+                console.log(x[i])
+            }
             res.status(200).send('Tournament created successfully');
         })
         .catch(error => {
@@ -275,6 +318,21 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
         });
     
 })
+
+function addPlayer(name){
+    let player;
+    try {
+        player = tournament.createPlayer(name);
+    } catch (e) {
+        console.error(e);
+        return;
+    }
+}
+
+function endingTour(){
+    //now we can use the reloadTournament() to use it for any edit or ending the tournamet
+    tournament.end()
+}
 
 app.get('/tournamentinfo', checkAuthenticated, async (req, res) => {
     try {
@@ -311,10 +369,23 @@ app.get('/editTour', checkAuthenticated, async (req, res) => {
         // The parameters are appended to the URL using a question mark (?) and are key-value pairs separated by an ampersand (&).
         // They are accessed using the key-value pairs in the req.query object.
         const { id } = req.query;
-        const tournament = await tourinfo.findById(id);
-        res.render('editTourForm.ejs', { tournament });
+        const tour = await tourinfo.findById(id);
+        res.render('editTourForm.ejs', { tour });
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/completeTour/:id', checkAuthenticated, async (req, res) => {
+    try {
+        // Used to access query parameters passed in the URL query string, such as /editTour?id=123.
+        // The parameters are appended to the URL using a question mark (?) and are key-value pairs separated by an ampersand (&).
+        // They are accessed using the key-value pairs in the req.query object.
+        const { id } = req.params;
+        tournament = await org.reloadTournament(id);
+        tournament.end()
+    } catch (error) {
+        res.status(500).json({ message: "Eh "+error.message });
     }
 });
 
@@ -355,13 +426,31 @@ app.delete('/tournamentinfo/:id', async (req, res) => {
 // })
 //use below instead
 app.delete('/logout', (req, res, next) => {
+
     req.logOut((err) => {
       if (err) {
         return next(err);
       }
+      clearArray()
       res.redirect('/login');
     });
   });
+
+function clearArray(){
+    
+    //do nested loop -> do remove the tournament inside the array of org.tournaments by using org.removeTournament()
+
+    while(org.tournaments.length!=0){
+        org.tournaments.forEach(tournament => {
+            console.log("Deleting..."+tournament.id)
+            org.removeTournament(tournament.id)
+        })
+    }
+    
+    org.tournaments.forEach(tournament => {
+        console.log(tournament.id)
+    });
+}
 
 //create a function to check Authentication user as middleware
 //this function will be executed first inside '/' so if the 
