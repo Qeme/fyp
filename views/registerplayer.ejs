@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Players Form</title>
+</head>
+<body>
+
+<h2><%= tournament.name %></h2>
+
+<h3>Add Players Form</h3>
+
+<form id="players-form" action="/registerplayer?id=<%= tournament.id %>" method="POST">
+  <div id="players-container">
+    <div class="player-input">
+      <label for="player-email">Player Email:</label>
+      <input type="email" name="player-email[]" required>
+      <label for="player-name">Player Name:</label>
+      <input type="text" name="player-name[]" required>
+
+      <!-- removePlayer(this) basically remove the div for this particular player -->
+      <button type="button" onclick="removePlayer(this)">Remove Player</button>
+    </div>
+  </div>
+  <!-- addPlayer() will append a new div - player-input for new player registration -->
+  <button type="button" onclick="addPlayer()">Add Player</button>
+  <button type="submit">Submit</button>
+</form>
+
+<script>
+function addPlayer() {
+  const container = document.getElementById('players-container');
+  const playerInput = document.createElement('div');
+  playerInput.classList.add('player-input');
+  playerInput.innerHTML = `
+    <label for="player-email">Player Email:</label>
+    <input type="email" name="player-email[]" required>
+    <label for="player-name">Player Name:</label>
+    <input type="text" name="player-name[]" required>
+    <button type="button" onclick="removePlayer(this)">Remove Player</button>
+  `;
+  container.appendChild(playerInput);
+}
+
+function removePlayer(button) {
+  const playerInput = button.parentElement;
+  playerInput.remove();
+}
+</script>
+
+</body>
+</html>

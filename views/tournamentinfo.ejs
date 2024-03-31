@@ -20,9 +20,17 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+                <!-- Ending the tournament -->
                 <a href="/completeTour?id=<%= tournament.id %>">
                     <input type="button" value="complete">
                 </a>
+
+                <!-- register players -->
+                <a href="/registerplayer?id=<%= tournament.id %>">
+                    <input type="button" value="Register">
+                </a>
+
+                <!-- Deleting tournament -->
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="submit" value="Delete">
@@ -44,6 +52,12 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+
+                <!-- Ending the tournament -->
+                <a href="/completeTour?id=<%= tournament.id %>">
+                    <input type="button" value="complete">
+                </a>
+
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="submit" value="Delete">
@@ -65,6 +79,12 @@
                 <a href="/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+
+                <!-- Ending the tournament -->
+                <a href="/completeTour?id=<%= tournament.id %>">
+                    <input type="button" value="Complete">
+                </a>
+
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="submit" value="Delete">

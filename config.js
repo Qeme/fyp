@@ -103,35 +103,36 @@ const TournamentSchema = new mongoose.Schema({
             required: true,
             default: 0
         },
-        players:{
-            id:{
-                type:[String],
+        players: [{
+            email: {
+                type: String,
                 required: false,
-                default: []
+                default: ""
             },
-            name:{
-                type:[String],
+            name: {
+                type: String,
                 required: false,
-                default: []
+                default: ""
             }
-        },
-        matches:{
+        }],
+        // those players and matches should be in array object, not the attributes in array
+        matches:[{
             id:{
-                type:[String],
+                type:String,
                 required: false,
-                default: []
+                default: ""
             },
             round:{
-                type:[Number],
+                type:Number,
                 required: false,
-                default: []
+                default: ""
             },
             match:{
-                type:[Number],
+                type:Number,
                 required: false,
-                default: []
+                default: ""
             }
-        },
+        }],
         colored:{
             type: Boolean,
             required: true,

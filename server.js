@@ -15,6 +15,7 @@ import dotenv from 'dotenv';
 import TournamentOrganizer from 'tournament-organizer';
 const org = new TournamentOrganizer()
 let tournament
+let player
 
 import initializePassport from './passport-config.js'
 import {userinfo,tourinfo} from './config.js'
@@ -54,38 +55,18 @@ app.use(methodOverride('_method'))
 
 
 //need to use async funct because it takes time to grab the data from mongodb
-app.get('/',async (req, res) => {
+app.get('/',checkAuthenticated,async (req, res) => {
     // console.log(await req.user)
     let user = await req.user
-    res.render('index', { user: user });
 
     //do for loop to create back the tournaments that he had created before org.createTournament()
     const tourlist = await tourinfo.find({ 'meta.organizer': user.email });
-    console.log(tourlist.length)
-    if (tourlist.length > 0) {
-        // Loop through each tournament and create it
-        for (let tour of tourlist) {
-            org.createTournament(tour.name,{
-                stageOne:{
-                    format: tour.setting.stageOne.format
-                },
-                stageTwo:{
-                    format: tour.setting.stageTwo.format
-                },
-                round: tour.setting.round,
-                colored: tour.setting.colored,
-                sorting: tour.setting.sorting,
-                scoring:tour.setting.scoring,
-                meta: tour.meta
-            },tour.id);
 
-        }
+    if(org.tournaments.length === 0){
+        fillArray(tourlist)
     }
-
-    org.tournaments.forEach(tournament => {
-            // Access the ID of each tournament and log it to the console
-            console.log(tournament.id);
-        });
+        
+    res.render('index.ejs', { user: user });
 
 });
 
@@ -302,14 +283,16 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
                 meta: savedTournament.meta
                 },
                 savedTournament.id)
+
             //tournament = org.reloadTournament(newTournament)
-            addPlayer('Amani')
-            endingTour()
+            // addPlayer('Amani')
+            // endingTour()
             //console.log(tournament)
-            let x = org.tournaments
-            for (let i = 0; i < x.length; i++) {
-                console.log(x[i])
-            }
+            // let x = org.tournaments
+            // for (let i = 0; i < x.length; i++) {
+            //     console.log(x[i])
+            // }
+
             res.status(200).send('Tournament created successfully');
         })
         .catch(error => {
@@ -318,21 +301,6 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
         });
     
 })
-
-function addPlayer(name){
-    let player;
-    try {
-        player = tournament.createPlayer(name);
-    } catch (e) {
-        console.error(e);
-        return;
-    }
-}
-
-function endingTour(){
-    //now we can use the reloadTournament() to use it for any edit or ending the tournamet
-    tournament.end()
-}
 
 app.get('/tournamentinfo', checkAuthenticated, async (req, res) => {
     try {
@@ -370,23 +338,98 @@ app.get('/editTour', checkAuthenticated, async (req, res) => {
         // They are accessed using the key-value pairs in the req.query object.
         const { id } = req.query;
         const tour = await tourinfo.findById(id);
-        res.render('editTourForm.ejs', { tour });
+        res.render('editTourForm.ejs', { tournament : tour });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-app.get('/completeTour/:id', checkAuthenticated, async (req, res) => {
-    try {
-        // Used to access query parameters passed in the URL query string, such as /editTour?id=123.
-        // The parameters are appended to the URL using a question mark (?) and are key-value pairs separated by an ampersand (&).
-        // They are accessed using the key-value pairs in the req.query object.
-        const { id } = req.params;
-        tournament = await org.reloadTournament(id);
-        tournament.end()
-    } catch (error) {
-        res.status(500).json({ message: "Eh "+error.message });
+// ending the tournament
+app.get('/completeTour',checkAuthenticated,async (req,res)=>{
+    try{
+        const { id } = req.query;
+        for(let x = 0; x< org.tournaments.length ; x++){
+            if(org.tournaments[x].id === id){
+                tournament = org.tournaments[x]
+                console.log(tournament.status)
+                endingTour()
+            }
+        }
+        await tourinfo.findByIdAndUpdate(id,{'setting.status':tournament.status},{new:true})
+        console.log(tournament.id+tournament.status)
+        res.render('status.ejs',{tournament: tournament})
+    }catch(error){
+        res.status(500).json({ message: error.message });
     }
+    
+})
+
+// Create a form to add new players into the tournament (send the tour id to the page)
+// use player = tournament.createPlayer(name,id)
+// save the new players into the database as well
+app.get('/registerplayer',checkAuthenticated,async (req,res)=>{
+    try{
+        const { id } = req.query;
+        const tour = await tourinfo.findById(id);
+        res.render('registerplayer.ejs',{tournament: tour})
+    }catch(error){
+        res.status(500).json({ message: error.message });
+    }
+})
+
+app.post('/registerplayer',checkAuthenticated,async (req,res)=>{
+    //take the id tournament to distinguish which tournament that should be updated
+    try{
+        const { id } = req.query
+
+        //take the body of the players by email and name req.body by grabbing them by name HTML FORM
+        const playerEmails = req.body['player-email[]'];
+        const playerNames = req.body['player-name[]'];
+
+        //we create an empty array
+        const players = []
+
+        // do looping push the players' information into array for each player
+        for (let i = 0; i < playerEmails.length; i++) {
+            const playerinfo = {
+            email: playerEmails[i],
+            name: playerNames[i]
+            };
+            players.push(playerinfo)
+        }
+        console.log("New player(s) inserted "+players.length)
+
+        //we append or match the data with the attributes inside collection Tournament
+        //we update in mongodb by using updateOne()
+        //search by id tournament, update contents, options
+
+        const result = await tourinfo.updateOne(
+            { _id: id },
+            { $set: { 'setting.players': players }}
+        );
+        console.log('Document updated successfully:', result);
+          
+        //find the tournament inside org.tournament by using id
+        //append the player info inside the array of tournament
+
+        for(let x = 0; x< org.tournaments.length ; x++){
+            if(org.tournaments[x].id === id){
+                tournament = org.tournaments[x]
+                for(let y = 0; y< players.length; y++)
+                    addPlayer(players[y].name,players[y].email)
+            }
+        }
+
+        // show the tournament info array
+        let x = org.tournaments
+            for (let i = 0; i < x.length; i++) {
+                console.log(x[i])
+            }
+
+    }catch(error){
+        res.status(500).json({ message: error.message });
+    }
+    
 });
 
 // PUT endpoint to update tournament information
@@ -396,7 +439,7 @@ app.put('/tournamentinfo/:id', async (req, res) => {
         const updatedTournamentData = req.body; // Extract the updated tournament data from the request body
 
         // Perform the update operation using the tournament ID and updated data
-        const updatedTournament = await tourinfo.findByIdAndUpdate(id, updatedTournamentData, { new: true });
+        await tourinfo.findByIdAndUpdate(id, updatedTournamentData, { new: true });
 
         res.redirect('/tournamentinfo')
     } catch (error) {
@@ -411,6 +454,7 @@ app.delete('/tournamentinfo/:id', async (req, res) => {
 
         // Perform the delete operation using the tournament ID
         await tourinfo.findByIdAndDelete(id);
+        org.removeTournament(id)
 
         res.redirect('/tournamentinfo')
     } catch (error) {
@@ -431,13 +475,57 @@ app.delete('/logout', (req, res, next) => {
       if (err) {
         return next(err);
       }
-      clearArray()
+      if(org.tournaments.length !== 0)
+        clearArray()
+
       res.redirect('/login');
     });
   });
 
+function addPlayer(name,id){
+    let player;
+    try {
+        player = tournament.createPlayer(name,id);
+    } catch (e) {
+        console.error(e);
+        return;
+    }
+}
+
+function endingTour(){
+    //now we can use the reloadTournament() to use it for any edit or ending the tournamet
+    tournament.end()
+}
+
+function fillArray(tourlist){
+    console.log(tourlist.length)
+    if (tourlist.length > 0) {
+        // Loop through each tournament and create it
+        for (let tour of tourlist) {
+            org.createTournament(tour.name,{
+                stageOne:{
+                    format: tour.setting.stageOne.format
+                },
+                stageTwo:{
+                    format: tour.setting.stageTwo.format
+                },
+                round: tour.setting.round,
+                colored: tour.setting.colored,
+                sorting: tour.setting.sorting,
+                scoring:tour.setting.scoring,
+                meta: tour.meta
+            },tour.id);
+
+        }
+    }
+
+    org.tournaments.forEach(tournament => {
+            // Access the ID of each tournament and log it to the console
+            console.log(tournament.id);
+        });
+}
+
 function clearArray(){
-    
     //do nested loop -> do remove the tournament inside the array of org.tournaments by using org.removeTournament()
 
     while(org.tournaments.length!=0){
