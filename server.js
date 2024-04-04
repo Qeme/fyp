@@ -382,22 +382,35 @@ app.post('/registerplayer',checkAuthenticated,async (req,res)=>{
     try{
         const { id } = req.query
 
+        const playerCount = req.body['player-count'];
+
+        // Now you have the value of playerCount, you can use it as needed
+        console.log("Player count:", playerCount);
+
         //take the body of the players by email and name req.body by grabbing them by name HTML FORM
         const playerEmails = req.body['player-email[]'];
         const playerNames = req.body['player-name[]'];
 
+        console.log("Player email:", playerEmails," Length:",playerEmails.length);
         //we create an empty array
         const players = []
-
-        // do looping push the players' information into array for each player
-        for (let i = 0; i < playerEmails.length; i++) {
-            const playerinfo = {
-            email: playerEmails[i],
-            name: playerNames[i]
+        if(playerCount<2){
+            const onePlayer = {
+                email: playerEmails,
+                name: playerNames
             };
-            players.push(playerinfo)
+            players.push(onePlayer);
+        }else{
+            for (let i = 0; i < playerCount; i++) {
+                const playerinfo = {
+                email: playerEmails[i],
+                name: playerNames[i]
+                };
+                players.push(playerinfo)
+            }
         }
         console.log("New player(s) inserted "+players.length)
+        
 
         //we append or match the data with the attributes inside collection Tournament
         //we update in mongodb by using updateOne()
@@ -405,7 +418,9 @@ app.post('/registerplayer',checkAuthenticated,async (req,res)=>{
 
         const result = await tourinfo.updateOne(
             { _id: id },
-            { $set: { 'setting.players': players }}
+            { $push: { 'setting.players': players }}
+            // $set is used to replace the existing variables value
+            // $push is used add more variables value into existing 
         );
         console.log('Document updated successfully:', result);
           
@@ -431,6 +446,30 @@ app.post('/registerplayer',checkAuthenticated,async (req,res)=>{
     }
     
 });
+
+app.post('/startTour',checkAuthenticated, (req,res)=>{
+    // inside try...catch
+    try{
+        // get the id of the certain tournament
+        let { id } = req.query
+
+        // iterate loop to find the tournament based on the id
+        // assign it to tournament variable
+        tournament = org.tournaments.find(tournament => tournament.id === id);
+
+        // call the start tournament function 
+        startTour()
+
+        // print the tournament output on how it goes now
+        console.log(tournament)
+
+        // update the status of the tournament from setup to stageOne for mongodb
+
+    }catch(error){
+        res.status(500).json({ message: error.message });
+    }
+
+})
 
 // PUT endpoint to update tournament information
 app.put('/tournamentinfo/:id', async (req, res) => {
@@ -492,6 +531,11 @@ function addPlayer(name,id){
     }
 }
 
+function startTour(){
+    //start the tournament but make sure the player > 2
+    tournament.start()
+}
+
 function endingTour(){
     //now we can use the reloadTournament() to use it for any edit or ending the tournamet
     tournament.end()
@@ -513,7 +557,9 @@ function fillArray(tourlist){
                 colored: tour.setting.colored,
                 sorting: tour.setting.sorting,
                 scoring:tour.setting.scoring,
-                meta: tour.meta
+                meta: tour.meta,
+                players: tour.setting.players,
+                matches: tour.setting.matches
             },tour.id);
 
         }

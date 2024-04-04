@@ -8,7 +8,7 @@
 <body>
 
 <h2><%= tournament.name %></h2>
-
+<h4><span id="playerCount">0</span> players added</h4>
 <h3>Add Players Form</h3>
 
 <form id="players-form" action="/registerplayer?id=<%= tournament.id %>" method="POST">
@@ -26,9 +26,13 @@
   <!-- addPlayer() will append a new div - player-input for new player registration -->
   <button type="button" onclick="addPlayer()">Add Player</button>
   <button type="submit">Submit</button>
+  <!-- Hidden input field to store the player count -->
+  <input type="hidden" id="playerCountInput" name="player-count" value="1">
 </form>
 
 <script>
+let playerCount = 1; // Initialize player count to 1 for the initial player
+
 function addPlayer() {
   const container = document.getElementById('players-container');
   const playerInput = document.createElement('div');
@@ -41,11 +45,25 @@ function addPlayer() {
     <button type="button" onclick="removePlayer(this)">Remove Player</button>
   `;
   container.appendChild(playerInput);
+  
+  // Increment player count
+  playerCount++;
+  document.getElementById('playerCount').textContent = playerCount;
+  // Update hidden input field value
+  document.getElementById('playerCountInput').value = playerCount;
 }
 
 function removePlayer(button) {
   const playerInput = button.parentElement;
   playerInput.remove();
+  
+  // Decrement player count if greater than 1
+  if(playerCount > 1) {
+    playerCount--;
+    document.getElementById('playerCount').textContent = playerCount;
+    // Update hidden input field value
+    document.getElementById('playerCountInput').value = playerCount;
+  }
 }
 </script>
 
