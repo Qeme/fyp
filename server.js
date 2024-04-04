@@ -12,10 +12,7 @@ import flash from "express-flash"
 import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
-import TournamentOrganizer from 'tournament-organizer';
-const org = new TournamentOrganizer()
-let tournament
-let player
+import { org, tournament, player } from "./global-variables.js";
 
 import initializePassport from './passport-config.js'
 import {userinfo,tourinfo} from './config.js'
@@ -302,34 +299,9 @@ app.post('/createTour',checkAuthenticated, async (req,res)=>{
     
 })
 
-app.get('/tournamentinfo', checkAuthenticated, async (req, res) => {
-    try {
-        const user = await req.user;
-        
-        // .find({}) to find all the value in the array and pass it to tournaments
-        // inside {} is the condition to be met
-        const tournaments = await tourinfo.find({ 'meta.organizer' : user.email });
-        
-        res.render('tournamentinfo.ejs', { tournaments });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-//later when the user clicks on the update button for certain tournament, it will redirect user to update page
-//the way it works is that the user clicks, the id is grabbed, then we find the tournament based on the id
-app.get('/tournamentinfo/:id',checkAuthenticated,async (req,res)=>{
-    try{
-        // Used to access parameters defined within the route path, such as /tournamentinfo/:id.
-        // The parameters are part of the route URL itself.
-        // They are accessed using the key-value pairs in the req.params object.
-        const { id } = req.params
-        const tournament = await tourinfo.findById(id)
-        res.render('fulltourifno.ejs',{tournament})
-    }catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+// now put it into routes to make it cleaner
+import tourinfoRouter from './routes/tournament.js';
+app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
 
 app.get('/editTour', checkAuthenticated, async (req, res) => {
     try {
@@ -364,88 +336,14 @@ app.get('/completeTour',checkAuthenticated,async (req,res)=>{
     
 })
 
-// Create a form to add new players into the tournament (send the tour id to the page)
-// use player = tournament.createPlayer(name,id)
-// save the new players into the database as well
-app.get('/registerplayer',checkAuthenticated,async (req,res)=>{
-    try{
-        const { id } = req.query;
-        const tour = await tourinfo.findById(id);
-        res.render('registerplayer.ejs',{tournament: tour})
-    }catch(error){
-        res.status(500).json({ message: error.message });
-    }
-})
-
-app.post('/registerplayer',checkAuthenticated,async (req,res)=>{
-    //take the id tournament to distinguish which tournament that should be updated
-    try{
-        const { id } = req.query
-
-        const playerCount = req.body['player-count'];
-
-        // Now you have the value of playerCount, you can use it as needed
-        console.log("Player count:", playerCount);
-
-        //take the body of the players by email and name req.body by grabbing them by name HTML FORM
-        const playerEmails = req.body['player-email[]'];
-        const playerNames = req.body['player-name[]'];
-
-        console.log("Player email:", playerEmails," Length:",playerEmails.length);
-        //we create an empty array
-        const players = []
-        if(playerCount<2){
-            const onePlayer = {
-                email: playerEmails,
-                name: playerNames
-            };
-            players.push(onePlayer);
-        }else{
-            for (let i = 0; i < playerCount; i++) {
-                const playerinfo = {
-                email: playerEmails[i],
-                name: playerNames[i]
-                };
-                players.push(playerinfo)
-            }
-        }
-        console.log("New player(s) inserted "+players.length)
-        
-
-        //we append or match the data with the attributes inside collection Tournament
-        //we update in mongodb by using updateOne()
-        //search by id tournament, update contents, options
-
-        const result = await tourinfo.updateOne(
-            { _id: id },
-            { $push: { 'setting.players': players }}
-            // $set is used to replace the existing variables value
-            // $push is used add more variables value into existing 
-        );
-        console.log('Document updated successfully:', result);
-          
-        //find the tournament inside org.tournament by using id
-        //append the player info inside the array of tournament
-
-        for(let x = 0; x< org.tournaments.length ; x++){
-            if(org.tournaments[x].id === id){
-                tournament = org.tournaments[x]
-                for(let y = 0; y< players.length; y++)
-                    addPlayer(players[y].name,players[y].email)
-            }
-        }
-
-        // show the tournament info array
-        let x = org.tournaments
-            for (let i = 0; i < x.length; i++) {
-                console.log(x[i])
-            }
-
-    }catch(error){
-        res.status(500).json({ message: error.message });
-    }
-    
+import playerinfoRouter from './routes/player.js';
+app.use((req, res, next) => {
+    req.showTour = showTour;
+    req.addPlayer = addPlayer;
+    next();
 });
+app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
+
 
 app.post('/startTour',checkAuthenticated, (req,res)=>{
     // inside try...catch
@@ -471,36 +369,6 @@ app.post('/startTour',checkAuthenticated, (req,res)=>{
 
 })
 
-// PUT endpoint to update tournament information
-app.put('/tournamentinfo/:id', async (req, res) => {
-    try {
-        const { id } = req.params; 
-        const updatedTournamentData = req.body; // Extract the updated tournament data from the request body
-
-        // Perform the update operation using the tournament ID and updated data
-        await tourinfo.findByIdAndUpdate(id, updatedTournamentData, { new: true });
-
-        res.redirect('/tournamentinfo')
-    } catch (error) {
-        res.status(500).send('Error updating tournament');
-    }
-});
-
-// PUT endpoint to update tournament information
-app.delete('/tournamentinfo/:id', async (req, res) => {
-    try {
-        const { id } = req.params; 
-
-        // Perform the delete operation using the tournament ID
-        await tourinfo.findByIdAndDelete(id);
-        org.removeTournament(id)
-
-        res.redirect('/tournamentinfo')
-    } catch (error) {
-        res.status(500).send('Error deleting tournament');
-    }
-});
-
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
 // app.delete('/logout',(req,res)=>{
@@ -520,6 +388,14 @@ app.delete('/logout', (req, res, next) => {
       res.redirect('/login');
     });
   });
+
+function showTour(){
+    let x = org.tournaments
+    
+    for (let i = 0; i < x.length; i++) {
+        console.log(x[i])
+    }
+}
 
 function addPlayer(name,id){
     let player;
