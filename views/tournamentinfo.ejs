@@ -17,17 +17,17 @@
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
 
                 <!-- Pass tournament ID to Edit button -->
-                <a href="/editTour?id=<%= tournament.id %>">
+                <a href="/tournamentinfo/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
 
                 <!-- Starting the tournament -->
-                <a href="/startTour?id=<%= tournament.id %>">
+                <a href="/tournamentinfo/startTour?id=<%= tournament.id %>">
                     <input type="button" value="Start">
                 </a>
 
                 <!-- Ending the tournament -->
-                <a href="/completeTour?id=<%= tournament.id %>">
+                <a href="/tournamentinfo/completeTour?id=<%= tournament.id %>">
                     <input type="button" value="Complete">
                 </a>
 

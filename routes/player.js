@@ -1,7 +1,8 @@
 import express from "express"
 const router = express.Router()
 import { userinfo, tourinfo } from '../config.js'
-import { org, tournament, player } from "../global-variables.js";
+import { org, showTour } from "../server.js";
+let tournament
 
 // Create a form to add new players into the tournament (send the tour id to the page)
 // use player = tournament.createPlayer(name,id)
@@ -10,8 +11,8 @@ import { org, tournament, player } from "../global-variables.js";
 router.get('/',async (req,res)=>{
     try{
         const { id } = req.query;
-        const tournament = await tourinfo.findById(id);
-        res.render('registerplayer.ejs',{tournament: tournament})
+        const tournamentinfo = await tourinfo.findById(id);
+        res.render('registerplayer.ejs',{tournament: tournamentinfo})
     }catch(error){
         res.status(500).json({ message: error.message });
     }
@@ -67,16 +68,18 @@ router.post('/',async (req,res)=>{
         //find the tournament inside org.tournament by using id
         //append the player info inside the array of tournament
 
-        for(let x = 0; x< org.tournaments.length ; x++){
-            if(org.tournaments[x].id === id){
-                tournament = org.tournaments[x]
-                for(let y = 0; y< players.length; y++)
-                    req.addPlayer(players[y].name,players[y].email)
+        for(let y=0;y<org.tournaments.length;y++){
+            if(org.tournaments[y].id===id){
+                tournament = org.tournaments[y]
+                players.forEach(player=>{
+                    tournament.createPlayer(player.email,player.name)
+                })
+                
             }
         }
 
         // show the tournament info array
-        req.showTour()
+        // showTour()
 
     }catch(error){
         res.status(500).json({ message: error.message });

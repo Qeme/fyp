@@ -12,7 +12,19 @@ import flash from "express-flash"
 import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
-import { org, tournament, player } from "./global-variables.js";
+import TournamentOrganizer from 'tournament-organizer';
+const org = new TournamentOrganizer()
+let tournament
+let player
+
+// now put it into routes to make it cleaner
+import tourgenerateRouter from './routes/tournament-generation.js';
+import tourinfoRouter from './routes/tournament.js';
+import playerinfoRouter from './routes/player.js';
+
+app.use('/createTour',checkAuthenticated,tourgenerateRouter)
+app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
+app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
 
 import initializePassport from './passport-config.js'
 import {userinfo,tourinfo} from './config.js'
@@ -176,199 +188,6 @@ try{
 
 })
 
-//get tournament info page
-app.get('/createTour',checkAuthenticated,(req,res)=>{
-    res.render('tourCreate.ejs')
-})
-
-app.post('/createTour',checkAuthenticated, async (req,res)=>{
-
-    const {
-        tname,
-        game,
-        platform,
-        venue,
-        format1,
-        format2,
-        regitime,
-        closetime,
-        starttour,
-        endtour,
-        checkIn,
-        rules,
-        regulation,
-        competitor,
-        viewer,
-        round,
-        colored,
-        sorting,
-        bestOf,
-        bye,
-        draw,
-        loss,
-        tiebreaks,
-        win
-    } = req.body;
-
-    //get the info of the user details like email
-    const user = await req.user
-
-    const newTournament = new tourinfo({
-        name: tname,
-        setting:{
-            stageOne: { 
-                format: format1
-            },
-            stageTwo: {
-                format: format2
-            },
-            round: round,
-            colored: colored,
-            sorting: sorting,
-            scoring:{
-                bestOf: bestOf,
-                bye: bye,
-                draw: draw,
-                loss: loss,
-                tiebreaks: tiebreaks,
-                win: win
-            }
-        },
-        meta: {
-            organizer: user.email,
-            game: game,
-            platform: platform,
-            venue: venue,
-            register: {
-                open: regitime,
-                close: closetime
-            },
-            running: {
-                start: starttour,
-                end: endtour
-            },
-            checkin: checkIn,
-            notification: {
-                rules: rules,
-                regulation: regulation
-            },
-            ticket: {
-                competitor: competitor,
-                viewer: viewer
-            }
-        }
-
-        
-    });
-
-    newTournament.save()
-        .then(savedTournament => {
-            //console.log('Tournament created successfully!',savedTournament);
-            //create tournament based on the organizer identity
-            tournament = org.createTournament(savedTournament.name,
-                {
-                stageOne:{
-                    format: savedTournament.setting.stageOne.format
-                },
-                stageTwo:{
-                    format: savedTournament.setting.stageTwo.format
-                },
-                round: savedTournament.setting.round,
-                colored: savedTournament.setting.colored,
-                sorting: savedTournament.setting.sorting,
-                scoring:savedTournament.setting.scoring,
-                meta: savedTournament.meta
-                },
-                savedTournament.id)
-
-            //tournament = org.reloadTournament(newTournament)
-            // addPlayer('Amani')
-            // endingTour()
-            //console.log(tournament)
-            // let x = org.tournaments
-            // for (let i = 0; i < x.length; i++) {
-            //     console.log(x[i])
-            // }
-
-            res.status(200).send('Tournament created successfully');
-        })
-        .catch(error => {
-            console.error('Error creating tournament:', error);
-            res.status(500).send('Error creating tournament');
-        });
-    
-})
-
-// now put it into routes to make it cleaner
-import tourinfoRouter from './routes/tournament.js';
-app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
-
-app.get('/editTour', checkAuthenticated, async (req, res) => {
-    try {
-        // Used to access query parameters passed in the URL query string, such as /editTour?id=123.
-        // The parameters are appended to the URL using a question mark (?) and are key-value pairs separated by an ampersand (&).
-        // They are accessed using the key-value pairs in the req.query object.
-        const { id } = req.query;
-        const tour = await tourinfo.findById(id);
-        res.render('editTourForm.ejs', { tournament : tour });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// ending the tournament
-app.get('/completeTour',checkAuthenticated,async (req,res)=>{
-    try{
-        const { id } = req.query;
-        for(let x = 0; x< org.tournaments.length ; x++){
-            if(org.tournaments[x].id === id){
-                tournament = org.tournaments[x]
-                console.log(tournament.status)
-                endingTour()
-            }
-        }
-        await tourinfo.findByIdAndUpdate(id,{'setting.status':tournament.status},{new:true})
-        console.log(tournament.id+tournament.status)
-        res.render('status.ejs',{tournament: tournament})
-    }catch(error){
-        res.status(500).json({ message: error.message });
-    }
-    
-})
-
-import playerinfoRouter from './routes/player.js';
-app.use((req, res, next) => {
-    req.showTour = showTour;
-    req.addPlayer = addPlayer;
-    next();
-});
-app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
-
-
-app.post('/startTour',checkAuthenticated, (req,res)=>{
-    // inside try...catch
-    try{
-        // get the id of the certain tournament
-        let { id } = req.query
-
-        // iterate loop to find the tournament based on the id
-        // assign it to tournament variable
-        tournament = org.tournaments.find(tournament => tournament.id === id);
-
-        // call the start tournament function 
-        startTour()
-
-        // print the tournament output on how it goes now
-        console.log(tournament)
-
-        // update the status of the tournament from setup to stageOne for mongodb
-
-    }catch(error){
-        res.status(500).json({ message: error.message });
-    }
-
-})
-
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
 // app.delete('/logout',(req,res)=>{
@@ -397,26 +216,6 @@ function showTour(){
     }
 }
 
-function addPlayer(name,id){
-    let player;
-    try {
-        player = tournament.createPlayer(name,id);
-    } catch (e) {
-        console.error(e);
-        return;
-    }
-}
-
-function startTour(){
-    //start the tournament but make sure the player > 2
-    tournament.start()
-}
-
-function endingTour(){
-    //now we can use the reloadTournament() to use it for any edit or ending the tournamet
-    tournament.end()
-}
-
 function fillArray(tourlist){
     console.log(tourlist.length)
     if (tourlist.length > 0) {
@@ -435,7 +234,8 @@ function fillArray(tourlist){
                 scoring:tour.setting.scoring,
                 meta: tour.meta,
                 players: tour.setting.players,
-                matches: tour.setting.matches
+                matches: tour.setting.matches,
+                status: tour.setting.status
             },tour.id);
 
         }
@@ -483,6 +283,8 @@ function checkNotAuthenticated(req,res,next){
 
     next()
 }
+
+export { org, showTour };
 
 //telling our app to start listening for visitors on a the port 3000
 app.listen(3001)
