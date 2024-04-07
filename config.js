@@ -104,16 +104,67 @@ const TournamentSchema = new mongoose.Schema({
             default: 0
         },
         players: [{
-            email: {
+            _id: false, // to stop the _id from autogenerate
+            id:{
                 type: String,
-                required: false,
-                default: ""
+                required: false
             },
             name: {
                 type: String,
                 required: false,
                 default: ""
-            }
+            },
+            active:{
+                type: Boolean,
+                required: false,
+                default: true
+            },
+            value:{
+                type: Number,
+                required: false,
+                default: 0
+            },
+            matches: [{
+                bye: {
+                    type: Boolean,
+                    required: false,
+                },
+                color:{
+                    type: String,
+                    enum: ["w" , "b"],
+                    required: false
+                },
+                draw:{
+                    type: Number,
+                    required: false,
+                    default: 0
+                },
+                loss:{
+                    type:Number,
+                    required:false,
+                    default:0
+                },
+                win:{
+                    type:Number,
+                    required:false,
+                    default:0
+                },
+                id:{
+                    type: String,
+                    required: false
+                },
+                opponent:{
+                    type: String,
+                    required: false
+                },
+                pairUpDown:{
+                    type: Boolean,
+                    required: false
+                }
+            }],
+            meta:{
+
+            }//will be announce later
         }],
         // those players and matches should be in array object, not the attributes in array
         matches:[{

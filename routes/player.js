@@ -37,14 +37,14 @@ router.post('/',async (req,res)=>{
         const players = []
         if(playerCount<2){
             const onePlayer = {
-                email: playerEmails,
+                id: playerEmails,
                 name: playerNames
             };
             players.push(onePlayer);
         }else{
             for (let i = 0; i < playerCount; i++) {
                 const playerinfo = {
-                email: playerEmails[i],
+                id: playerEmails[i],
                 name: playerNames[i]
                 };
                 players.push(playerinfo)
@@ -72,14 +72,14 @@ router.post('/',async (req,res)=>{
             if(org.tournaments[y].id===id){
                 tournament = org.tournaments[y]
                 players.forEach(player=>{
-                    tournament.createPlayer(player.email,player.name)
+                    tournament.createPlayer(player.name,player.id)
                 })
                 
             }
         }
 
         // show the tournament info array
-        // showTour()
+         showTour()
 
     }catch(error){
         res.status(500).json({ message: error.message });

@@ -51,7 +51,7 @@ router.get('/completeTour',async (req,res)=>{
     
 })
 
-router.post('/startTour', (req,res)=>{
+router.get('/startTour', (req,res)=>{
     // inside try...catch
     try{
         // get the id of the certain tournament
@@ -59,16 +59,25 @@ router.post('/startTour', (req,res)=>{
 
         // iterate loop to find the tournament based on the id
         // assign it to tournament variable
-        tournament = org.tournaments.find(tournament => tournament.id === id);
-
-        // call the start tournament function 
-        tournament.start()
-
-        // print the tournament output on how it goes now
-        console.log(tournament)
+        // tournament = org.tournaments.find(tournament => tournament.id === id);
+        for(let x = 0; x<org.tournaments.length; x++){
+            if(org.tournaments[x].id === id){
+                tournament = org.tournaments[x]
+                console.log(tournament)
+                try {
+                    tournament.start();
+                    console.log(tournament)
+                } catch (e) {
+                    console.error(e);
+                    return;
+                }
+            }
+        }
 
         // update the status of the tournament from setup to stageOne for mongodb
 
+        //redirect user to tournamentinfo page again
+        res.redirect('/tournamentinfo')
     }catch(error){
         res.status(500).json({ message: error.message });
     }

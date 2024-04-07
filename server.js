@@ -17,15 +17,6 @@ const org = new TournamentOrganizer()
 let tournament
 let player
 
-// now put it into routes to make it cleaner
-import tourgenerateRouter from './routes/tournament-generation.js';
-import tourinfoRouter from './routes/tournament.js';
-import playerinfoRouter from './routes/player.js';
-
-app.use('/createTour',checkAuthenticated,tourgenerateRouter)
-app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
-app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
-
 import initializePassport from './passport-config.js'
 import {userinfo,tourinfo} from './config.js'
 
@@ -38,6 +29,7 @@ initializePassport(
 
 //render engine
 app.set('view engine', 'ejs');
+app.use(express.static('public')) // it acts as middleware to present static file/javascript/images - client can directly access
 
 //adding middleware to the Express application. 
 //Middleware functions are functions that have access to the request object (req)
@@ -74,6 +66,8 @@ app.get('/',checkAuthenticated,async (req, res) => {
     if(org.tournaments.length === 0){
         fillArray(tourlist)
     }
+
+    showTour()
         
     res.render('index.ejs', { user: user });
 
@@ -187,6 +181,15 @@ try{
 }
 
 })
+
+// now put it into routes to make it cleaner
+import tourgenerateRouter from './routes/tournament-generation.js';
+import tourinfoRouter from './routes/tournament.js';
+import playerinfoRouter from './routes/player.js';
+
+app.use('/createTour',checkAuthenticated,tourgenerateRouter)
+app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
+app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
 
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
