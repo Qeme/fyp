@@ -222,28 +222,9 @@ function showTour(){
 function fillArray(tourlist){
     console.log(tourlist.length)
     if (tourlist.length > 0) {
-        // create an object Player
-        function Player(id, name, active, value, matches, meta) {
-            this.id = id;
-            this.name = name;
-            this.active = active;
-            this.value = value;
-            this.matches = matches;
-            this.meta = meta;
-            // Add other properties as needed
-        }
-
         // Loop through each tournament and create it
         for (let tour of tourlist) {
-            // create an array to store the players value
-            const players = [];
-            let x = tour.setting.players
-            x.forEach(xy=>{
-                const playerinfo = new Player(xy.id,xy.name,xy.active,xy.value,xy.matches,xy.meta);
-                players.push(playerinfo);
-            })
-            
-            org.createTournament(tour.name,{
+            tournament = org.createTournament(tour.name,{
                 stageOne:{
                     format: tour.setting.stageOne.format
                 },
@@ -255,12 +236,20 @@ function fillArray(tourlist){
                 sorting: tour.setting.sorting,
                 scoring:tour.setting.scoring,
                 meta: tour.meta,
-                players: players,
                 matches: tour.setting.matches,
                 status: tour.setting.status
             },tour.id);
 
+            // do loop to createPlayer again + other stuff
+            for(let z = 0; z< tour.setting.players.length;z++){
+            player = tournament.createPlayer(tour.setting.players[z].name,tour.setting.players[z].id)
+            player.active = tour.setting.players[z].active
+            player.value = tour.setting.players[z].value
+            player.matches = tour.setting.players[z].matches
+            player.meta = tour.setting.players[z].meta
+            }
         }
+        
     }
 
     org.tournaments.forEach(tournament => {
