@@ -79,7 +79,7 @@ router.post('/',async (req,res)=>{
         }
 
         // show the tournament info array
-         showTour()
+        showTour()
 
     }catch(error){
         res.status(500).json({ message: error.message });

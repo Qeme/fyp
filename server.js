@@ -222,8 +222,27 @@ function showTour(){
 function fillArray(tourlist){
     console.log(tourlist.length)
     if (tourlist.length > 0) {
+        // create an object Player
+        function Player(id, name, active, value, matches, meta) {
+            this.id = id;
+            this.name = name;
+            this.active = active;
+            this.value = value;
+            this.matches = matches;
+            this.meta = meta;
+            // Add other properties as needed
+        }
+
         // Loop through each tournament and create it
         for (let tour of tourlist) {
+            // create an array to store the players value
+            const players = [];
+            let x = tour.setting.players
+            x.forEach(xy=>{
+                const playerinfo = new Player(xy.id,xy.name,xy.active,xy.value,xy.matches,xy.meta);
+                players.push(playerinfo);
+            })
+            
             org.createTournament(tour.name,{
                 stageOne:{
                     format: tour.setting.stageOne.format
@@ -236,7 +255,7 @@ function fillArray(tourlist){
                 sorting: tour.setting.sorting,
                 scoring:tour.setting.scoring,
                 meta: tour.meta,
-                players: tour.setting.players,
+                players: players,
                 matches: tour.setting.matches,
                 status: tour.setting.status
             },tour.id);
