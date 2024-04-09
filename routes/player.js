@@ -22,6 +22,7 @@ router.post('/',async (req,res)=>{
     //take the id tournament to distinguish which tournament that should be updated
     try{
         const { id } = req.query
+        const tournamentinfo = await tourinfo.findById(id);
 
         const playerCount = req.body['player-count'];
 
@@ -40,8 +41,9 @@ router.post('/',async (req,res)=>{
         
         if (existingPlayers) {
             // If any of the emails already exist, redirect the user to the registration page with an error message
-            return res.redirect('/registerplayer?error=email-exists');
+            return res.render('registerplayer.ejs',{error:'email-exists',tournament:tournamentinfo});
         }        
+        
 
         console.log("Player email:", playerEmails," Length:",playerEmails.length);
         //we create an empty array
