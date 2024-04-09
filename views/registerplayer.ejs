@@ -16,6 +16,14 @@
     <div class="player-input">
       <label for="player-email">Player Email:</label>
       <input type="email" name="player-email[]" required>
+
+            <!-- the error type will be included here to be popped out -->
+      <% if (error && error === 'email-exists') { %>
+        <p style="color: red;">Email already being registered. Make sure to submit different player email.</p>
+      <% } else if (error && error === 'unknown') { %>
+        <p style="color: red;">An unknown error occurred. Please try again later.</p>
+      <% } %>
+
       <label for="player-name">Player Name:</label>
       <input type="text" name="player-name[]" required>
 

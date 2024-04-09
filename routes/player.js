@@ -12,7 +12,7 @@ router.get('/',async (req,res)=>{
     try{
         const { id } = req.query;
         const tournamentinfo = await tourinfo.findById(id);
-        res.render('registerplayer.ejs',{tournament: tournamentinfo})
+        res.render('registerplayer.ejs',{tournament: tournamentinfo, error: req.query.error })
     }catch(error){
         res.status(500).json({ message: error.message });
     }
@@ -31,6 +31,17 @@ router.post('/',async (req,res)=>{
         //take the body of the players by email and name req.body by grabbing them by name HTML FORM
         const playerEmails = req.body['player-email[]'];
         const playerNames = req.body['player-name[]'];
+
+        // checking if the email already being inserted into tournament already or not
+        const existingPlayers = await tourinfo.findOne({ 
+            _id: id, 
+            'setting.players': { $elemMatch: { id: { $in: playerEmails } } } 
+        });
+        
+        if (existingPlayers) {
+            // If any of the emails already exist, redirect the user to the registration page with an error message
+            return res.redirect('/registerplayer?error=email-exists');
+        }        
 
         console.log("Player email:", playerEmails," Length:",playerEmails.length);
         //we create an empty array
@@ -80,6 +91,9 @@ router.post('/',async (req,res)=>{
 
         // show the tournament info array
         showTour()
+
+        // redirect user to the tournamentinfo page 
+        res.redirect('/tournamentinfo')
 
     }catch(error){
         res.status(500).json({ message: error.message });

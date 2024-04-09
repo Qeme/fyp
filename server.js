@@ -242,11 +242,11 @@ function fillArray(tourlist){
 
             // do loop to createPlayer again + other stuff
             for(let z = 0; z< tour.setting.players.length;z++){
-            player = tournament.createPlayer(tour.setting.players[z].name,tour.setting.players[z].id)
-            player.active = tour.setting.players[z].active
-            player.value = tour.setting.players[z].value
-            player.matches = tour.setting.players[z].matches
-            player.meta = tour.setting.players[z].meta
+                player = tournament.createPlayer(tour.setting.players[z].name,tour.setting.players[z].id)
+                player.active = tour.setting.players[z].active
+                player.value = tour.setting.players[z].value
+                player.matches = tour.setting.players[z].matches
+                player.meta = tour.setting.players[z].meta
             }
         }
         
