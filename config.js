@@ -48,7 +48,7 @@ const TournamentSchema = new mongoose.Schema({
                 type: String,
                 enum: ["single-elimination", "double-elimination", "stepladder", "swiss", "round-robin", "double-round-robin"],
                 required: false,
-                default: "double-elimination"
+                default: "single-elimination"
             },
             initialRound: {
                 type: Number,
@@ -58,7 +58,7 @@ const TournamentSchema = new mongoose.Schema({
             maxPlayers: {
                 type: Number,
                 required: false,
-                default: 2
+                default: 0
             },
             rounds: {
                 type: Number,
@@ -125,6 +125,7 @@ const TournamentSchema = new mongoose.Schema({
                 default: 0
             },
             matches: [{
+                _id: false, // similar to the players where we need to remove auto generated id
                 bye: {
                     type: Boolean,
                     required: false,
@@ -168,6 +169,7 @@ const TournamentSchema = new mongoose.Schema({
         }],
         // those players and matches should be in array object, not the attributes in array
         matches:[{
+            _id: false, // avoid from the _id from auto generated
             id:{
                 type:String,
                 required: false,
@@ -182,6 +184,63 @@ const TournamentSchema = new mongoose.Schema({
                 type:Number,
                 required: false,
                 default: ""
+            },
+            active:{
+                type: Boolean,
+                required: false
+            },
+            bye:{
+                type: Boolean,
+                required: false
+            },
+            path:{
+                loss:{
+                    type: String,
+                    required: false
+                },
+                win:{
+                    type: String,
+                    required: false
+                }
+            },
+            player1:{
+                draw:{
+                    type: Number,
+                    required: false
+                },
+                id:{
+                    type: String,
+                    required: false
+                },
+                loss:{
+                    type: Number,
+                    required: false
+                },
+                win:{
+                    type: Number,
+                    required: false
+                }
+            },
+            player2:{
+                draw:{
+                    type: Number,
+                    required: false
+                },
+                id:{
+                    type: String,
+                    required: false
+                },
+                loss:{
+                    type: Number,
+                    required: false
+                },
+                win:{
+                    type: Number,
+                    required: false
+                }
+            },
+            meta:{
+                // define later ...
             }
         }],
         colored:{

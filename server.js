@@ -13,6 +13,7 @@ import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
 import TournamentOrganizer from 'tournament-organizer';
+import { Match } from './node_modules/tournament-organizer/dist/Match.js'; // need to grab back the class Match just to create back the match for Mongodb...this is dumb
 const org = new TournamentOrganizer()
 let tournament
 let player
@@ -186,10 +187,12 @@ try{
 import tourgenerateRouter from './routes/tournament-generation.js';
 import tourinfoRouter from './routes/tournament.js';
 import playerinfoRouter from './routes/player.js';
+import matchinfoRouter from './routes/match.js';
 
 app.use('/createTour',checkAuthenticated,tourgenerateRouter)
 app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
 app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
+app.use('/match',checkAuthenticated,matchinfoRouter)
 
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"
@@ -211,7 +214,29 @@ app.delete('/logout', (req, res, next) => {
     });
   });
 
+async function updateTourDB(id, tournament){
+
+    let updateDetail = {
+        'setting.players' : tournament.players,
+        'setting.matches' : tournament.matches,
+        'setting.status' : tournament.status,
+        'setting.stageOne' : tournament.stageOne,
+        'setting.stageTwo' : tournament.stageTwo,
+        'setting.round' : tournament.round,
+        'setting.colored' : tournament.colored,
+        'setting.sorting' : tournament.sorting,
+        'setting.scoring' : tournament.scoring
+
+        // id
+        // name
+        // meta
+};
+
+    return await tourinfo.findByIdAndUpdate(id, { $set: updateDetail }, { new: true });
+}
+
 function showTour(){
+
     let x = org.tournaments
     
     for (let i = 0; i < x.length; i++) {
@@ -220,24 +245,20 @@ function showTour(){
 }
 
 function fillArray(tourlist){
+
     console.log(tourlist.length)
     if (tourlist.length > 0) {
         // Loop through each tournament and create it
         for (let tour of tourlist) {
             tournament = org.createTournament(tour.name,{
-                stageOne:{
-                    format: tour.setting.stageOne.format
-                },
-                stageTwo:{
-                    format: tour.setting.stageTwo.format
-                },
+                stageOne: tour.setting.stageOne,
+                stageTwo: tour.setting.stageTwo,
                 round: tour.setting.round,
                 colored: tour.setting.colored,
                 sorting: tour.setting.sorting,
                 scoring:tour.setting.scoring,
-                meta: tour.meta,
-                matches: tour.setting.matches,
-                status: tour.setting.status
+                // matches: tour.setting.matches,
+                meta: tour.meta
             },tour.id);
 
             // do loop to createPlayer again + other stuff
@@ -248,6 +269,22 @@ function fillArray(tourlist){
                 player.matches = tour.setting.players[z].matches
                 player.meta = tour.setting.players[z].meta
             }
+
+            // insert matches as well
+            for(let y = 0; y< tour.setting.matches.length;y++){
+                let m = tour.setting.matches[y]
+                let match = new Match(m.id,m.round,m.match)
+                match.active = m.active
+                match.bye = m.bye
+                match.player1 = m.player1
+                match.player2 = m.player2
+                match.path = m.path
+                match.meta = m.meta
+                tournament.matches.push(match)
+            }
+
+            // change the status of the tournament from default to the current tournament status
+            tournament.status = tour.setting.status
         }
         
     }
@@ -295,7 +332,7 @@ function checkNotAuthenticated(req,res,next){
     next()
 }
 
-export { org, showTour };
+export { org, showTour, updateTourDB };
 
 //telling our app to start listening for visitors on a the port 3000
 app.listen(3001)

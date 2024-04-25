@@ -1,0 +1,35 @@
+<h2>HELOOOOOOO</h2>
+
+<%= tournament.name %>
+
+<table border="1">
+    <tr>
+        <th>Match ID</th>
+        <th>Team 1</th>
+        <th>Score</th>
+        <th>Team 2</th>
+        <th>Score</th>
+        <th>Actions</th>
+        <!-- Add more headers as needed -->
+    </tr>
+    <% tournament.setting.matches.forEach(match => { %>
+        <tr>
+            <td><%= match.id %></td>
+            <td><%= match.player1.id %></td>
+            <td><%= match.player1.win %></td>
+            <td><%= match.player2.id %></td>
+            <td><%= match.player2.win %></td>
+            
+            <td>
+                <form action="/match/insert?id=<%= tournament.id %>&matchId=<%= match.id %>" method="post" style="display: inline;">
+                    <button type="submit">Insert</button>
+                </form>
+                
+                <form action="/match/clear?id=<%= tournament.id %>&matchId=<%= match.id %>" method="post" style="display: inline;">
+                    <button type="submit">Clear</button>
+                </form>
+            </td>
+            <!-- style can be deleted after all the backend finish -->
+        </tr>
+    <% }); %>
+</table>

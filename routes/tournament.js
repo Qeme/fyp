@@ -1,7 +1,7 @@
 import express from "express"
 const router = express.Router()
 import { userinfo, tourinfo } from '../config.js'
-import { org, showTour } from "../server.js";
+import { org, showTour, updateTourDB } from "../server.js";
 let tournament
 
 router.get('/', async (req, res) => {
@@ -38,11 +38,16 @@ router.get('/completeTour',async (req,res)=>{
         for(let x = 0; x< org.tournaments.length ; x++){
             if(org.tournaments[x].id === id){
                 tournament = org.tournaments[x]
-                console.log(tournament.status)
                 tournament.end()
             }
         }
-        await tourinfo.findByIdAndUpdate(id,{'setting.status':tournament.status},{new:true})
+        let endTour = {
+                'setting.players': tournament.players,
+                'setting.matches': tournament.matches,
+                'setting.status': tournament.status
+        }; // make sure to only specify the 'setting.' but if later on when you want to remove setting, just write "players : tournament.players" inside endTour
+
+        await tourinfo.findByIdAndUpdate(id, { $set: endTour } ,{ new:true }) // it change all the old tournament config
         console.log(tournament.id+tournament.status)
         res.render('status.ejs',{tournament: tournament})
     }catch(error){
@@ -50,8 +55,20 @@ router.get('/completeTour',async (req,res)=>{
     }
     
 })
+router.get('/updateTour', async (req,res)=>{
+    try{
+        let { id } = req.query
+        const tournamentinfo = await tourinfo.findById(id);
 
-router.get('/startTour', (req,res)=>{
+        res.render('stage-one-progress.ejs',{ tournament : tournamentinfo })
+
+    }catch(error){
+        res.status(500).json({ message: error.message });
+    }
+    
+})
+
+router.get('/startTour', async (req,res)=>{
     // inside try...catch
     try{
         // get the id of the certain tournament
@@ -63,10 +80,17 @@ router.get('/startTour', (req,res)=>{
         for(let x = 0; x<org.tournaments.length; x++){
             if(org.tournaments[x].id === id){
                 tournament = org.tournaments[x]
-                console.log(tournament)
                 try {
+                    // start the tournament
                     tournament.start();
-                    console.log(tournament)
+                    console.log("Start Tournament",tournament)
+
+                    let tournamentinfo = await updateTourDB(id, tournament)
+                    console.log(tournamentinfo)
+
+                    //redirect user to matches progress
+                    res.render('stage-one-progress.ejs',{ tournament : tournamentinfo })
+
                 } catch (e) {
                     console.error(e);
                     return;
@@ -74,10 +98,6 @@ router.get('/startTour', (req,res)=>{
             }
         }
 
-        // update the status of the tournament from setup to stageOne for mongodb
-
-        //redirect user to tournamentinfo page again
-        res.redirect('/tournamentinfo')
     }catch(error){
         res.status(500).json({ message: error.message });
     }

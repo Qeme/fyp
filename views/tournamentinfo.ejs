@@ -55,13 +55,18 @@
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
 
                 <!-- Pass tournament ID to Edit button -->
-                <a href="/editTour?id=<%= tournament.id %>">
+                <a href="/tournamentinfo/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
 
+                <!-- Pass tournament ID to Update button -->
+                <a href="/tournamentinfo/updateTour?id=<%= tournament.id %>">
+                    <input type="button" value="Update">
+                </a>
+
                 <!-- Ending the tournament -->
-                <a href="/completeTour?id=<%= tournament.id %>">
-                    <input type="button" value="complete">
+                <a href="/tournamentinfo/completeTour?id=<%= tournament.id %>">
+                    <input type="button" value="Complete">
                 </a>
 
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
@@ -81,13 +86,18 @@
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
 
-                <!-- Pass tournament ID to Edit button -->
-                <a href="/editTour?id=<%= tournament.id %>">
+                 <!-- Pass tournament ID to Edit button -->
+                 <a href="/tournamentinfo/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
 
+                <!-- Pass tournament ID to Update button -->
+                <a href="/tournamentinfo/updateTour?id=<%= tournament.id %>">
+                    <input type="button" value="Update">
+                </a>
+
                 <!-- Ending the tournament -->
-                <a href="/completeTour?id=<%= tournament.id %>">
+                <a href="/tournamentinfo/completeTour?id=<%= tournament.id %>">
                     <input type="button" value="Complete">
                 </a>
 
@@ -109,9 +119,11 @@
                 <strong>Status:</strong> <%= tournament.setting.status %><br>
 
                 <!-- Pass tournament ID to Edit button -->
-                <a href="/editTour?id=<%= tournament.id %>">
+                 <!-- Pass tournament ID to Edit button -->
+                 <a href="/tournamentinfo/editTour?id=<%= tournament.id %>">
                     <input type="button" value="Edit">
                 </a>
+
                 <form action="/tournamentinfo/<%= tournament.id %>?_method=DELETE" method="POST">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="submit" value="Delete">
