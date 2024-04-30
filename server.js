@@ -188,11 +188,13 @@ import tourgenerateRouter from './routes/tournament-generation.js';
 import tourinfoRouter from './routes/tournament.js';
 import playerinfoRouter from './routes/player.js';
 import matchinfoRouter from './routes/match.js';
+import participateRouter from './routes/participation.js';
 
 app.use('/createTour',checkAuthenticated,tourgenerateRouter)
 app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
 app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
 app.use('/match',checkAuthenticated,matchinfoRouter)
+app.use('/joinTour',checkAuthenticated,participateRouter)
 
 //this logout gave error because req.logout is asynchronous
 //where u will get "req#logout requires a callback function"

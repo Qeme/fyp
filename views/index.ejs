@@ -2,67 +2,14 @@
     <h1>Holla <%= user.name %> </h1>
 
     <body>
-        <button onclick="assignOrganizer()">Create Tournament</button>
-    
-        <button onclick="assignCompetitor()">Join Tournament</button>
-
         <!-- link to the GET matches -->
         <li><a href="/matches">Matches</a></li>
 
         <li><a href="/createTour">Create Tournament</a></li>
 
-        <li><a href="/tournamentinfo">Tournament Informations</a></li><br>
+        <li><a href="/joinTour">Join Tournament</a></li>
 
-        <script>
-            function assignOrganizer() {
-                // Send a POST request to the server to add the "organizer" role
-                fetch('/update-roles', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        roles: 'organizer',
-                        tournaments: 'ABC Tournament'
-                    }),
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to add role "organizer"');
-                    }
-                    console.log("Role 'organizer' added successfully");
-                })
-                .catch(error => {
-                    console.error(error.message);
-                });
-            }
-    
-            function assignCompetitor() {
-                // Send a POST request to the server to add the "competitor" role
-                fetch('/update-roles', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        roles: 'competitor',
-                        tournaments: 'ABC Tournament'
-                    }),
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to add role "competitor"');
-                    }
-                    console.log("Role 'competitor' added successfully");
-                })
-                .catch(error => {
-                    console.error(error.message);
-                });
-            }
-
-        </script>  
+        <li><a href="/tournamentinfo">Tournament Informations</a></li><br>  
     
         <form action="/logout?_method=DELETE" method="POST">
             <button type="submit">Log Out</button>

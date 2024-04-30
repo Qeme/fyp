@@ -27,7 +27,6 @@ router.post('/',async (req,res)=>{
         regulation,
         competitor,
         viewer,
-        round,
         colored,
         sorting,
         bestOf,
@@ -50,7 +49,6 @@ router.post('/',async (req,res)=>{
             stageTwo: {
                 format: format2
             },
-            round: round,
             colored: colored,
             sorting: sorting,
             scoring:{
@@ -101,7 +99,6 @@ router.post('/',async (req,res)=>{
                 stageTwo:{
                     format: savedTournament.setting.stageTwo.format
                 },
-                round: savedTournament.setting.round,
                 colored: savedTournament.setting.colored,
                 sorting: savedTournament.setting.sorting,
                 scoring:savedTournament.setting.scoring,

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Information</title>
+</head>
+<body>
+    <h1>Tournament Information</h1>
+    <div class="tournament-info">
+        <h2><%= tournament.name %></h2>
+        <div class="meta-info">
+            <strong>Game:</strong> <%= tournament.meta.game %><br>
+            <strong>Platform:</strong> <%= tournament.meta.platform %><br>
+            <strong>Venue:</strong> <%= tournament.meta.venue %><br>
+            <strong>Registration Period:</strong> <%= new Date(tournament.meta.register.open).toLocaleDateString() %> to <%= new Date(tournament.meta.register.close).toLocaleDateString() %><br>
+            <strong>Running Period:</strong> <%= new Date(tournament.meta.running.start).toLocaleDateString() %> to <%= new Date(tournament.meta.running.end).toLocaleDateString() %><br>
+            <strong>Check-in Duration (in minutes):</strong> <%= tournament.meta.checkin %><br>
+            <strong>Competitor Ticket Price (RM):</strong> RM <%= tournament.meta.ticket.competitor %><br>
+            <strong>Viewer Ticket Price (RM):</strong> RM <%= tournament.meta.ticket.viewer %><br>
+            <strong>Rules:</strong> <%= tournament.meta.notification.rules %><br>
+            <strong>Regulation:</strong> <%= tournament.meta.notification.regulation %><br>
+        </div>
+        <div class="setting-info">
+            <h3>Settings</h3>
+            <h4>Stage 1</h4>
+            <strong>Format:</strong> <%= tournament.setting.stageOne.format %> format<br>
+            <strong>Consolation:</strong> <%= tournament.setting.stageOne.consolation ? 'Yes' : 'No' %><br>
+            <strong>Initial Round:</strong> <%= tournament.setting.stageOne.initialRound %><br>
+            <strong>Max Players:</strong> <%= tournament.setting.stageOne.maxPlayers %><br>
+            <strong>Number of Rounds:</strong> <%= tournament.setting.stageOne.rounds %><br>
+
+            <h4>Stage 2</h4>
+            <strong>Format:</strong> <%= tournament.setting.stageTwo.format %> format<br>
+            <strong>Consolation:</strong> <%= tournament.setting.stageTwo.consolation ? 'Yes' : 'No' %><br>
+            <strong>Advance Players Method:</strong> <%= tournament.setting.stageTwo.advance.method %><br>
+            <strong>Breakpoint Value:</strong> <%= tournament.setting.stageTwo.advance.value %><br><br>
+            <strong>Scoring Points:</strong> 
+            <ul>
+                <li>Win: <%= tournament.setting.scoring.win %> points</li>
+                <li>Loss: <%= tournament.setting.scoring.loss %> points</li>
+                <li>Draw: <%= tournament.setting.scoring.draw %> points</li>
+                <li>Bye: <%= tournament.setting.scoring.bye %> points</li>
+                <li>Best of: <%= tournament.setting.scoring.bestOf %> rounds</li>
+                <li>Tiebreaks: <%= tournament.setting.scoring.tiebreaks.join(', ') %></li>
+            </ul>
+            <strong>Current Number of Round:</strong> <%= tournament.setting.round %><br>
+            <strong>Status:</strong> <%= tournament.setting.status %><br>
+        </div>
+    </div>
+    <form method="POST" action="/joinTour/register">
+        <button type="submit">Register</button>
+    </form>    
+</body>
+</html>

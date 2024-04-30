@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Tournament</title>
+</head>
+<body>
+    <h3>JOINNNNNNNNNNNN <%= user.name %> </h3>
+
+    <h3>Whats new:</h3>
+    <ul>
+        <% tournaments.filter(tournament => tournament.meta.organizer !== user.email && tournament.setting.status === 'setup').forEach(tournament => { %>
+            <li>
+                <strong>ID:</strong> <a href="/joinTour/<%= tournament.id %>"><%= tournament.id %></a><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>   
+            </li>
+        <% }); %>
+        
+    </ul>
+
+    <h3>Recent Tournament Joined:</h3>
+    <!-- <ul>
+        <% tournaments.filter(tournament => tournament.meta.organizer !== user.email && tournament.setting.status === 'setup').forEach(tournament => { %>
+            <li>
+                <strong>ID:<%= tournament.id %></a><br>
+                <strong>Tournament Name:</strong> <%= tournament.name %><br>
+                <strong>Status:</strong> <%= tournament.setting.status %><br>   
+            </li>
+        <% }); %>
+    </ul> -->
+
+</body>
+</html>

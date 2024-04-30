@@ -100,7 +100,7 @@ const TournamentSchema = new mongoose.Schema({
         },
         round:{
             type: Number,
-            required: true,
+            required: false,
             default: 0
         },
         players: [{

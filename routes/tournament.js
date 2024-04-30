@@ -146,7 +146,6 @@ router
                 stageTwo:{
                     format: newTourUpdate.setting.stageTwo.format
                 },
-                round: newTourUpdate.setting.round,
                 colored: newTourUpdate.setting.colored,
                 sorting: newTourUpdate.setting.sorting,
                 scoring: newTourUpdate.setting.scoring,

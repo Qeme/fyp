@@ -2,34 +2,44 @@
 
 <%= tournament.name %>
 
-<table border="1">
-    <tr>
-        <th>Match ID</th>
-        <th>Team 1</th>
-        <th>Score</th>
-        <th>Team 2</th>
-        <th>Score</th>
-        <th>Actions</th>
-        <!-- Add more headers as needed -->
-    </tr>
+<% let currentRound = 0; %>
     <% tournament.setting.matches.forEach(match => { %>
+        <% if (match.round !== currentRound) { %>
+            <% if (currentRound !== 0) { %>
+                </table> <!-- Close the previous table if it's not the first round -->
+            <% } %>
+            <h3>Round <%= match.round %></h3>
+            <table>
+                <tr>
+                    <th>Match ID</th>
+                    <th>Round #</th>
+                    <th>Match #</th>
+                    <th>Team 1</th>
+                    <th>Score</th>
+                    <th>Team 2</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            <% currentRound = match.round; %>
+        <% } %>
         <tr>
             <td><%= match.id %></td>
+            <td><%= match.round %></td>
+            <td><%= match.match %></td>
             <td><%= match.player1.id %></td>
             <td><%= match.player1.win %></td>
             <td><%= match.player2.id %></td>
             <td><%= match.player2.win %></td>
-            
             <td>
                 <form action="/match/insert?id=<%= tournament.id %>&matchId=<%= match.id %>" method="post" style="display: inline;">
                     <button type="submit">Insert</button>
                 </form>
-                
+
                 <form action="/match/clear?id=<%= tournament.id %>&matchId=<%= match.id %>" method="post" style="display: inline;">
                     <button type="submit">Clear</button>
                 </form>
             </td>
-            <!-- style can be deleted after all the backend finish -->
         </tr>
     <% }); %>
-</table>
+    </table> <!-- Close the last table -->
+</body>
