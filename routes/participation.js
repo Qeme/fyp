@@ -1,7 +1,7 @@
 import express from "express"
 const router = express.Router()
-import { userinfo, tourinfo } from '../config.js'
-import { org, showTour } from "../server.js";
+import { userinfo, tourinfo, teaminfo } from '../config.js'
+import { org, showTour, generateRandomId } from "../server.js";
 let tournament
 // let player
 
@@ -19,18 +19,71 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-    // when user click on the register button
-    // u also sending the tournament id, ticket price for comp and viewer and the QR banking
+    try{
+        const { id } = req.query
+        let tournamentinfo = await tourinfo.findById(id)
+        res.render("insert-join.ejs",{tournament: tournamentinfo})
 
-    // just open the pop up
+        // later in the development, grab the team from the user collection to make sure user not put back the name of the team back into registreation
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+});
 
-    // let the user choose the amount of ticket needed
+router.post('/register-complete', async (req, res) => {
+    // get the register information and store it into database
+    try{
+        const { id } = req.query
+        const user = await req.user // use to save the id of the user to the team
 
-    // do some calculation Price = Nc(Comp Ticket Price) + Nv(Viewer Ticket Price)
+        let tournamentinfo = await tourinfo.findById(id)
 
-    // then user insert either picture of receipt or reference number
+        // if the tournament representative is for team only
+        if(tournamentinfo.meta.representative.repType === 'team'){
+            const teamName = req.body.teamName;
+            const playerEmails = req.body['playerEmail[]'];
+            const playerNames = req.body['playerName[]'];
 
-    // then submit
+            const players = playerEmails.map((email, index) => ({
+                email: email,
+                name: playerNames[index]
+            }));            
+
+            // Extract the first part of the first player's email
+            const firstEmailPart = user.email[0].split('@')[0];
+
+            // Generate a random ID based on the team name, email part, and a random string
+            const randomId = `${teamName}-${firstEmailPart}-${generateRandomId(10)}`;
+
+            const newTeam = new teaminfo({
+                // id auto generate by stricting its pattern
+                id: randomId,
+                name: teamName,
+                manager: user.email,
+                players : players
+            })
+            
+            console.log(newTeam);
+
+            // save the tournament info into database
+            newTeam.save()
+                .then(() => console.log("Team created successfully"))
+                .catch(err => console.error("Error creating team:", err));
+
+            const updatedUser = await userinfo.updateOne(
+                { _id: user.id },
+                { $push: { team: newTeam.id }}
+                // $set is used to replace the existing variables value
+                // $push is used add more variables value into existing 
+            );
+
+            console.log(updatedUser);
+        }
+        
+        
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
 });
 
 router

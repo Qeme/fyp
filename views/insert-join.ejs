@@ -1,0 +1,24 @@
+<form method="POST" action="/joinTour/register-complete?id=<%=tournament.id%>">
+    <p>Tournament Registration Page</p>
+    
+    <ol>
+        <li>Tournament Name: <%=tournament.name%></li>
+        <li>Tournament Game: <%=tournament.meta.game%></li>
+        <li>Competitor Ticket: RM <%=tournament.meta.ticket.competitor%></li>
+        <li>Viewer Ticket: RM <%=tournament.meta.ticket.viewer%></li>
+        <li>Representative: <%=tournament.meta.representative.repType%></li>
+        <% if(tournament.meta.representative.repType === "team"){ %>
+            <label for="teamName">Team Name: </label>
+            <input type="text" id="teamName" name="teamName">
+            <% for(let x =0; x<tournament.meta.representative.numPlayers; x++){ %>
+                <p>Player <%= x+1 %></p>
+                <label for="playerEmail">Email: </label>
+                <input type="text" id="playerEmail" name="playerEmail[]" required>
+                <label for="playerName">Name: </label>
+                <input type="text" id="playerName" name="playerName[]" required>
+            <% } %>
+        <% } %>
+    </ol>
+
+    <button>Register Now</button>
+</form>

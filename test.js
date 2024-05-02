@@ -3,16 +3,16 @@ const org = new TournamentOrganizer()
 let tournament
 let player
 
-tournament = org.createTournament("A",{stageOne:{format:"swiss"},sorting:"ascending"},"123")
+tournament = org.createTournament("A",{stageOne:{format:"round-robin"},sorting:"ascending"},"123")
 
-player = tournament.createPlayer("Omar","456")
+player = tournament.createPlayer("Omar","A")
 player.value = 10
-player = tournament.createPlayer("Azman","787")
+player = tournament.createPlayer("Azman","D")
 player.value = 8
-player = tournament.createPlayer("Popa","111")
+player = tournament.createPlayer("Popa","B")
 player.value = 6
-player = tournament.createPlayer("Ali","22")
-// player.value = 4
+player = tournament.createPlayer("Ali","C")
+player.value = 4
 // player = tournament.createPlayer("Zul","6")
 // player.value = 3
 // player = tournament.createPlayer("Harith","7")
@@ -20,7 +20,7 @@ player = tournament.createPlayer("Ali","22")
 // player = tournament.createPlayer("Kumar","8")
 // player.value = 1
 // player = tournament.createPlayer("Othman","9")
-// player.value = 0
+player.value = 0
 // player = tournament.createPlayer("Kumar","114")
 // player = tournament.createPlayer("Olah","345")
 
@@ -81,31 +81,29 @@ console.log('222222222222222222',tournament)
 // tournament.enterResult(tournament.matches[0].id,2,1,0)
 // tournament.enterResult(tournament.matches[1].id,2,1,0)
 
-console.log("Post-Tournament")
+console.log("Pre Tournament")
 tournament.matches.forEach(match => console.log("Match :",match.match," Round :",match.round," P1 [",match.player1.id,"] (",match.player1.win,") VS P2 [",match.player2.id,"] (",match.player2.win,")"))
 
 // tournament.createPlayer('puyu','99999999999999')
 // tournament.assignLoss('Puyu')
 
-tournament.enterResult(tournament.matches[0].id,1,2,0)
-// tournament.assignLoss("22",2)
-tournament.enterResult(tournament.matches[1].id,2,1,0)
+tournament.enterResult(tournament.matches[0].id,0,1,0)
+// tournament.enterResult(tournament.matches[1].id,2,1,0)
 
-tournament.createPlayer("KOKOKO","9999999999999")
-tournament.assignLoss("9999999999999")
-
-console.log('3333333333333333333333333',tournament)
+// tournament.enterResult(tournament.matches[1].id,1,0,0)
+tournament.assignBye("B",1)
+// tournament.next()
 
 console.log("Post Tournament")
 tournament.matches.forEach(match => console.log("Match :",match.match," Round :",match.round," P1 [",match.player1.id,"] (",match.player1.win,") VS P2 [",match.player2.id,"] (",match.player2.win,")"))
 
-console.log("Post Tournament")
-tournament.players.forEach(player => {
-    console.log("Player: ", player.name);
-    player.matches.forEach(match => {
-        console.log("Match ID: ",match.id);
-    });
-});
+// console.log("Post Tournament")
+// tournament.players.forEach(player => {
+//     console.log("Player: ", player.name);
+//     player.matches.forEach(match => {
+//         console.log("Match ID: ",match.id);
+//     });
+// });
 
 
 

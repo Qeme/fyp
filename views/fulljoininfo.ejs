@@ -48,7 +48,7 @@
             <strong>Status:</strong> <%= tournament.setting.status %><br>
         </div>
     </div>
-    <form method="POST" action="/joinTour/register">
+    <form method="POST" action="/joinTour/register?id=<%=tournament.id%>">
         <button type="submit">Register</button>
     </form>    
 </body>

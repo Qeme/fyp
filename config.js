@@ -22,14 +22,10 @@ const LoginSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    roles: {
-        type: [String], // Array of strings
-        default: ['normal-user'] // Default value
-    },
-    tournaments: {
-        type: [String],
-        default: [null]
-    }
+    team: [{
+        type: String, 
+        ref: 'teams' 
+    }]
 })
 
 const TournamentSchema = new mongoose.Schema({
@@ -350,15 +346,52 @@ const TournamentSchema = new mongoose.Schema({
                 type: Number,
                 required: true
             }
+        },
+        representative:{
+            repType:{
+                type: String,
+                required: true
+            },
+            numPlayers:{
+                type: Number,
+                required: false
+            }
         }
     }
   
 })
 
+// team
+const TeamSchema = new mongoose.Schema({
+    id:{
+        type: String,
+        required: false
+    },
+    name: {
+        type: String,
+        required: false
+    },
+    manager:{
+        type: String,
+        required: true
+    },
+    players: [{
+        _id:false,
+        email: {
+            type: String,
+            required: false
+        },
+        name: {
+            type: String,
+            required: false
+        }
+    }]
+})
+
 //create the Collection part
 const userinfo = new mongoose.model("users",LoginSchema)
 const tourinfo = new mongoose.model("tournaments",TournamentSchema)
-
+const teaminfo = new mongoose.model("teams",TeamSchema)
 
 //export the module to be used inside server.js
-export {userinfo,tourinfo}
+export {userinfo,tourinfo,teaminfo}

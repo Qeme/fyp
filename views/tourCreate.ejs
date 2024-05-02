@@ -15,6 +15,21 @@
         <label for="game">Game name:</label>
         <input type="text" id="game" name="game"><br>
 
+        
+        <label>
+            <input type="radio" id="preference" name="preference" value="individual" onclick="hidePlayerCountInput()">
+            Individual
+        </label><br>
+        <label>
+            <input type="radio" id="preference" name="preference" value="team" checked onclick="showPlayerCountInput()">
+            Team
+        </label><br>
+        <div id="playerCountInput">
+            <label for="playerCount">Number of Players:</label>
+            <input type="number" id="playerCount" name="playerCount" min="1">
+        </div>
+        
+
         <div>
             <label for="Platform">Platform Types:</label><br>
             <input type="radio" id="online" name="platform" value="online">
@@ -182,6 +197,14 @@
             });
         }
     });
+
+    function showPlayerCountInput() {
+            document.getElementById("playerCountInput").style.display = "block";
+        }
+
+    function hidePlayerCountInput() {
+        document.getElementById("playerCountInput").style.display = "none";
+    }
 
     
 

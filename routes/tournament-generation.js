@@ -34,7 +34,9 @@ router.post('/',async (req,res)=>{
         draw,
         loss,
         tiebreaks,
-        win
+        win,
+        preference,
+        playerCount
     } = req.body;
 
     //get the info of the user details like email
@@ -81,6 +83,10 @@ router.post('/',async (req,res)=>{
             ticket: {
                 competitor: competitor,
                 viewer: viewer
+            },
+            representative: {
+                repType: preference,
+                numPlayers: playerCount
             }
         }
 

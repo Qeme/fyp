@@ -334,7 +334,16 @@ function checkNotAuthenticated(req,res,next){
     next()
 }
 
-export { org, showTour, updateTourDB };
+function generateRandomId(length) {
+    const characters = '0123456789!@#$%^&*()_+';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
+export { org, showTour, updateTourDB, generateRandomId };
 
 //telling our app to start listening for visitors on a the port 3000
 app.listen(3001)

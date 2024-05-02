@@ -29,6 +29,6 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "superagent": "^8.1.2",
-    "tournament-organizer": "^3.4.1"
+    "tournament-organizer": "^3.5.0"
   }
 }
