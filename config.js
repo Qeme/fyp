@@ -388,10 +388,35 @@ const TeamSchema = new mongoose.Schema({
     }]
 })
 
+// games inside each matches
+const GameSchema = new mongoose.Schema({
+    match_id:{
+        type: String,
+        ref: 'tournaments'
+    },
+    p1:{
+        type: String,
+        required: false
+    },
+    p2:{
+        type: String,
+        required: false
+    },
+    scoreP1: [{
+        type: Number,
+        required: false
+    }],
+    scoreP2: [{
+        type: Number,
+        required: false
+    }]
+})
+
 //create the Collection part
 const userinfo = new mongoose.model("users",LoginSchema)
 const tourinfo = new mongoose.model("tournaments",TournamentSchema)
 const teaminfo = new mongoose.model("teams",TeamSchema)
+const gameinfo = new mongoose.model("games",GameSchema)
 
 //export the module to be used inside server.js
-export {userinfo,tourinfo,teaminfo}
+export {userinfo,tourinfo,teaminfo,gameinfo}

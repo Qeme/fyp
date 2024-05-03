@@ -1,6 +1,6 @@
 import express from "express"
 const router = express.Router()
-import { userinfo, tourinfo } from '../config.js'
+import { userinfo, tourinfo, gameinfo } from '../config.js'
 import { org, showTour, updateTourDB } from "../server.js";
 let tournament
 
@@ -87,6 +87,20 @@ router.get('/startTour', async (req,res)=>{
 
                     let tournamentinfo = await updateTourDB(id, tournament)
                     console.log(tournamentinfo)
+
+                    // generate the game for each matches based on the bestOf
+                    tournamentinfo.setting.matches.forEach(match=>{
+                        let bestOf = tournamentinfo.setting.scoring.bestOf
+                        const game = new gameinfo({
+                            match_id: match.id,
+                            p1: match.player1.id,
+                            p2: match.player2.id,
+                            scoreP1: new Array(bestOf).fill(0),
+                            scoreP2: new Array(bestOf).fill(0)
+                        })
+                        game.save()
+                    })
+                    
 
                     //redirect user to matches progress
                     res.render('stage-one-progress.ejs',{ tournament : tournamentinfo })

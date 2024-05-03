@@ -3,7 +3,7 @@ const org = new TournamentOrganizer()
 let tournament
 let player
 
-tournament = org.createTournament("A",{stageOne:{format:"round-robin"},sorting:"ascending"},"123")
+tournament = org.createTournament("A",{scoring:{bestOf:3},stageOne:{format:"single-elimination"},sorting:"ascending"},"123")
 
 player = tournament.createPlayer("Omar","A")
 player.value = 10
@@ -13,10 +13,10 @@ player = tournament.createPlayer("Popa","B")
 player.value = 6
 player = tournament.createPlayer("Ali","C")
 player.value = 4
-// player = tournament.createPlayer("Zul","6")
-// player.value = 3
-// player = tournament.createPlayer("Harith","7")
-// player.value = 2
+player = tournament.createPlayer("Zul","6")
+player.value = 3
+player = tournament.createPlayer("Harith","7")
+player.value = 2
 // player = tournament.createPlayer("Kumar","8")
 // player.value = 1
 // player = tournament.createPlayer("Othman","9")
@@ -87,11 +87,11 @@ tournament.matches.forEach(match => console.log("Match :",match.match," Round :"
 // tournament.createPlayer('puyu','99999999999999')
 // tournament.assignLoss('Puyu')
 
-tournament.enterResult(tournament.matches[0].id,0,1,0)
+tournament.enterResult(tournament.matches[0].id,0,4,0)
 // tournament.enterResult(tournament.matches[1].id,2,1,0)
 
 // tournament.enterResult(tournament.matches[1].id,1,0,0)
-tournament.assignBye("B",1)
+// tournament.assignLoss("B",1)
 // tournament.next()
 
 console.log("Post Tournament")

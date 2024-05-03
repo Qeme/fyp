@@ -1,17 +1,17 @@
-<form action="/match/insert-complete?id=<%= id %>&matchId=<%= match.id %>" method="POST">
+<%=bestOf%>
+<%=game.match_id%>
+<form action="/match/insert-complete?id=<%=id%>&matchId=<%=game.match_id%>" method="POST">
 
-    <h3><%= match.player1.id %> Versus <%= match.player2.id %></h3>
-    <!-- Name of the player1 name -->
-    <label for="player1score">Player 1 Score: </label>
-    <input type="number" id="player1score" name="player1score" value="<%=match.player1.win%>"><br>
+    <%= game.p1 %> Versus <%= game.p2 %>
 
-    <!-- Name of the player2 name -->
-    <label for="player2score">Player 2 Score: </label>
-    <input type="number" id="player2score" name="player2score" value="<%=match.player2.win%>"><br>
-
-    <!-- Draw value will be the same for both, means we can take player1/player2 to get the prev value -->
-    <label for="draw">Draw (if any): </label>
-    <input type="number" id="draw" name="draw" value="<%=match.player2.draw%>"><br>
-
+    <!-- hidden input  -->
+    <% for(let x = 0; x < bestOf; x++) { %>
+        <p>Game <%= x+1 %></p>
+        <label for="p1score">P1: </label>
+        <input type="number" id="p1score" name="p1score[]" value="<%=game.scoreP1[x]%>" min="0">
+        <label for="p2score">P2: </label>
+        <input type="number" id="p2score" name="p2score[]" value="<%=game.scoreP2[x]%>" min="0">
+    <% } %>
+    
     <input type="submit" value="Update Match">
 </form>
