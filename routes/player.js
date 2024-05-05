@@ -1,8 +1,9 @@
 import express from "express"
 const router = express.Router()
-import { userinfo, tourinfo } from '../config.js'
-import { org, showTour } from "../server.js";
+import { tourinfo } from '../config.js'
+import { findTourFetch, removeTourFetch, updateTourDB } from "../server.js";
 let tournament
+let tournamentinfo
 
 // Create a form to add new players into the tournament (send the tour id to the page)
 // use player = tournament.createPlayer(name,id)
@@ -11,7 +12,7 @@ let tournament
 router.get('/',async (req,res)=>{
     try{
         const { id } = req.query;
-        const tournamentinfo = await tourinfo.findById(id);
+        tournamentinfo = await tourinfo.findOne({ id: id });
         res.render('registerplayer.ejs',{tournament: tournamentinfo, error: req.query.error })
     }catch(error){
         res.status(500).json({ message: error.message });
@@ -22,7 +23,7 @@ router.post('/',async (req,res)=>{
     //take the id tournament to distinguish which tournament that should be updated
     try{
         const { id } = req.query
-        const tournamentinfo = await tourinfo.findById(id);
+        tournamentinfo = await tourinfo.findOne({ id: id });
 
         const playerCount = req.body['player-count'];
 
@@ -35,7 +36,7 @@ router.post('/',async (req,res)=>{
 
         // checking if the email already being inserted into tournament already or not
         const existingPlayers = await tourinfo.findOne({ 
-            _id: id, 
+            id: id, 
             'setting.players': { $elemMatch: { id: { $in: playerEmails } } } 
         });
         
@@ -44,7 +45,6 @@ router.post('/',async (req,res)=>{
             return res.render('registerplayer.ejs',{error:'email-exists',tournament:tournamentinfo});
         }        
         
-
         console.log("Player email:", playerEmails," Length:",playerEmails.length);
         //we create an empty array
         const players = []
@@ -65,34 +65,18 @@ router.post('/',async (req,res)=>{
         }
         console.log("New player(s) inserted "+players.length)
         
+        //find the tournament fetch
+        //create new players into setup tournament one-by-one
+        tournament = findTourFetch(tournamentinfo)
+        players.forEach(player=>{
+            tournament.createPlayer(player.name,player.id)
+        })
 
-        //we append or match the data with the attributes inside collection Tournament
-        //we update in mongodb by using updateOne()
-        //search by id tournament, update contents, options
+        // we then update the tournament data into tournamentinfo DB
+        await updateTourDB(id,tournament)
 
-        const result = await tourinfo.updateOne(
-            { _id: id },
-            { $push: { 'setting.players': players }}
-            // $set is used to replace the existing variables value
-            // $push is used add more variables value into existing 
-        );
-        console.log('Document updated successfully:', result);
-          
-        //find the tournament inside org.tournament by using id
-        //append the player info inside the array of tournament
-
-        for(let y=0;y<org.tournaments.length;y++){
-            if(org.tournaments[y].id===id){
-                tournament = org.tournaments[y]
-                players.forEach(player=>{
-                    tournament.createPlayer(player.name,player.id)
-                })
-                
-            }
-        }
-
-        // show the tournament info array
-        showTour()
+        // after done, remove the tournament fetch data
+        removeTourFetch()
 
         // redirect user to the tournamentinfo page 
         res.redirect('/tournamentinfo')

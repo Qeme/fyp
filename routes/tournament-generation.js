@@ -1,9 +1,8 @@
 import express from "express"
 const router = express.Router()
-import { userinfo, tourinfo } from '../config.js'
-import { org, showTour } from "../server.js";
+import { tourinfo } from '../config.js'
+import { org, removeTourFetch } from "../server.js";
 let tournament
-let player
 
 router.get('/',(req,res)=>{
     res.render('tourCreate.ejs')
@@ -11,6 +10,7 @@ router.get('/',(req,res)=>{
 
 router.post('/',async (req,res)=>{
 
+    // get the information from the tournament creation form page
     const {
         tname,
         game,
@@ -42,25 +42,24 @@ router.post('/',async (req,res)=>{
     //get the info of the user details like email
     const user = await req.user
 
-    const newTournament = new tourinfo({
-        name: tname,
-        setting:{
-            stageOne: { 
-                format: format1
-            },
-            stageTwo: {
-                format: format2
-            },
-            colored: colored,
-            sorting: sorting,
-            scoring:{
-                bestOf: bestOf,
-                bye: bye,
-                draw: draw,
-                loss: loss,
-                tiebreaks: tiebreaks,
-                win: win
-            }
+    //create tournament based on the organizer identity
+    tournament = org.createTournament(tname,
+        {
+        stageOne:{
+            format: format1
+        },
+        stageTwo:{
+            format: format2
+        },
+        colored: colored,
+        sorting: sorting,
+        scoring: {
+            bestOf: bestOf,
+            bye: bye,
+            draw: draw,
+            loss: loss,
+            tiebreaks: tiebreaks,
+            win: win
         },
         meta: {
             organizer: user.email,
@@ -89,36 +88,35 @@ router.post('/',async (req,res)=>{
                 numPlayers: playerCount
             }
         }
+        },)
 
+    // the newly object structure of tourinfo collection
+    const newTournament = new tourinfo({
+        id: tournament.id,
+        name: tournament.name,
+        setting:{
+            stageOne: tournament.stageOne,
+            stageTwo: tournament.stageTwo,
+            colored: tournament.colored,
+            sorting: tournament.sorting,
+            scoring: tournament.scoring,
+            status: tournament.status,
+            round: tournament.round,
+            players: tournament.players,
+            matches: tournament.matches
+        },
+        meta: tournament.meta
         
     });
 
+    // save the newly created tournament into tourinfo collection database
     newTournament.save()
-        .then(savedTournament => {
-            //console.log('Tournament created successfully!',savedTournament);
-            //create tournament based on the organizer identity
-            tournament = org.createTournament(savedTournament.name,
-                {
-                stageOne:{
-                    format: savedTournament.setting.stageOne.format
-                },
-                stageTwo:{
-                    format: savedTournament.setting.stageTwo.format
-                },
-                colored: savedTournament.setting.colored,
-                sorting: savedTournament.setting.sorting,
-                scoring:savedTournament.setting.scoring,
-                meta: savedTournament.meta
-                },
-                savedTournament.id)
 
-            showTour()
-            res.status(200).send('Tournament created successfully');
-        })
-        .catch(error => {
-            console.error('Error creating tournament:', error);
-            res.status(500).send('Error creating tournament');
-        });
+    // remove the tournament fetch data
+    removeTourFetch()
+
+    // redirect user to the list of tournament page
+    res.redirect('/tournamentinfo')
     
 })
 

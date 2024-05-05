@@ -10,7 +10,7 @@
 
     <h3>Whats new:</h3>
     <ul>
-        <% tournaments.filter(tournament => tournament.meta.organizer !== user.email && tournament.setting.status === 'setup').forEach(tournament => { %>
+        <% tournaments_new.forEach(tournament => { %>
             <li>
                 <strong>ID:</strong> <a href="/joinTour/<%= tournament.id %>"><%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
@@ -21,15 +21,15 @@
     </ul>
 
     <h3>Recent Tournament Joined:</h3>
-    <!-- <ul>
-        <% tournaments.filter(tournament => tournament.meta.organizer !== user.email && tournament.setting.status === 'setup').forEach(tournament => { %>
+    <ul>
+        <% tournaments_join.forEach(tournament => { %>
             <li>
                 <strong>ID:<%= tournament.id %></a><br>
                 <strong>Tournament Name:</strong> <%= tournament.name %><br>
                 <strong>Status:</strong> <%= tournament.setting.status %><br>   
             </li>
         <% }); %>
-    </ul> -->
+    </ul>
 
 </body>
 </html>

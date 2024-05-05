@@ -13,8 +13,6 @@ import session from "express-session"
 import methodOverride from "method-override"
 import dotenv from 'dotenv';
 import TournamentOrganizer from 'tournament-organizer';
-import { Match } from './node_modules/tournament-organizer/dist/Match.js'; // need to grab back the class Match just to create back the match for Mongodb...this is dumb
-import { Player } from './node_modules/tournament-organizer/dist/Player.js'; // need to grab back the class Match just to create back the match for Mongodb...this is dumb
 const org = new TournamentOrganizer()
 let tournament
 let player
@@ -61,15 +59,6 @@ app.use(methodOverride('_method'))
 app.get('/',checkAuthenticated,async (req, res) => {
     // console.log(await req.user)
     let user = await req.user
-
-    //do for loop to create back the tournaments that he had created before org.createTournament()
-    const tourlist = await tourinfo.find({ 'meta.organizer': user.email });
-
-    if(org.tournaments.length === 0){
-        fillArray(tourlist)
-    }
-
-    showTour()
         
     res.render('index.ejs', { user: user });
 
@@ -210,10 +199,9 @@ app.delete('/logout', (req, res, next) => {
       if (err) {
         return next(err);
       }
-      if(org.tournaments.length !== 0)
-        clearArray()
 
       res.redirect('/login');
+
     });
   });
 
@@ -228,77 +216,46 @@ async function updateTourDB(id, tournament){
         'setting.round' : tournament.round,
         'setting.colored' : tournament.colored,
         'setting.sorting' : tournament.sorting,
-        'setting.scoring' : tournament.scoring
+        'setting.scoring' : tournament.scoring,
+        'meta.organizer' : tournament.meta.organizer,
+        'meta.game' : tournament.meta.game,
+        'meta.platform' : tournament.meta.platform,
+        'meta.venue' : tournament.meta.venue,
+        'meta.register' : tournament.meta.register,
+        'meta.running' : tournament.meta.running,
+        'meta.checkin' : tournament.meta.checkin,
+        'meta.notification' : tournament.meta.notification,
+        'meta.ticket' : tournament.meta.ticket,
+        'meta.representative' : tournament.meta.representative
 
         // id
         // name
-        // meta
 };
-
-    return await tourinfo.findByIdAndUpdate(id, { $set: updateDetail }, { new: true });
+    return await tourinfo.findOneAndUpdate({ id : id }, { $set: updateDetail }, { new: true });
 }
 
-function showTour(){
+function findTourFetch(tournamentinfo){
 
-    let x = org.tournaments
+    let tourney ={
+        id: tournamentinfo.id,
+        name: tournamentinfo.name,
+        stageOne: tournamentinfo.setting.stageOne,
+        stageTwo: tournamentinfo.setting.stageTwo,
+        round: tournamentinfo.setting.round,
+        colored: tournamentinfo.setting.colored,
+        sorting: tournamentinfo.setting.sorting,
+        scoring: tournamentinfo.setting.scoring,
+        players: tournamentinfo.setting.players,
+        matches: tournamentinfo.setting.matches,
+        meta: tournamentinfo.meta,
+        status: tournamentinfo.setting.status
+    }
     
-    for (let i = 0; i < x.length; i++) {
-        console.log(x[i])
-    }
+    return org.reloadTournament(tourney);
+
 }
 
-function fillArray(tourlist){
-
-    console.log(tourlist.length)
-    if (tourlist.length > 0) {
-        // Loop through each tournament and create it
-        for (let tour of tourlist) {
-            tournament = org.createTournament(tour.name,{
-                stageOne: tour.setting.stageOne,
-                stageTwo: tour.setting.stageTwo,
-                round: tour.setting.round,
-                colored: tour.setting.colored,
-                sorting: tour.setting.sorting,
-                scoring:tour.setting.scoring,
-                // matches: tour.setting.matches,
-                meta: tour.meta
-            },tour.id);
-
-            // do loop to createPlayer again + other stuff
-            for(let z = 0; z< tour.setting.players.length;z++){
-                player = tournament.createPlayer(tour.setting.players[z].name,tour.setting.players[z].id)
-                player.active = tour.setting.players[z].active
-                player.value = tour.setting.players[z].value
-                player.matches = tour.setting.players[z].matches
-                player.meta = tour.setting.players[z].meta
-            }
-
-            // insert matches as well
-            for(let y = 0; y< tour.setting.matches.length;y++){
-                let m = tour.setting.matches[y]
-                let match = new Match(m.id,m.round,m.match)
-                match.active = m.active
-                match.bye = m.bye
-                match.player1 = m.player1
-                match.player2 = m.player2
-                match.path = m.path
-                match.meta = m.meta
-                tournament.matches.push(match)
-            }
-
-            // change the status of the tournament from default to the current tournament status
-            tournament.status = tour.setting.status
-        }
-        
-    }
-
-    org.tournaments.forEach(tournament => {
-            // Access the ID of each tournament and log it to the console
-            console.log(tournament.id);
-        });
-}
-
-function clearArray(){
+function removeTourFetch(){
     //do nested loop -> do remove the tournament inside the array of org.tournaments by using org.removeTournament()
 
     while(org.tournaments.length!=0){
@@ -307,10 +264,7 @@ function clearArray(){
             org.removeTournament(tournament.id)
         })
     }
-    
-    org.tournaments.forEach(tournament => {
-        console.log(tournament.id)
-    });
+
 }
 
 //create a function to check Authentication user as middleware
@@ -344,7 +298,7 @@ function generateRandomId(length) {
     return result;
 }
 
-export { Player, org, showTour, updateTourDB, generateRandomId };
+export { org, updateTourDB, generateRandomId, findTourFetch, removeTourFetch };
 
 //telling our app to start listening for visitors on a the port 3000
 app.listen(3001)

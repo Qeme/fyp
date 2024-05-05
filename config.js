@@ -29,6 +29,11 @@ const LoginSchema = new mongoose.Schema({
 })
 
 const TournamentSchema = new mongoose.Schema({
+    id: {
+        type: String,
+        required: true, // or false if not required
+        unique: true // if you want the ID to be unique
+    },
     name:{
         type: String,
         required: true

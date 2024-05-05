@@ -18,6 +18,9 @@
                 <input type="text" id="playerName" name="playerName[]" required>
             <% } %>
         <% } %>
+        <% if(tournament.meta.representative.repType === "individual"){ %>
+            <p>Your data such as email and name will be processed for registration</p>
+        <% } %>
     </ol>
 
     <button>Register Now</button>

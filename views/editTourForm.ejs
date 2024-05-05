@@ -10,7 +10,6 @@
     <!-- dynamically change the method to PUT from POST -->
     <form action="/tournamentinfo/<%= tournament.id %>?_method=PUT" method="POST">
         <!-- <div class="tournament-info"> -->
-            <input type="hidden" name="id" value="<%= tournament._id %>">
             <!-- <div class="name"> -->
                 <label for="name">Tournament Name:</label>
                 <input type="text" id="name" name="name" value="<%= tournament.name %>"><br>
@@ -18,7 +17,7 @@
             <!-- <div class="meta-info"> -->
                 <!-- the id mention here must point to meta->game then works -->
                 <label for="meta.game">Game:</label>
-                <input type="text" id="meta.game" name="meta.game" value="<%= tournament.meta.game %>"><br>
+                <input type="text" id="meta.game" name="meta.game" value="<%=tournament.meta.game%>"><br>
                 <label for="meta.platform">Platform:</label>
                 <select id="meta.platform" name="meta.platform">
                     <!-- if the value is already online -> it will show the option is online in drop down -->

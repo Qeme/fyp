@@ -1,16 +1,31 @@
 import express from "express"
 const router = express.Router()
 import { userinfo, tourinfo, teaminfo } from '../config.js'
-import { org, showTour, generateRandomId, Player } from "../server.js";
+import { generateRandomId, updateTourDB, findTourFetch, removeTourFetch } from "../server.js";
 let tournament
-let player
+let tournamentinfo
 
 router.get('/', async (req, res) => {
     // get all the tournaments 
     try {
         const user = await req.user
-        const tournaments = await tourinfo.find();
-        res.render('tourJoin.ejs', { user: user, tournaments: tournaments });
+
+        // .find() can put condition where you give the properties that equal to value that you want
+        //  $ne means not equal to
+        //  $elemMatch makes the setting.players array contains at least one object where the id (player.id) property matches the user's email
+        //  $nin means not in (it requires an array value to check)
+        let tournaments_new = await tourinfo.find({
+                'meta.organizer': { $ne: user.email }, 
+                'setting.status': 'setup',
+                'setting.players.id': { $nin: [user.email] }
+        });
+
+        let tournaments_join = await tourinfo.find({
+            'meta.organizer': { $ne: user.email },
+            'setting.players': { $elemMatch: { id: user.email }}
+        });
+
+        res.render('tourJoin.ejs', { user: user, tournaments_new : tournaments_new, tournaments_join : tournaments_join });
     } catch (error) {
         // Handle error
         console.error('Error fetching tournament data:', error);
@@ -21,8 +36,8 @@ router.get('/', async (req, res) => {
 router.post('/register', async (req, res) => {
     try{
         const { id } = req.query
-        let tournamentinfo = await tourinfo.findById(id)
-        res.render("insert-join.ejs",{tournament: tournamentinfo})
+        tournamentinfo = await tourinfo.findOne({ id : id })
+        res.render("insert-join.ejs",{ tournament : tournamentinfo })
 
         // later in the development, grab the team from the user collection to make sure user not put back the name of the team back into registreation
     }catch(error){
@@ -36,7 +51,7 @@ router.post('/register-complete', async (req, res) => {
         const { id } = req.query
         const user = await req.user // use to save the id of the user to the team
 
-        let tournamentinfo = await tourinfo.findById(id)
+        tournamentinfo = await tourinfo.findOne({ id : id })
 
         // if the tournament representative is for team only
         if(tournamentinfo.meta.representative.repType === 'team'){
@@ -53,7 +68,7 @@ router.post('/register-complete', async (req, res) => {
             const firstEmailPart = user.email[0].split('@')[0];
 
             // Generate a random ID based on the team name, email part, and a random string
-            const randomId = `${teamName}-${firstEmailPart}-${generateRandomId(10)}`;
+            const randomId = `${teamName}${firstEmailPart}${generateRandomId(10)}`;
 
             const newTeam = new teaminfo({
                 // id auto generate by stricting its pattern
@@ -70,14 +85,14 @@ router.post('/register-complete', async (req, res) => {
                 .then(() => console.log("Team created successfully"))
                 .catch(err => console.error("Error creating team:", err));
 
-            // create the team as player into tournament directly
-            const teamXplayer = new Player(newTeam.id,newTeam.name)
-            console.log(teamXplayer)
+            // call the tournament fetch
+            tournament = findTourFetch(tournamentinfo)
 
-            await tourinfo.updateOne(
-                { _id : id },
-                { $push : { 'setting.players' : teamXplayer }}
-            )
+            // createPlayer() for the team as player
+            tournament.createPlayer(newTeam.name,newTeam.id)
+
+            // save the new updated players into tournamentinfo DB
+            await updateTourDB(id,tournament)
 
             // update the user as manager of the team
             const updatedUser = await userinfo.updateOne(
@@ -88,9 +103,24 @@ router.post('/register-complete', async (req, res) => {
             );
 
             console.log(updatedUser);
+
+            // after done, remove the tournament fetch data
+            removeTourFetch()
+            
+        }else if(tournamentinfo.meta.representative.repType === 'individual'){
+            // call the tournament fetch
+            tournament = findTourFetch(tournamentinfo)
+
+            // createPlayer() for the team as player
+            tournament.createPlayer(user.name,user.email)
+
+            await updateTourDB(id,tournament)
+
+            // after done, remove the tournament fetch data
+            removeTourFetch()
         }
         
-        // res.redirect('/')
+        res.redirect('/joinTour')
 
     }catch(error){
         res.status(500).json({message: error.message})
@@ -105,7 +135,7 @@ router
             // The parameters are part of the route URL itself.
             // They are accessed using the key-value pairs in the req.params object.
             
-            let tournamentinfo = await tourinfo.findById(req.tournamentId)
+            tournamentinfo = await tourinfo.findOne({id : req.tournamentId})
 
             res.render('fulljoininfo.ejs',{tournament: tournamentinfo})
 
