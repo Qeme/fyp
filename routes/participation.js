@@ -1,9 +1,9 @@
 import express from "express"
 const router = express.Router()
 import { userinfo, tourinfo, teaminfo } from '../config.js'
-import { org, showTour, generateRandomId } from "../server.js";
+import { org, showTour, generateRandomId, Player } from "../server.js";
 let tournament
-// let player
+let player
 
 router.get('/', async (req, res) => {
     // get all the tournaments 
@@ -70,6 +70,16 @@ router.post('/register-complete', async (req, res) => {
                 .then(() => console.log("Team created successfully"))
                 .catch(err => console.error("Error creating team:", err));
 
+            // create the team as player into tournament directly
+            const teamXplayer = new Player(newTeam.id,newTeam.name)
+            console.log(teamXplayer)
+
+            await tourinfo.updateOne(
+                { _id : id },
+                { $push : { 'setting.players' : teamXplayer }}
+            )
+
+            // update the user as manager of the team
             const updatedUser = await userinfo.updateOne(
                 { _id: user.id },
                 { $push: { team: newTeam.id }}
@@ -80,7 +90,8 @@ router.post('/register-complete', async (req, res) => {
             console.log(updatedUser);
         }
         
-        
+        // res.redirect('/')
+
     }catch(error){
         res.status(500).json({message: error.message})
     }

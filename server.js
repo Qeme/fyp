@@ -14,6 +14,7 @@ import methodOverride from "method-override"
 import dotenv from 'dotenv';
 import TournamentOrganizer from 'tournament-organizer';
 import { Match } from './node_modules/tournament-organizer/dist/Match.js'; // need to grab back the class Match just to create back the match for Mongodb...this is dumb
+import { Player } from './node_modules/tournament-organizer/dist/Player.js'; // need to grab back the class Match just to create back the match for Mongodb...this is dumb
 const org = new TournamentOrganizer()
 let tournament
 let player
@@ -343,7 +344,7 @@ function generateRandomId(length) {
     return result;
 }
 
-export { org, showTour, updateTourDB, generateRandomId };
+export { Player, org, showTour, updateTourDB, generateRandomId };
 
 //telling our app to start listening for visitors on a the port 3000
 app.listen(3001)
