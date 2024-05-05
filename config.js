@@ -23,8 +23,11 @@ const LoginSchema = new mongoose.Schema({
         required: true
     },
     team: [{
-        type: String, 
-        ref: 'teams' 
+        _id: false,
+        id: {
+            type: String,
+            ref: 'teams'
+        }
     }]
 })
 

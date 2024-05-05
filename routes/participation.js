@@ -14,15 +14,25 @@ router.get('/', async (req, res) => {
         //  $ne means not equal to
         //  $elemMatch makes the setting.players array contains at least one object where the id (player.id) property matches the user's email
         //  $nin means not in (it requires an array value to check)
+
+        let teamIds = user.team.map(team => team.id); // Extract team IDs if user.team is an array
+
+        // tournaments_new is to sort the tournament that is new, status = setup and the user not yet register to the tournament either as individual/team
         let tournaments_new = await tourinfo.find({
-                'meta.organizer': { $ne: user.email }, 
-                'setting.status': 'setup',
-                'setting.players.id': { $nin: [user.email] }
+            'meta.organizer': { $ne: user.email },
+            'setting.status': 'setup',
+            'setting.players.id': { 
+                $nin: [user.email, ...teamIds] // Spread operator to include all team IDs
+            }
         });
 
+        // tournaments_join is to sort the tournament that is status = setup/stageOne/stageTwo/complete and the user had registered to the tournament either as individual/team
         let tournaments_join = await tourinfo.find({
             'meta.organizer': { $ne: user.email },
-            'setting.players': { $elemMatch: { id: user.email }}
+            '$or': [
+                { 'setting.players': { $elemMatch: { id: user.email } } }, // Matches if the user's email is among the players
+                { 'setting.players': { $elemMatch: { id: { $in: teamIds } } } } // Matches if any of the user's team IDs are among the players
+            ]
         });
 
         res.render('tourJoin.ejs', { user: user, tournaments_new : tournaments_new, tournaments_join : tournaments_join });
@@ -97,7 +107,7 @@ router.post('/register-complete', async (req, res) => {
             // update the user as manager of the team
             const updatedUser = await userinfo.updateOne(
                 { _id: user.id },
-                { $push: { team: newTeam.id }}
+                { $push: { team: {id : newTeam.id} }}
                 // $set is used to replace the existing variables value
                 // $push is used add more variables value into existing 
             );
