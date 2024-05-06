@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register Referees Form</title>
+</head>
+<body>
+
+<h2><%= tournament.name %></h2>
+<h3>Add Referee Form</h3>
+
+<form id="referees-form" action="/registerreferee?id=<%= tournament.id %>" method="POST">
+  <div id="referees-container">
+    <div class="referee-input">
+
+      <label for="referee-email">Referee Email:</label>
+      <select id="refereeDropdown">
+        <option value="">--Please choose an option--</option>
+        <% referees.forEach(function(email) { %>
+            <option value="<%= email %>"><%= email %></option>
+        <% }); %>
+      </select>
+
+  <!-- add button to the array list -->
+  <button type="button" onclick="addReferee()">Add Referee</button>
+    </div>
+  </div>
+
+  <!-- finalize the referee registration to the tournament -->
+  <button type="submit">Submit</button>
+
+</form>
+
+<script>
+let referee_list = []; // Array to store selected referee emails
+
+function addReferee() {
+  const dropdown = document.getElementById('refereeDropdown');
+  const selectedEmail = dropdown.value; // Get selected email from dropdown
+  
+  if (selectedEmail && !referee_list.includes(selectedEmail)) { // Check if email is selected and not already added
+    referee_list.push(selectedEmail); // Add email to the list
+    console.log('Selected referees:', referee_list);
+
+    // Create a new input element for the selected email
+    const container = document.getElementById('referees-container');
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('referee-input');
+
+    // Create a readonly input for displaying the email
+    const input = document.createElement('input');
+    input.type = 'email';
+    input.name = 'refereeEmails[]'; // Name it such that server receives it as an array
+    input.value = selectedEmail;
+    input.readOnly = true;
+
+    // Optional: Add a remove button for each email
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.type = 'button';
+    removeButton.onclick = function() {
+      inputDiv.remove(); // Remove input div from the form
+      referee_list = referee_list.filter(email => email !== selectedEmail); // Filter out the email from the list
+      console.log('Updated referees:', referee_list);
+    };
+
+    inputDiv.appendChild(input);
+    inputDiv.appendChild(removeButton);
+    container.appendChild(inputDiv);
+  }
+  else {
+    alert('Please select a valid and unique email.');
+  }
+}
+
+</script>
+
+</body>
+</html>

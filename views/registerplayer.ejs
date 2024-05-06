@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add Players Form</title>
+<title>Register Player Form</title>
 </head>
 <body>
 
@@ -11,44 +11,49 @@
 <h4><span id="playerCount">0</span> players added</h4>
 <h3>Add Players Form</h3>
 
-<form id="players-form" action="/registerplayer?id=<%= tournament.id %>" method="POST">
+<form id="players-form" action="/registerplayer?id=<%=tournament.id%>" method="POST">
+  
+<% if(repType==='individual'){%>
+  <div id="official-players-container">
+    <div class="official-player-input">
+
+      <label for="official-player-email">Official Player Email: </label>
+      <select id="playerDropdown">
+        <option value="">--Please choose an option--</option>
+        <% potentialplayer.forEach(function(email) { %>
+            <option value="<%= email %>"><%= email %></option>
+        <% }); %>
+      </select>
+
+  <!-- add button to the array list -->
+  <button type="button" onclick="addOffPlayer()">Add Official Player</button>
+    </div>
+  </div>
+<%}%>
+  <br>
+
   <div id="players-container">
     <div class="player-input">
-      <label for="player-email">Player Email:</label>
-      <input type="email" name="player-email[]" required>
-
-            <!-- the error type will be included here to be popped out -->
-      <% if (error && error === 'email-exists') { %>
-        <p style="color: red;">Email already being registered. Make sure to submit different player email.</p>
-      <% } else if (error && error === 'unknown') { %>
-        <p style="color: red;">An unknown error occurred. Please try again later.</p>
-      <% } %>
-
-      <label for="player-name">Player Name:</label>
-      <input type="text" name="player-name[]" required>
-
-      <!-- removePlayer(this) basically remove the div for this particular player -->
-      <button type="button" onclick="removePlayer(this)">Remove Player</button>
+      <p>Free Roam <%if(repType==='individual'){%>Player<%}else if(repType==='team'){%>Team<%}%></p>
     </div>
   </div>
   <!-- addPlayer() will append a new div - player-input for new player registration -->
   <button type="button" onclick="addPlayer()">Add Player</button>
-  <button type="submit">Submit</button>
   <!-- Hidden input field to store the player count -->
-  <input type="hidden" id="playerCountInput" name="player-count" value="1">
+  <input type="hidden" id="playerCountInput" name="player-count" value="0">
+
+  <button type="submit">Submit</button>
 </form>
 
 <script>
-let playerCount = 1; // Initialize player count to 1 for the initial player
+let playerCount = 0; // Initialize player count to 1 for the initial player
 
 function addPlayer() {
   const container = document.getElementById('players-container');
   const playerInput = document.createElement('div');
   playerInput.classList.add('player-input');
   playerInput.innerHTML = `
-    <label for="player-email">Player Email:</label>
-    <input type="email" name="player-email[]" required>
-    <label for="player-name">Player Name:</label>
+    <label for="player-name"><%if(repType==='individual'){%>Player Name<%}else if(repType==='team'){%>Team Name<%}%>:</label>
     <input type="text" name="player-name[]" required>
     <button type="button" onclick="removePlayer(this)">Remove Player</button>
   `;
@@ -66,13 +71,55 @@ function removePlayer(button) {
   playerInput.remove();
   
   // Decrement player count if greater than 1
-  if(playerCount > 1) {
+  if(playerCount > 0) {
     playerCount--;
     document.getElementById('playerCount').textContent = playerCount;
     // Update hidden input field value
     document.getElementById('playerCountInput').value = playerCount;
   }
 }
+
+let offplayer_list = []; // Array to store selected referee emails
+
+function addOffPlayer() {
+  const dropdown = document.getElementById('playerDropdown');
+  const selectedEmail = dropdown.value; // Get selected email from dropdown
+  
+  if (selectedEmail && !offplayer_list.includes(selectedEmail)) { // Check if email is selected and not already added
+    offplayer_list.push(selectedEmail); // Add email to the list
+    console.log('Selected official players:', offplayer_list);
+
+    // Create a new input element for the selected email
+    const container = document.getElementById('official-players-container');
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('official-player-input');
+
+    // Create a readonly input for displaying the email
+    const input = document.createElement('input');
+    input.type = 'email';
+    input.name = 'offplayerEmails[]'; // Name it such that server receives it as an array
+    input.value = selectedEmail;
+    input.readOnly = true;
+
+    // Optional: Add a remove button for each email
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.type = 'button';
+    removeButton.onclick = function() {
+      inputDiv.remove(); // Remove input div from the form
+      offplayer_list = offplayer_list.filter(email => email !== selectedEmail); // Filter out the email from the list
+      console.log('Updated official players:', offplayer_list);
+    };
+
+    inputDiv.appendChild(input);
+    inputDiv.appendChild(removeButton);
+    container.appendChild(inputDiv);
+  }
+  else {
+    alert('Please select a valid and unique email.');
+  }
+}
+
 </script>
 
 </body>

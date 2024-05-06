@@ -364,7 +364,10 @@ const TournamentSchema = new mongoose.Schema({
                 type: Number,
                 required: false
             }
-        }
+        },referee:[{
+            type: String,
+            required: false
+        }]
     }
   
 })

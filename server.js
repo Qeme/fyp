@@ -177,12 +177,14 @@ try{
 import tourgenerateRouter from './routes/tournament-generation.js';
 import tourinfoRouter from './routes/tournament.js';
 import playerinfoRouter from './routes/player.js';
+import refereeinfoRouter from './routes/referee.js';
 import matchinfoRouter from './routes/match.js';
 import participateRouter from './routes/participation.js';
 
 app.use('/createTour',checkAuthenticated,tourgenerateRouter)
 app.use('/tournamentinfo',checkAuthenticated,tourinfoRouter)
 app.use('/registerplayer',checkAuthenticated,playerinfoRouter)
+app.use('/registerreferee',checkAuthenticated,refereeinfoRouter)
 app.use('/match',checkAuthenticated,matchinfoRouter)
 app.use('/joinTour',checkAuthenticated,participateRouter)
 
@@ -226,7 +228,8 @@ async function updateTourDB(id, tournament){
         'meta.checkin' : tournament.meta.checkin,
         'meta.notification' : tournament.meta.notification,
         'meta.ticket' : tournament.meta.ticket,
-        'meta.representative' : tournament.meta.representative
+        'meta.representative' : tournament.meta.representative,
+        'meta.referee' : tournament.meta.referee
 
         // id
         // name
