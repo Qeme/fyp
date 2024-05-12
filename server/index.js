@@ -1,12 +1,15 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const mongoose = require('mongoose');
-const UserModel = require('./models/users')
+const UserModel = require('./models/users');
 
 mongoose.connect('mongodb://localhost:27017/merntutorial')
 
 // get the data body from client side as JSON format
 app.use(express.json());
+// user cors to link our backend to React front end
+app.use(cors())
 
 app.get('/getUsers', async (req, res) => {
     try {
