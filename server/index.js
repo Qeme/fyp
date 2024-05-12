@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const UserModel = require('./models/users');
+require('dotenv').config()
 
 mongoose.connect('mongodb://localhost:27017/merntutorial')
 
@@ -10,6 +11,16 @@ mongoose.connect('mongodb://localhost:27017/merntutorial')
 app.use(express.json());
 // user cors to link our backend to React front end
 app.use(cors())
+
+// add global middleware function for the API ; it is useful for user authentication later on
+app.use((req,res,next)=>{
+    console.log(req.path,req.method)
+    next() // need to do this to make sure after the middleware is executed ,it can next() go to the targeted API
+})
+
+app.get('/', (req,res)=>{
+    res.send("Welcome to MERN")
+})
 
 app.get('/getUsers', async (req, res) => {
     try {
@@ -32,6 +43,7 @@ app.post('/createUser',async (req,res) => {
     }
 })
 
-app.listen(3002, ()=>{
-    console.log("Server is running")
+// save the port number inside .env file and use dotenv to call the PORT data
+app.listen(process.env.PORT, ()=>{
+    console.log("Server is running at port",process.env.PORT)
 });
