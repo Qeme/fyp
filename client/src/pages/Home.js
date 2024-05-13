@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"
 // import components
 import WorkoutDetails from "../components/WorkoutDetails";
+import WorkoutForm from "../components/WorkoutForm";
 
 // create a function Home to return a page with what you want
 const Home = () => {
@@ -42,11 +43,12 @@ const Home = () => {
             <div className="workouts">
                 {/* iterate all the workouts that you have found where workouts ISNT NULL
                     we also use () instead of {} because we return a template */}
-                {Array.isArray(workouts) && workouts.length > 0 && workouts.map((workout)=>(
+                {workouts && workouts.map((workout)=>(
                     // we use key for unique properties only & to optimize the rendering process and taking workout parameter as well
                     <WorkoutDetails key={workout._id} workout={workout}/>
                 ))}
             </div>
+            <WorkoutForm />
         </div>
     )
 }
