@@ -2,10 +2,21 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
-const UserModel = require('./models/users');
 require('dotenv').config()
 
+// call the workouts router into the index.js
+const workoutRoutes = require('./routes/workouts')
+
 mongoose.connect('mongodb://localhost:27017/merntutorial')
+    .then(()=>{
+        // save the port number inside .env file and use dotenv to call the PORT data
+        app.listen(process.env.PORT, ()=>{
+            console.log("Server is running at port",process.env.PORT)
+        });
+    })
+    .catch((error)=>{
+        console.log(error)
+    });
 
 // get the data body from client side as JSON format
 app.use(express.json());
@@ -18,32 +29,5 @@ app.use((req,res,next)=>{
     next() // need to do this to make sure after the middleware is executed ,it can next() go to the targeted API
 })
 
-app.get('/', (req,res)=>{
-    res.send("Welcome to MERN")
-})
-
-app.get('/getUsers', async (req, res) => {
-    try {
-        const users = await UserModel.find({}); // Using await to asynchronously wait for the query to complete
-        res.status(200).json(users); // Sending all users as response
-    } catch (err) {
-        console.error('Error retrieving users:', err);
-        res.status(500).json({ error: 'Internal server error' }); // Sending appropriate error response
-    }
-});
-
-app.post('/createUser',async (req,res) => {
-    try{
-        const user = req.body
-        const newUser = new UserModel(user)
-        await newUser.save()
-    } catch(error){
-        console.error('Error creating new user:', err);
-        res.status(500).json({ error: 'Internal server error' }); // Sending appropriate error response
-    }
-})
-
-// save the port number inside .env file and use dotenv to call the PORT data
-app.listen(process.env.PORT, ()=>{
-    console.log("Server is running at port",process.env.PORT)
-});
+// use the router by replacing the get('/') from /api/workouts
+app.use('/api/workouts',workoutRoutes)
