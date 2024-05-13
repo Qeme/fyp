@@ -21,7 +21,9 @@ mongoose.connect('mongodb://localhost:27017/merntutorial')
 // get the data body from client side as JSON format
 app.use(express.json());
 // user cors to link our backend to React front end
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000' // Change to your frontend URL
+  }));
 
 // add global middleware function for the API ; it is useful for user authentication later on
 app.use((req,res,next)=>{
