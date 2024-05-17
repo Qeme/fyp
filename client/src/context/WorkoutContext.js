@@ -21,6 +21,11 @@ export const workoutReducer = (state,action) => {
                 // ...state.workouts is basically set up the current value (if not mentioned, it will completely replaced the original one)
                 workouts: [action.payload, ...state.workouts]
             }
+        case 'DELETE_WORKOUT':
+            return {
+                // the workouts value will be replaced by using filter->only take the workout that id is not same with the id that is being
+                workouts: state.workouts.filter((workout) => workout._id !== action.payload._id)
+            }            
         default:
             // send back the state if no case is run
             return state
