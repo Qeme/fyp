@@ -40,6 +40,24 @@ const getAWorkout = async (req,res)=>{
 const createWorkout = async (req,res)=>{
     const {title, reps, load} = req.body;
 
+    // check the field that is empty
+    let emptyFields = []
+
+    // so for each field that empty, push the field properties to the array
+    if(!title){
+        emptyFields.push('title')
+    }
+    if(!reps){
+        emptyFields.push('reps')
+    }
+    if(!load){
+        emptyFields.push('load')
+    }
+    if(emptyFields.length > 0){
+        // if the emptyFields have value, we return universal error message means we avoid the system from continuing/proceeding
+        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields})
+    }
+
     try{
         // use .create() to generate and save the data
         const workout = await workoutdb.create({title, reps, load})

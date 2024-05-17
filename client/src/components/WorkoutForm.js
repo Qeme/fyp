@@ -8,6 +8,8 @@ const WorkoutForm = () =>{
     const [title,setTitle] = useState('')
     const [load,setLoad] = useState('')
     const [reps,setReps] = useState('')
+    // add additional state for emptyFields
+    const [emptyFields, setEmptyFields] = useState([])
 
     // now, to handle error message, we might use useState as well
     const [error,setError] = useState(null)
@@ -36,11 +38,13 @@ const WorkoutForm = () =>{
         })
 
         // basically we take back the json from the server to here...maybe we can do something about it idk
+        // if we got error as well, it will be return into json
         const json = await response.json()
 
         if(!response.ok){
             // take the json error message and change the error variable
             setError(json.error)
+            setEmptyFields(json.emptyFields)
         }
         if(response.ok){
             // after all done, reset all the variables including error 
@@ -48,6 +52,8 @@ const WorkoutForm = () =>{
             setLoad('')
             setReps('')
             setError(null)
+            // if no error, set back the EmptyFields to empty array
+            setEmptyFields([])
 
             // checking 
             console.log("New workout inserted ",json)
@@ -70,6 +76,9 @@ const WorkoutForm = () =>{
                 type="text"
                 onChange={(e)=> setTitle(e.target.value)}
                 value={title}
+                // setup the input className into error if there is error
+                // if the emptyFields includes 'title' then we make the className into 'error' if not ''
+                className={emptyFields.includes('title') ? 'error' : ''}
             />
 
             <label>Load (in Kg): </label>
@@ -77,6 +86,7 @@ const WorkoutForm = () =>{
                 type="number"
                 onChange={(e)=> setLoad(e.target.value)}
                 value={load}
+                className={emptyFields.includes('load') ? 'error' : ''}
             />
 
             <label>Reps : </label>
@@ -84,6 +94,7 @@ const WorkoutForm = () =>{
                 type="number"
                 onChange={(e)=> setReps(e.target.value)}
                 value={reps}
+                className={emptyFields.includes('reps') ? 'error' : ''}
             />
 
             {/* as you can see, there is no need to put action="" inside form tag,
