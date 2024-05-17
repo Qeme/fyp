@@ -1,6 +1,9 @@
 import { useState } from 'react'
+import { useWorkoutContext } from '../hooks/useWorkoutContext'
 
 const WorkoutForm = () =>{
+    // take the dispatch components from the hooks
+    const { dispatch } = useWorkoutContext()
     // set up the useState for 3 properties
     const [title,setTitle] = useState('')
     const [load,setLoad] = useState('')
@@ -48,6 +51,10 @@ const WorkoutForm = () =>{
 
             // checking 
             console.log("New workout inserted ",json)
+
+            // now call the dispatch from useWorkoutContext hook to create new workout
+            // we put payload : json as value because json has body of workout: { title, load, reps }
+            dispatch({type: 'CREATE_WORKOUT', payload: json})
         }
 
     }

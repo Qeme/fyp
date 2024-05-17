@@ -1,13 +1,18 @@
-// import React hooks 
-import { useState, useEffect } from "react"
+// remove the useState as we know use the hooks
+import { useEffect } from "react"
+
+// import the hooks that involve with WorkoutContext
+import { useWorkoutContext } from "../hooks/useWorkoutContext";
+
 // import components
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 
 // create a function Home to return a page with what you want
 const Home = () => {
-    // call the useState to have null value at first
-    const [workouts, setWorkouts] = useState(null)
+    // use {} to destructure 
+    const { workouts, dispatch } = useWorkoutContext()
+    
     // call the useEffect hook
     // second argument [] because we want to run it once
     useEffect(() => {
@@ -16,14 +21,14 @@ const Home = () => {
             try {
                 // create a variable to fetch
                 const response = await fetch('http://localhost:3002/api/workouts');
-                
+                // take the user input and pass it as json
+                const json = await response.json()
+
                 // check if response is ok or not
                 if (response.ok) {
-                    // parse the JSON data
-                    const json = await response.json();
+                    // instead of using the setWorkout, we just put dispatch
+                    dispatch({type: 'SET_WORKOUTS', payload: json})
                     
-                    // if ok, set the workouts state to the JSON value returned by GET '/'
-                    setWorkouts(json);
                 } else {
                     console.error('Error fetching workouts:', response.statusText);
                 }
