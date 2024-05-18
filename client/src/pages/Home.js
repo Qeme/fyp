@@ -39,7 +39,7 @@ const Home = () => {
     
         // call the function
         fetchWorkout();
-    }, []);
+    }, [dispatch]);
     
 
     // this is what will be presented to the page when called

@@ -1,5 +1,7 @@
 // call the useWorkoutContext hook
 import { useWorkoutContext } from "../hooks/useWorkoutContext"
+// call date-fns package
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 // create the function WorkoutDetails
 // taking each workout value from the Home.js
@@ -31,8 +33,9 @@ const WorkoutDetails = ({workout})=>{
         <h4>{workout.title}</h4>
         <p><strong>Load(Kg): </strong>{workout.load}</p>
         <p><strong>Reps: </strong>{workout.reps}</p>
-        <p>{workout.createdAt}</p>
-        <span onClick={handleClick}>delete</span>
+        {/* instead of just showing the string of the date, u can use the date-fns to format them */}
+        <p>{formatDistanceToNow( new Date(workout.createdAt), { addSuffix: true } )}</p> 
+        <span className="material-symbols-outlined" onClick={handleClick}>delete</span>
         </div>
     )
 }
