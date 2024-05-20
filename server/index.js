@@ -8,6 +8,7 @@ dotenv.config();
 // call the tournaments router into the index.js
 import tournamentRoutes from './routes/tournamentRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import teamRoutes from './routes/teamRoutes.js'
 
 mongoose.connect('mongodb://localhost:27017/esmsDB')
     .then(()=>{
@@ -36,3 +37,4 @@ app.use((req,res,next)=>{
 // use the router by replacing the get('/') from /api/tournaments
 app.use('/api/tournaments',tournamentRoutes)
 app.use('/api/users',userRoutes)
+app.use('/api/teams',teamRoutes)
