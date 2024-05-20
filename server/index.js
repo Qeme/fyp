@@ -1,13 +1,14 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config()
+import express from 'express'
+const app = express()
+import cors from 'cors'
+import mongoose from 'mongoose'
+import dotenv from 'dotenv';
+dotenv.config();
 
-// call the workouts router into the index.js
-const workoutRoutes = require('./routes/workouts')
+// call the tournaments router into the index.js
+import tournamentRoutes from './routes/tournamentRoutes.js'
 
-mongoose.connect('mongodb://localhost:27017/merntutorial')
+mongoose.connect('mongodb://localhost:27017/esmsDB')
     .then(()=>{
         // save the port number inside .env file and use dotenv to call the PORT data
         app.listen(process.env.PORT, ()=>{
@@ -31,5 +32,5 @@ app.use((req,res,next)=>{
     next() // need to do this to make sure after the middleware is executed ,it can next() go to the targeted API
 })
 
-// use the router by replacing the get('/') from /api/workouts
-app.use('/api/workouts',workoutRoutes)
+// use the router by replacing the get('/') from /api/tournaments
+app.use('/api/tournaments',tournamentRoutes)
