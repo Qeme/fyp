@@ -9,6 +9,7 @@ dotenv.config();
 import tournamentRoutes from './routes/tournamentRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import teamRoutes from './routes/teamRoutes.js'
+import gameRoutes from './routes/gameRoutes.js'
 
 mongoose.connect('mongodb://localhost:27017/esmsDB')
     .then(()=>{
@@ -38,3 +39,4 @@ app.use((req,res,next)=>{
 app.use('/api/tournaments',tournamentRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/teams',teamRoutes)
+app.use('/api/games',gameRoutes)
