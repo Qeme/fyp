@@ -12,7 +12,7 @@ const gameSchema = new Schema({
         enum: ["online" , "physical" , "to be announced"],
         required: false,
         default: "to be announced"
-    },
+    }
 },{timestamps: true})
 
 // games is the name of the collection in DB
