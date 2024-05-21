@@ -1,7 +1,11 @@
 // call the matches collection
 import matchDB from '../models/matchModel.js'
+import tournamentDB from '../models/tournamentModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
+import { addFetchTournament } from '../functions/addFetchTournament.js'
+import { removeFetchTournament } from '../functions/removeFetchTournament.js'
+import { updateFetchToDatabase } from '../functions/updateFetchToDatabase.js'
 
 // get all matches
 export const getAllMatches = async (req,res)=>{
@@ -36,34 +40,66 @@ export const getAMatch = async (req,res)=>{
 }
 
 
-// post new match
-export const createMatch = async (req,res)=>{
-    const {match_id, p1, p2, scoreP1, scoreP2} = req.body;
-
-    // check the field that is empty
-    let emptyFields = []
-
-    // so for each field that empty, push the field properties to the array
-    if(!p1){
-        emptyFields.push('p1')
-    }
-    if(!p2){
-        emptyFields.push('p2')
-    }
-    if(emptyFields.length > 0){
-        // if the emptyFields have value, we return universal error message means we avoid the system from continuing/proceeding
-        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields})
-    }
-
+// post match record
+export const keyInMatch = async (req,res)=>{
+    const {tourid, id} = req.params;
+    const {p1score, p2score} = req.body
+    
     try{
-        // use .create() to generate and save the data
-        const match = await matchDB.create({ 
-            match_id, p1, p2, scoreP1, scoreP2
+        
+        let player1_id = ""
+        let player2_id = ""
+
+        // get the latest id of the players from the matches
+        const tournament = await tournamentDB.findOne({ _id : tourid })
+        tournament.setting.matches.forEach(match=>{
+            if(match.id === id){
+                player1_id = match.player1.id
+                player2_id = match.player2.id
+            }
         })
 
-        res.status(200).json(match)
+        // update the match collection from database
+        await matchDB.updateOne(
+            { match_id: id },
+            { $set: { p1: player1_id, p2: player2_id, scoreP1: p1score, scoreP2: p2score } }
+        );
+
+        // do simple calculation to identify the winner, loser and draw point
+        let p1win = 0, p2win = 0, draw = 0; // Declare variables outside of the loop
+
+        for (let x = 0; x < p1score.length; x++) {
+            if (p1score[x] !== 0 && p2score[x] !== 0) {
+                if (p1score[x] > p2score[x]) {
+                    p1win++;
+                } else if (p1score[x] < p2score[x]) {
+                    p2win++;
+                } else {
+                    draw++;
+                }
+            }
+        }
+
+        // update the match point for p1 and p2 (tournament)
+        const tour = addFetchTournament(tournament)
+
+        // enterResult for the match for that certain round
+        try{
+            tour.enterResult(id, p1win, p2win, draw);
+        }catch(error){
+            res.status(400).json({ message: "Unable to key in the result" });
+        }
+
+        // update the tournament DB based on tournament
+        const updatedTournament = await updateFetchToDatabase(tour.id, tour);
+
+        // after done, remove the tournament fetch data
+        removeFetchTournament()
+
+        res.status(200).json(updatedTournament)
+        
     }catch(error){
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: "Deny Permission: Key In"})
     }
 
 }

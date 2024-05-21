@@ -4,6 +4,9 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv';
 dotenv.config();
+import TournamentOrganizer from 'tournament-organizer';
+
+export const org = new TournamentOrganizer()
 
 // call the tournaments router into the index.js
 import tournamentRoutes from './routes/tournamentRoutes.js'

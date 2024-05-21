@@ -8,6 +8,10 @@ const matchSchema = new Schema({
         required: true,
         unique: true // if you want the ID to be unique
     },
+    bestOf:{
+        type: Number,
+        required: false
+    },
     p1:{
         type: String,
         required: false

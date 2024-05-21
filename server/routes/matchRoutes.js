@@ -4,11 +4,11 @@ const router = express.Router()
 
 // import the functions from the controller
 import {
-    createMatch,
     getAllMatches,
     getAMatch,
     deleteMatch,
-    updateMatch
+    updateMatch,
+    keyInMatch
 } from '../controllers/matchController.js'
 
 // put the router API for get('/api/matches/') all
@@ -17,8 +17,8 @@ router.get('/',getAllMatches)
 // put the router API for get('/api/matches/:id') single
 router.get('/:id',getAMatch)
 
-// put the router API for post('/api/matches/')
-router.post('/', createMatch)
+// put the router API for post('/api/matches/:tourid/:id')
+router.post('/:tourid/:id', keyInMatch)
 
 // put the router API for delete('/api/matches/')
 router.delete('/:id', deleteMatch)

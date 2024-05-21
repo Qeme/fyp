@@ -1,74 +1,12 @@
 // call the tournaments collection
 import tournamentDB  from '../models/tournamentModel.js'
-// call the Tournament Module
-import TournamentOrganizer from 'tournament-organizer';
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
-
-const org = new TournamentOrganizer()
-
-// function to find the fetch tournament
-function findTourFetch(tournament){
-
-    const tourney ={
-        id: tournament.tour_id,
-        name: tournament.name,
-        stageOne: tournament.setting.stageOne,
-        stageTwo: tournament.setting.stageTwo,
-        round: tournament.setting.round,
-        colored: tournament.setting.colored,
-        sorting: tournament.setting.sorting,
-        scoring: tournament.setting.scoring,
-        players: tournament.setting.players,
-        matches: tournament.setting.matches,
-        meta: tournament.meta,
-        status: tournament.setting.status
-    }
-    
-    return org.reloadTournament(tourney);
-
-}
-
-// function to remove any fetch tournament remaining
-function removeTourFetch(){
-    //do nested loop -> do remove the tournament inside the array of org.tournaments by using org.removeTournament()
-
-    while(org.tournaments.length!=0){
-        org.tournaments.forEach(tournament => {
-            console.log("Deleting..."+tournament.id)
-            org.removeTournament(tournament.id)
-        })
-    }
-
-}
-
-// update the tournament db from the current fetch tournament
-async function updateTourDB(id, tour){
-
-    const updateDetail = {
-        'setting.players' : tour.players,
-        'setting.matches' : tour.matches,
-        'setting.status' : tour.status,
-        'setting.stageOne' : tour.stageOne,
-        'setting.stageTwo' : tour.stageTwo,
-        'setting.round' : tour.round,
-        'setting.colored' : tour.colored,
-        'setting.sorting' : tour.sorting,
-        'setting.scoring' : tour.scoring,
-        'meta.organizer_id' : tour.meta.organizer_id,
-        'meta.game_id' : tour.meta.game_id,
-        'meta.venue_id' : tour.meta.venue_id,
-        'meta.register' : tour.meta.register,
-        'meta.running' : tour.meta.running,
-        'meta.checkin' : tour.meta.checkin,
-        'meta.notification' : tour.meta.notification,
-        'meta.ticket' : tour.meta.ticket,
-        'meta.representative' : tour.meta.representative,
-        'meta.referee_id' : tour.meta.referee_id
-};
-
-    return await tournamentDB.findOneAndUpdate({ tour_id : id }, { $set: updateDetail }, { new: true });
-}
+import matchDB from '../models/matchModel.js';
+import { removeFetchTournament } from '../functions/removeFetchTournament.js';
+import { addFetchTournament } from '../functions/addFetchTournament.js';
+import { updateFetchToDatabase } from '../functions/updateFetchToDatabase.js';
+import { org } from '../index.js';
 
 // get all tournaments
 export const getAllTournaments = async (req,res)=>{
@@ -159,7 +97,7 @@ export const createTournament = async (req,res)=>{
         })
 
         // clean up the fetch tour
-        removeTourFetch()
+        removeFetchTournament()
 
         res.status(200).json(tournament)
     }catch(error){
@@ -184,7 +122,7 @@ export const assignTournament = async (req,res) => {
             );
         }
 
-        const tour = findTourFetch(tournament)
+        const tour = addFetchTournament(tournament)
     
         // create player to the tour
         players.map((player)=>{
@@ -192,10 +130,10 @@ export const assignTournament = async (req,res) => {
         })
 
         // update the tournament DB
-        const updatedTournament = await updateTourDB(tour.id, tour)
+        const updatedTournament = await updateFetchToDatabase(tour.id, tour)
 
         // after done, remove the tournament fetch data
-        removeTourFetch()
+        removeFetchTournament()
             
         res.status(200).json(updatedTournament)
     }catch(error){
@@ -209,19 +147,33 @@ export const startTournament = async (req,res) => {
     const {id} = req.params
 
     const tournament = await tournamentDB.findById(id)
+    const bestOf = tournament.setting.scoring.bestOf;
 
     try{
         // reload the tour fetch by the tournamentinfo DB
-        const tour = findTourFetch(tournament)
+        const tour = addFetchTournament(tournament)
 
         // start the tour
         tour.start();
 
+        // generate the match after starting the tournament
+        tour.matches.map(async (match)=>{
+            // use .create() to generate and save the data
+            await matchDB.create({ 
+                match_id: match.id,
+                bestOf: bestOf,
+                p1: match.player1.id,
+                p2: match.player2.id,
+                scoreP1: new Array(bestOf).fill(0),
+                scoreP2: new Array(bestOf).fill(0)
+            })
+        })
+
         // update the tournament DB
-        const updatedTournament = await updateTourDB(tour.id, tour)
+        const updatedTournament = await updateFetchToDatabase(tour.id, tour)
 
         // after done, remove the tournament fetch data
-        removeTourFetch()
+        removeFetchTournament()
         
         res.status(200).json(updatedTournament)
     }catch(error){
@@ -238,16 +190,16 @@ export const endTournament = async (req,res) => {
 
     try{
         // reload the tour fetch by the tournamentinfo DB
-        const tour = findTourFetch(tournament)
+        const tour = addFetchTournament(tournament)
 
         // end the tour
         tour.end();
 
         // update the tournament DB
-        const updatedTournament = await updateTourDB(tour.id, tour)
+        const updatedTournament = await updateFetchToDatabase(tour.id, tour)
 
         // after done, remove the tournament fetch data
-        removeTourFetch()
+        removeFetchTournament()
         
         res.status(200).json(updatedTournament)
     }catch(error){
