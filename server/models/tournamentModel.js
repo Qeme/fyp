@@ -264,20 +264,15 @@ const tournamentSchema = new Schema({
         }
     },
     meta:{
-        organizer:{
-            type: String,
-            required: false,
-            default: null
-        },
-        game:{
+        organizer_id:{
             type: String,
             required: false
         },
-        platform:{
+        game_id:{
             type: String,
-            required: false  
+            required: false
         },
-        venue:{
+        venue_id:{
             type: String,
             required: false  
         },
@@ -303,7 +298,8 @@ const tournamentSchema = new Schema({
         },
         checkin:{
             type: Number,
-            required: false
+            required: false,
+            default: 0
         },
         notification:{
             rules:{
@@ -318,23 +314,28 @@ const tournamentSchema = new Schema({
         ticket:{
             competitor:{
                 type: Number,
-                required: false
+                required: false,
+                default: 0
             },
             viewer:{
                 type: Number,
-                required: false
+                required: false,
+                default: 0
             }
         },
         representative:{
             repType:{
                 type: String,
-                required: false
+                required: false,
+                default: "individual"
             },
             numPlayers:{
                 type: Number,
-                required: false
+                required: false,
+                default: 1
             }
-        },referee:[{
+        },
+        referee_id: [{
             type: String,
             required: false
         }]
