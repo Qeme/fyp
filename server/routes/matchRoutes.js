@@ -6,9 +6,11 @@ const router = express.Router()
 import {
     getAllMatches,
     getAMatch,
-    deleteMatch,
-    updateMatch,
-    keyInMatch
+    keyInMatch,
+    clearMatch,
+    stageOne,
+    stageTwo,
+    advanceBracket
 } from '../controllers/matchController.js'
 
 // put the router API for get('/api/matches/') all
@@ -17,14 +19,20 @@ router.get('/',getAllMatches)
 // put the router API for get('/api/matches/:id') single
 router.get('/:id',getAMatch)
 
+// put the router API for get('/api/matches/stageone/:tourid')
+router.get('/stageone/:tourid', stageOne)
+
+// put the router API for post('/api/matches/advance/:tourid')
+router.post('/advance/:tourid', advanceBracket)
+
+// put the router API for get('/api/matches/stagetwo/:tourid')
+router.get('/stagetwo/:tourid', stageTwo)
+
 // put the router API for post('/api/matches/:tourid/:id')
 router.post('/:tourid/:id', keyInMatch)
 
-// put the router API for delete('/api/matches/')
-router.delete('/:id', deleteMatch)
-
-// put the router API for patch('/api/matches/')
-router.patch('/:id', updateMatch)
+// put the router API for post('/api/matches/:tourid/:id')
+router.delete('/:tourid/:id', clearMatch)
 
 // export the router to be used inside index.js
 export default router;
