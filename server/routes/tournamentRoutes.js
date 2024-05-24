@@ -10,6 +10,8 @@ import {
     endTournament,
     getAllTournaments,
     getATournament,
+    getPublishTournaments,
+    publishTournament,
     deleteTournament,
     updateTournament
 } from '../controllers/tournamentController.js'
@@ -17,11 +19,17 @@ import {
 // put the router API for get('/api/tournaments/') all
 router.get('/',getAllTournaments)
 
+// put the router API for get('/api/tournaments/publish') 
+router.get('/publish',getPublishTournaments)
+
 // put the router API for get('/api/tournaments/:id') single
 router.get('/:id',getATournament)
 
-// put the router API for post('/api/tournaments/')
-router.post('/', createTournament)
+// put the router API for post('/api/tournaments/create')
+router.post('/create', createTournament)
+
+// put the router API for post('/api/tournaments/publish/:id') single
+router.post('/publish/:id',publishTournament)
 
 // put the router API for post('/api/tournaments/assign/')
 router.post('/assign/:id', assignTournament)

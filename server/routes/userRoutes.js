@@ -8,7 +8,10 @@ import {
     getAllUsers,
     getAUser,
     deleteUser,
-    updateUser
+    updateUser,
+    competeTournament,
+    spectateTournament,
+    monitorTournament
 } from '../controllers/userController.js'
 
 // put the router API for get('/api/users/') all
@@ -19,6 +22,15 @@ router.get('/:id',getAUser)
 
 // put the router API for post('/api/users/')
 router.post('/', createUser)
+
+// put the router API for post('/api/users/compete/:tourid')
+router.post('/compete/:tourid', competeTournament)
+
+// put the router API for post('/api/users/spectate/:tourid')
+router.post('/spectate/:tourid', spectateTournament)
+
+// put the router API for post('/api/users/monitor/:tourid')
+router.post('/monitor/:tourid', monitorTournament)
 
 // put the router API for delete('/api/users/')
 router.delete('/:id', deleteUser)

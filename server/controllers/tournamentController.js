@@ -40,10 +40,34 @@ export const getATournament = async (req,res)=>{
     res.status(200).json(tournament)
 }
 
+// get the list of published tournaments
+export const getPublishTournaments = async (req,res)=>{
+    try{
+        const tournaments = await tournamentDB.find({"meta.status" : "published"}).sort({createdAt: -1})
+        res.status(200).json(tournaments)
+    }catch(error){
+        res.status(400).json({error: "No such published tournament in database"})
+    }
+}
+
+// post the tournament from "created" to "published"
+export const publishTournament = async (req,res)=>{
+    // there is a params value which is id
+    const {id} = req.params
+
+    try{
+        const updatedTournament = await tournamentDB.findByIdAndUpdate(id,{
+            $set: {"meta.status": "published"}
+        })
+        res.status(200).json(updatedTournament)
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+}
 
 // post new tournament
 export const createTournament = async (req,res)=>{
-    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, referee_id, colored, sorting, scoring} = req.body;
+    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, colored, sorting, scoring} = req.body;
 
     // check the field that is empty
     let emptyFields = []
@@ -73,8 +97,7 @@ export const createTournament = async (req,res)=>{
                 checkin,
                 notification,
                 ticket,
-                representative,
-                referee_id
+                representative
             }
         })
 
@@ -101,7 +124,7 @@ export const createTournament = async (req,res)=>{
 
         res.status(200).json(tournament)
     }catch(error){
-        res.status(400).json({error: error.message})
+        res.status(400).json({error: `Tournament can't be created. Additional info: ${error.message}`})
     }
 
 }
@@ -118,7 +141,7 @@ export const assignTournament = async (req,res) => {
         for (const referee of referees) {
             await tournamentDB.updateOne(
                 { _id: id },
-                { $push: { 'meta.referee_id': referee.email } }
+                { $push: { 'meta.referee_id': { id: referee.email } } }
             );
         }
 

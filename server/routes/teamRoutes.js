@@ -8,11 +8,15 @@ import {
     getAllTeams,
     getATeam,
     deleteTeam,
-    updateTeam
+    updateTeam,
+    getManagedTeams
 } from '../controllers/teamController.js'
 
 // put the router API for get('/api/teams/') all
 router.get('/',getAllTeams)
+
+// put the router API for get('/api/teams/:userid')
+router.get('/:userid',getManagedTeams)
 
 // put the router API for get('/api/teams/:id') single
 router.get('/:id',getATeam)

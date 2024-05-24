@@ -1,7 +1,7 @@
-// call the teams collection
-import teamDB from '../models/teamModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
+import userDB from '../models/userModel.js'
+import teamDB from '../models/teamModel.js'
 
 // get all teams
 export const getAllTeams = async (req,res)=>{
@@ -10,6 +10,27 @@ export const getAllTeams = async (req,res)=>{
         // then .sort({createdAt: -1}) by descending order means from newest to oldest
         const teams = await teamDB.find({}).sort({createdAt: -1})
         res.status(200).json(teams)
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+}
+
+// get the teams managed by the user
+export const getManagedTeams = async (req,res)=>{
+    const {userid} = req.params
+    
+    // check if the id inserted inside params are actually followed the _id format, return if it is invalid
+    if(!mongoose.Types.ObjectId.isValid(userid)){
+        return res.status(404).json({error: "No such team in database"})
+    }
+
+    try{
+        const user = await userDB.findById(userid)
+        // get the teams where the manager === user.email
+        const managedTeams = await teamDB.find({manager : user.email})
+
+        res.status(200).json(managedTeams)
+        
     }catch(error){
         res.status(400).json({error: error.message})
     }
@@ -38,7 +59,7 @@ export const getATeam = async (req,res)=>{
 
 // post new team
 export const createTeam = async (req,res)=>{
-    const {name, manager} = req.body;
+    const {name, manager, players} = req.body;
 
     // check the field that is empty
     let emptyFields = []
@@ -58,7 +79,7 @@ export const createTeam = async (req,res)=>{
     try{
         // use .create() to generate and save the data
         const team = await teamDB.create({ 
-            name, manager
+            name, manager, players
         })
 
         res.status(200).json(team)

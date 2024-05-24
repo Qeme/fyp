@@ -16,7 +16,7 @@ import gameRoutes from './routes/gameRoutes.js'
 import venueRoutes from './routes/venueRoutes.js'
 import matchRoutes from './routes/matchRoutes.js'
 
-mongoose.connect('mongodb://localhost:27017/esmsDB')
+mongoose.connect('mongodb://localhost:27017/ESMS-DB')
     .then(()=>{
         // save the port number inside .env file and use dotenv to call the PORT data
         app.listen(process.env.PORT, ()=>{

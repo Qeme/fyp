@@ -276,6 +276,12 @@ const tournamentSchema = new Schema({
             type: String,
             required: false  
         },
+        status:{
+            type: String,
+            enum: ["created","published","running","finalized"],
+            required: false,
+            default: "created"
+        },
         register:{
             open:{
                 type: Date,
@@ -326,6 +332,7 @@ const tournamentSchema = new Schema({
         representative:{
             repType:{
                 type: String,
+                enum: ["individual" , "team"],
                 required: false,
                 default: "individual"
             },
@@ -335,9 +342,19 @@ const tournamentSchema = new Schema({
                 default: 1
             }
         },
+        spectator_id: [{
+            _id: false,
+            id:{
+                type: String,
+                required: false
+            }
+        }],
         referee_id: [{
-            type: String,
-            required: false
+            _id: false,
+            id:{
+                type: String,
+                required: false
+            }
         }]
     }
 },{timestamps: true})
