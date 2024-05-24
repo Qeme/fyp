@@ -135,7 +135,7 @@ export const spectateTournament = async (req,res) => {
             // Update the tournament by pushing the user email to spectator_id
             const updatedTournament = await tournamentDB.findByIdAndUpdate(
                 tourid,
-                { $push: { 'meta.spectator_id': user.email } },
+                { $push: { 'meta.spectator_id': { id: user.email } } },
                 { new: true } // This option returns the updated document
             );
     
@@ -164,7 +164,7 @@ export const monitorTournament = async (req,res) => {
             // Update the tournament by pushing the user email to referee_id
             const updatedTournament = await tournamentDB.findByIdAndUpdate(
                 tourid,
-                { $push: { 'meta.referee_id': user.email } },
+                { $push: { 'meta.referee_id': { id: user.email } } },
                 { new: true } // This option returns the updated document
             );
     

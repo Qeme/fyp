@@ -40,10 +40,12 @@ export const getATournament = async (req,res)=>{
     res.status(200).json(tournament)
 }
 
-// get the list of published tournaments
-export const getPublishTournaments = async (req,res)=>{
+// get the list of status tournaments ('created','published','running','finished')
+export const getStatusTournaments = async (req,res)=>{
+    const {status} = req.body
+
     try{
-        const tournaments = await tournamentDB.find({"meta.status" : "published"}).sort({createdAt: -1})
+        const tournaments = await tournamentDB.find({"meta.status" : status }).sort({createdAt: -1})
         res.status(200).json(tournaments)
     }catch(error){
         res.status(400).json({error: "No such published tournament in database"})
@@ -67,7 +69,7 @@ export const publishTournament = async (req,res)=>{
 
 // post new tournament
 export const createTournament = async (req,res)=>{
-    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, colored, sorting, scoring} = req.body;
+    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, colored, sorting, scoring, organizer_id} = req.body;
 
     // check the field that is empty
     let emptyFields = []
@@ -90,6 +92,7 @@ export const createTournament = async (req,res)=>{
             sorting,
             scoring,
             meta: {
+                organizer_id,
                 game_id,
                 venue_id,
                 register,
@@ -178,6 +181,9 @@ export const startTournament = async (req,res) => {
 
         // start the tour
         tour.start();
+        
+        // after start, change status from 'published' to 'running'
+        tour.meta.status = "running"
 
         // generate the match after starting the tournament
         tour.matches.map(async (match)=>{
@@ -217,6 +223,9 @@ export const endTournament = async (req,res) => {
 
         // end the tour
         tour.end();
+
+        // after ending the tour, change status from 'running' to 'finished'
+        tour.meta.status = "finished"
 
         // update the tournament DB
         const updatedTournament = await updateFetchToDatabase(tour.id, tour)

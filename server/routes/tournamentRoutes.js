@@ -10,7 +10,7 @@ import {
     endTournament,
     getAllTournaments,
     getATournament,
-    getPublishTournaments,
+    getStatusTournaments,
     publishTournament,
     deleteTournament,
     updateTournament
@@ -19,14 +19,15 @@ import {
 // put the router API for get('/api/tournaments/') all
 router.get('/',getAllTournaments)
 
-// put the router API for get('/api/tournaments/publish') 
-router.get('/publish',getPublishTournaments)
+// put the router API for get('/api/tournaments/status') 
+router.get('/status', getStatusTournaments)
 
 // put the router API for get('/api/tournaments/:id') single
-router.get('/:id',getATournament)
+router.get('/:id', getATournament)
 
-// put the router API for post('/api/tournaments/create')
-router.post('/create', createTournament)
+
+// put the router API for post('/api/tournaments/')
+router.post('/', createTournament)
 
 // put the router API for post('/api/tournaments/publish/:id') single
 router.post('/publish/:id',publishTournament)
@@ -40,8 +41,10 @@ router.post('/start/:id', startTournament)
 // put the router API for post('/api/tournaments/end/')
 router.post('/end/:id', endTournament)
 
+
 // put the router API for delete('/api/tournaments/')
 router.delete('/:id', deleteTournament)
+
 
 // put the router API for patch('/api/tournaments/')
 router.patch('/:id', updateTournament)

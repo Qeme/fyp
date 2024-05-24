@@ -21,7 +21,9 @@ export async function updateFetchToDatabase(id, tour){
         'meta.notification' : tour.meta.notification,
         'meta.ticket' : tour.meta.ticket,
         'meta.representative' : tour.meta.representative,
-        'meta.referee_id' : tour.meta.referee_id
+        'meta.status': tour.meta.status,
+        'meta.referee_id' : tour.meta.referee_id,
+        'meta.spectator_id' : tour.meta.referee_id
 };
 
     return await tournamentDB.findOneAndUpdate({ tour_id : id }, { $set: updateDetail }, { new: true });
