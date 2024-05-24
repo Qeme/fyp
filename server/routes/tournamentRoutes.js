@@ -11,6 +11,7 @@ import {
     getAllTournaments,
     getATournament,
     getStatusTournaments,
+    getStandingTournament,
     publishTournament,
     deleteTournament,
     updateTournament
@@ -21,6 +22,9 @@ router.get('/',getAllTournaments)
 
 // put the router API for get('/api/tournaments/status') 
 router.get('/status', getStatusTournaments)
+
+// put the router API for get('/api/tournaments/standing/id') 
+router.get('/standing/:id', getStandingTournament)
 
 // put the router API for get('/api/tournaments/:id') single
 router.get('/:id', getATournament)

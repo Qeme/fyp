@@ -2,7 +2,7 @@
 import tournamentDB  from '../models/tournamentModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
-import matchDB from '../models/matchModel.js';
+import roundDB from '../models/roundModel.js';
 import { removeFetchTournament } from '../functions/removeFetchTournament.js';
 import { addFetchTournament } from '../functions/addFetchTournament.js';
 import { updateFetchToDatabase } from '../functions/updateFetchToDatabase.js';
@@ -49,6 +49,23 @@ export const getStatusTournaments = async (req,res)=>{
         res.status(200).json(tournaments)
     }catch(error){
         res.status(400).json({error: "No such published tournament in database"})
+    }
+}
+
+// get the standing players inside the particular tournament
+export const getStandingTournament = async (req,res)=>{
+    const {id} = req.params
+
+    try{
+        const tournament = await tournamentDB.findById(id)
+        const tour = addFetchTournament(tournament)
+
+        // improve later ...
+        const ranking = tour.standings()
+
+        res.status(200).json(ranking)
+    }catch(error){
+        res.status(400).json({error: `Deny Permission: Assign . Additional info : ${error.message}`})
     }
 }
 
@@ -188,7 +205,7 @@ export const startTournament = async (req,res) => {
         // generate the match after starting the tournament
         tour.matches.map(async (match)=>{
             // use .create() to generate and save the data
-            await matchDB.create({ 
+            await roundDB.create({ 
                 match_id: match.id,
                 bestOf: bestOf,
                 p1: match.player1.id,

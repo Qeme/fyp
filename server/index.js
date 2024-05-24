@@ -14,7 +14,7 @@ import userRoutes from './routes/userRoutes.js'
 import teamRoutes from './routes/teamRoutes.js'
 import gameRoutes from './routes/gameRoutes.js'
 import venueRoutes from './routes/venueRoutes.js'
-import matchRoutes from './routes/matchRoutes.js'
+import roundRoutes from './routes/roundRoutes.js'
 
 mongoose.connect('mongodb://localhost:27017/ESMS-DB')
     .then(()=>{
@@ -46,4 +46,4 @@ app.use('/api/users',userRoutes)
 app.use('/api/teams',teamRoutes)
 app.use('/api/games',gameRoutes)
 app.use('/api/venues',venueRoutes)
-app.use('/api/matches',matchRoutes)
+app.use('/api/rounds',roundRoutes)
