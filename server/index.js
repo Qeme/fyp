@@ -15,7 +15,7 @@ import teamRoutes from './routes/teamRoutes.js'
 import gameRoutes from './routes/gameRoutes.js'
 import venueRoutes from './routes/venueRoutes.js'
 import roundRoutes from './routes/roundRoutes.js'
-import imageRoutes from './routes/imageRoutes.js'
+import fileRoutes from './routes/fileRoutes.js'
 
 // Connect to the TournamentDB database
 mongoose.connect(process.env.MONGOURI);
@@ -46,7 +46,7 @@ app.use('/api/teams',teamRoutes)
 app.use('/api/games',gameRoutes)
 app.use('/api/venues',venueRoutes)
 app.use('/api/rounds',roundRoutes)
-app.use('/api/images',imageRoutes)
+app.use('/api/files',fileRoutes)
 
 app.listen(process.env.PORT, () => 
     {console.log(`Server started on port ${process.env.PORT}`)

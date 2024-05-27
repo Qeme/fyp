@@ -11,11 +11,12 @@ const router = express.Router()
 
 // import the functions from the controller
 import {
-    getAllImages,
+    getAllFiles,
+    getAFile,
     getAnImage,
-    uploadImage,
-    deleteImage
-} from '../controllers/imageController.js'
+    uploadFile,
+    deleteFile
+} from '../controllers/fileController.js'
 
 // Create storage engine
 const storage = new GridFsStorage({
@@ -38,17 +39,20 @@ const storage = new GridFsStorage({
   });
 const upload = multer({ storage });
 
-// put the router API for get('/api/images/') all
-router.get('/',getAllImages)
+// put the router API for get('/api/files/') all
+router.get('/',getAllFiles)
 
-// put the router API for get('/api/images/:id') single
-router.get('/:id',getAnImage)
+// put the router API for get('/api/files/file/:filename') single
+router.get('/file/:filename',getAFile)
 
-// put the router API for post('/api/images/') -> 'file' depends on the name="file" in the form input
-router.post('/', upload.single('file'), uploadImage)
+// put the router API for get('/api/files/image/:filename') single
+router.get('/image/:filename',getAnImage)
 
-// put the router API for delete('/api/images/')
-router.delete('/:id', deleteImage)
+// put the router API for post('/api/files/') -> 'file' depends on the name="file" in the form input
+router.post('/', upload.single('file'), uploadFile)
+
+// put the router API for delete('/api/files/:filename')
+router.delete('/:filename', deleteFile)
 
 // export the router to be used inside index.js
 export default router;
