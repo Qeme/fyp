@@ -49,10 +49,10 @@ router.get('/file/:filename',getAFile)
 router.get('/image/:filename',getAnImage)
 
 // put the router API for post('/api/files/') -> 'file' depends on the name="file" in the form input
-router.post('/', upload.single('file'), uploadFile)
+router.post('/', uploadFile)
 
-// put the router API for delete('/api/files/:filename')
-router.delete('/:filename', deleteFile)
+// put the router API for delete('/api/files/del/:_id')
+router.delete('/del/:_id', deleteFile)
 
 // export the router to be used inside index.js
 export default router;

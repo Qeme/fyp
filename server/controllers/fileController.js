@@ -2,32 +2,43 @@
 import venueDB from '../models/venueModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
-import Grid from 'gridfs-stream'
+import fileSystem from 'fs'
+import { ObjectId } from 'mongodb';
 
 // Initialize GridFS stream when MongoDB connection is open
 let gfs;
 mongoose.connection.once('open', () => {
-    gfs = Grid(mongoose.connection.db, mongoose.mongo);
-    gfs.collection('uploads');
+    const bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: 'uploads'
+    });
+    gfs = bucket;
 });
 
 // get all files
 export const getAllFiles = async (req, res) => {
     try {
-        const files = await gfs.files.find().toArray();
-        
-        // If no files found
+        const filesCursor = gfs.find(); // This retrieves all files in the bucket
+        const files = await filesCursor.toArray(); // Convert the cursor to an array of files
+
         if (!files || files.length === 0) {
             return res.status(404).json({ error: 'No files exist' });
         }
 
-        // If files exist, return them as JSON
-        res.status(200).json(files);
+        // Mapping over files to get necessary data
+        const filesInfo = files.map(file => ({
+            filename: file.filename,
+            fileId: file._id,
+            contentType: file.contentType,
+            size: file.length,
+            uploadDate: file.uploadDate
+        }));
+
+        res.json(filesInfo); // Send the file information as JSON
     } catch (error) {
-        // Handle any errors that occurred during the query
         res.status(500).json({ error: 'An error occurred while fetching files' });
     }
-}
+};
+
 
 
 // get a file
@@ -49,63 +60,58 @@ export const getAFile = async (req,res)=>{
     }
 }
 
-
-// get an image
-export const getAnImage = async (req,res)=>{
-    const {filename} = req.params
-    gfs.createReadStream()
+// get an image (to render them - fetch)
+export const getAnImage = async (req, res) => {
+    const { filename } = req.params;
     try {
-        const file = await gfs.files.findOne({filename: filename});
-        
-        // If no files found
+        // Checking if file exists in GridFS
+        const file = await gfs.find({ filename: filename }).toArray();
         if (!file || file.length === 0) {
             return res.status(404).json({ error: 'No file exist' });
         }
 
-        if (file.contentType === "image/jpeg" || file.contentType === "image/png"){
-            const readstream = gfs.createReadStream({filename: filename});
+        // Checking the content type
+        if (file[0].metadata.type === "image/jpeg" || file[0].metadata.type === "image/png") {
+            // Creating a read stream
+            const readstream = gfs.openDownloadStream(file[0]._id);
             readstream.pipe(res);
-        }else{
-            res.status(404).json({ error: 'Not an image' })
+        } else {
+            res.status(404).json({ error: 'Not an image' });
         }
-
     } catch (error) {
-        // Handle any errors that occurred during the query
+        console.error('Error occurred: ', error);
         res.status(500).json({ error: 'An error occurred while fetching files' });
     }
-    
-}
-
+};
 
 // post upload new file
 export const uploadFile = (req,res)=>{
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-    }
-    res.status(201).send({
-        file: req.file,
-        message: 'File uploaded successfully.'
-    });
+    const file = req.files.file
+    const filePath = (new Date().getTime()) + "-" + file.name
+
+    fileSystem.createReadStream(file.path)
+        .pipe(gfs.openUploadStream(filePath, {
+            chunkSizeBytes: 1048576,
+            metadata: {
+                name: file.name,
+                size: file.size,
+                type: file.type
+            }
+        }))
+        .on("finish", function () {
+            res.status(200).json("Terbaik")
+        })
 }
 
 
 // delete an file
-export const deleteFile = async (req,res)=>{
-    // there is a params value which is id
-    const {id} = req.params
-
-    // check if the id inserted inside params are actually followed the _id format, return if it is invalid
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error: "No such venue in database"})
+export const deleteFile = async (req, res) => {
+    const {_id} = req.params;
+    try {
+        await gfs.delete(ObjectId(_id)); // Ensure _id is converted to an ObjectId
+        res.status(200).json({ message: 'Successfully deleted the file' });
+    } catch (error) {
+        console.error('Error deleting file:', error); // Good for debugging
+        res.status(500).json({ error: 'An error occurred while deleting the file' });
     }
-
-    // use .findOneAndDelete and put the parameter as _id that equal to id
-    const venue = await venueDB.findOneAndDelete({_id: id})
-
-    // if no venue found by that id, we need to return the function so that it will not proceed
-    if(!venue){
-        return res.status(404).json({error: "No such venue in database"})
-    }
-
-    res.status(200).json(venue)
 }

@@ -4,8 +4,8 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv';
 dotenv.config();
+import ExpressFormidable from 'express-formidable';
 import TournamentOrganizer from 'tournament-organizer';
-
 export const org = new TournamentOrganizer()
 
 // call the tournaments router into the index.js
@@ -46,7 +46,7 @@ app.use('/api/teams',teamRoutes)
 app.use('/api/games',gameRoutes)
 app.use('/api/venues',venueRoutes)
 app.use('/api/rounds',roundRoutes)
-app.use('/api/files',fileRoutes)
+app.use('/api/files',ExpressFormidable(),fileRoutes)
 
 app.listen(process.env.PORT, () => 
     {console.log(`Server started on port ${process.env.PORT}`)
