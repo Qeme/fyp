@@ -15,23 +15,22 @@ import teamRoutes from './routes/teamRoutes.js'
 import gameRoutes from './routes/gameRoutes.js'
 import venueRoutes from './routes/venueRoutes.js'
 import roundRoutes from './routes/roundRoutes.js'
+import imageRoutes from './routes/imageRoutes.js'
 
-mongoose.connect('mongodb://localhost:27017/ESMS-DB')
-    .then(()=>{
-        // save the port number inside .env file and use dotenv to call the PORT data
-        app.listen(process.env.PORT, ()=>{
-            console.log("Server is running at port",process.env.PORT)
-        });
-    })
-    .catch((error)=>{
-        console.log(error)
-    });
+// Connect to the TournamentDB database
+mongoose.connect(process.env.MONGOURI);
+
+const conn = mongoose.connection;
+
+conn.once('open', () => {
+    console.log('Connection to database established');
+});
 
 // get the data body from client side as JSON format
 app.use(express.json());
 // user cors to link our backend to React front end
 app.use(cors({
-    origin: 'http://localhost:3000' // Change to your frontend URL
+    origin: process.env.ORIGIN // Change to your frontend URL
   }));
 
 // add global middleware function for the API ; it is useful for user authentication later on
@@ -47,3 +46,8 @@ app.use('/api/teams',teamRoutes)
 app.use('/api/games',gameRoutes)
 app.use('/api/venues',venueRoutes)
 app.use('/api/rounds',roundRoutes)
+app.use('/api/images',imageRoutes)
+
+app.listen(process.env.PORT, () => 
+    {console.log(`Server started on port ${process.env.PORT}`)
+})
