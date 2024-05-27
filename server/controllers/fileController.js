@@ -1,9 +1,7 @@
-// call the images collection
-import venueDB from '../models/venueModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
 import fileSystem from 'fs'
-import { ObjectId } from 'mongodb';
+const { ObjectId } = mongoose.Types;
 
 // Initialize GridFS stream when MongoDB connection is open
 let gfs;
@@ -108,7 +106,7 @@ export const uploadFile = (req,res)=>{
 export const deleteFile = async (req, res) => {
     const {_id} = req.params;
     try {
-        await gfs.delete(ObjectId(_id)); // Ensure _id is converted to an ObjectId
+        await gfs.delete(new ObjectId(_id)); // Ensure _id is converted to an ObjectId
         res.status(200).json({ message: 'Successfully deleted the file' });
     } catch (error) {
         console.error('Error deleting file:', error); // Good for debugging
