@@ -1,6 +1,7 @@
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
 import fileSystem from 'fs'
+import paymentDB from '../models/paymentModel.js';
 const { ObjectId } = mongoose.Types;
 
 // Initialize GridFS stream when MongoDB connection is open
@@ -14,12 +15,16 @@ mongoose.connection.once('open', () => {
 
 // get all files
 export const getAllFiles = async (req, res) => {
+    const {topic} = req.fields;
     try {
-        const filesCursor = gfs.find(); // This retrieves all files in the bucket
+        // Determine the query based on the presence of imageType
+        const query = topic ? { 'metadata.topic': topic } : {};
+
+        const filesCursor = gfs.find(query); // This retrieves all files in the bucket
         const files = await filesCursor.toArray(); // Convert the cursor to an array of files
 
         if (!files || files.length === 0) {
-            return res.status(404).json({ error: 'No files exist' });
+            return res.status(404).json({ error: topic ? `No ${topic} files exist` : 'No files exist' });
         }
 
         // Mapping over files to get necessary data
@@ -82,31 +87,65 @@ export const getAnImage = async (req, res) => {
     }
 };
 
-// post upload new file
-export const uploadFile = (req,res)=>{
-    const file = req.files.file
-    const filePath = (new Date().getTime()) + "-" + file.name
 
-    fileSystem.createReadStream(file.path)
-        .pipe(gfs.openUploadStream(filePath, {
-            chunkSizeBytes: 1048576,
-            metadata: {
-                name: file.name,
-                size: file.size,
-                type: file.type
+// post upload new file
+export const uploadFile = (req, res) => {
+    const file = req.files.file;
+    const { userid, topic } = req.fields; 
+    /* 
+        userid -> the person that upload the file into database
+        topic -> which file does it belongs to ['tour_header','tour_bg','tour_qr','receipt']
+    */
+
+    const filePath = (new Date().getTime()) + "-" + file.name;
+
+    const stream = fileSystem.createReadStream(file.path);
+    const uploadStream = gfs.openUploadStream(filePath, {
+        chunkSizeBytes: 1048576,
+        metadata: {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            userid: userid, 
+            topic: topic 
+        }
+    });
+
+    // Pipe the read stream to the upload stream
+    stream.pipe(uploadStream);
+
+    uploadStream.on('finish', async function () {
+        // Use uploadStream.id to get the file ID from GridFS
+        const fileId = uploadStream.id;
+
+        if (topic === "receipt") {
+            try {
+                const payment = await paymentDB.create({ 
+                    receiptid: fileId, // Use the new file ID here
+                    payerid: userid,
+                    status: "pending"
+                });
+                res.status(200).json(payment);
+            } catch (error) {
+                console.error('Error creating payment:', error);
+                res.status(500).json({ error: 'An error occurred while creating payment' });
             }
-        }))
-        .on("finish", function () {
-            res.status(200).json("Terbaik")
-        })
-}
+        } else {
+            res.status(200).json("File uploaded successfully");
+        }
+    }).on('error', function (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).json({ error: 'An error occurred while uploading the file' });
+    });
+
+};
 
 
 // delete an file
 export const deleteFile = async (req, res) => {
-    const {_id} = req.params;
+    const {id} = req.params;
     try {
-        await gfs.delete(new ObjectId(_id)); // Ensure _id is converted to an ObjectId
+        await gfs.delete(new ObjectId(id)); // Ensure _id is converted to an ObjectId
         res.status(200).json({ message: 'Successfully deleted the file' });
     } catch (error) {
         console.error('Error deleting file:', error); // Good for debugging
