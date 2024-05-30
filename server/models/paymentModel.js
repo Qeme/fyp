@@ -6,10 +6,23 @@ const paymentSchema = new Schema(
   {
     receiptid: {
       type: String,
-      required: false,
+      required: true
+    },
+    teamid: {
+      type: String,
+      required: false,  
+    },
+    tournamentid: {
+      type: String,
+      required: false,  
     },
     payerid: {
       type: String,
+      required: false,
+    },
+    payertype: {
+      type: String,
+      enum: ["competitor", "spectator"],
       required: false,
     },
     status: {

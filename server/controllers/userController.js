@@ -1,12 +1,13 @@
 // call the users collection
 import tournamentDB from '../models/tournamentModel.js'
 import userDB from '../models/userModel.js'
+import teamDB from '../models/teamModel.js'
+import paymentDB from '../models/paymentModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
 import { addFetchTournament } from '../functions/addFetchTournament.js'
 import { updateFetchToDatabase } from '../functions/updateFetchToDatabase.js'
 import { removeFetchTournament } from '../functions/removeFetchTournament.js'
-import teamDB from '../models/teamModel.js'
 
 // get all users
 export const getAllUsers = async (req,res)=>{
@@ -83,37 +84,50 @@ export const competeTournament = async (req,res) => {
 
     try{
         const tournament = await tournamentDB.findById(tourid)
-        const tour = addFetchTournament(tournament)
-        
         const user = await userDB.findById(id)
 
-        var NAME;
-        var ID;
+        if(tournament.meta.ticket.competitor === 0){
+            const tour = addFetchTournament(tournament)
 
-        if(tournament.meta.representative.repType === 'individual'){
-            NAME = user.name
-            ID = user.email
-        }
-        if(tournament.meta.representative.repType === 'team'){
-            try{
-                const team = await teamDB.findById(teamid)
-                NAME = team.name
-                ID = team._id
-            }catch(error){
-                return res.status(400).json({error: `The team is not exist ` })
+            var NAME;
+            var ID;
+
+            if(tournament.meta.representative.repType === 'individual'){
+                NAME = user.name
+                ID = user.email
             }
-        }
-        
-        // create the user as player for that particular tournament
-        tour.createPlayer(NAME, ID)
-
-        // update the tournament DB
-        const updatedTournament = await updateFetchToDatabase(tour.id, tour)
-
-        // after done, remove the tournament fetch data
-        removeFetchTournament()
+            if(tournament.meta.representative.repType === 'team'){
+                try{
+                    const team = await teamDB.findById(teamid)
+                    NAME = team.name
+                    ID = team._id
+                }catch(error){
+                    return res.status(400).json({error: `The team is not exist ` })
+                }
+            }
             
-        res.status(200).json(updatedTournament)
+            // create the user as player for that particular tournament
+            tour.createPlayer(NAME, ID)
+
+            // update the tournament DB
+            const updatedTournament = await updateFetchToDatabase(tour.id, tour)
+
+            // after done, remove the tournament fetch data
+            removeFetchTournament()
+                
+            res.status(200).json(updatedTournament)
+            }else{
+                // Check if the user has uploaded a receipt
+                const payment = await paymentDB.findOne({ payerid: id, tournamentid: tourid, status: "pending" });
+
+                if (!payment) {
+                    return res.status(400).json({ error: "Receipt is required for registration" });
+                }
+
+                // should send to the organizer to verifyPayment later ................
+                res.status(200).json("Your registration will be evaluated! Will update sooner")
+            }
+        
     }catch(error){
         res.status(400).json({error: `Deny Permission: Compete ` })
     }
@@ -125,24 +139,35 @@ export const spectateTournament = async (req,res) => {
     const {tourid} = req.params
     const {id} = req.body
 
-    const user = await userDB.findById(id)
-
     try {
         const tournament = await tournamentDB.findById(tourid);
+        const user = await userDB.findById(id)
     
-        // Check if the current user is a spectator
-        if (!tournament.meta.spectator_id.includes(user.email)) {
-            // Update the tournament by pushing the user email to spectator_id
-            const updatedTournament = await tournamentDB.findByIdAndUpdate(
-                tourid,
-                { $push: { 'meta.spectator_id': { id: user.email } } },
-                { new: true } // This option returns the updated document
-            );
-    
-            res.status(200).json(updatedTournament);
-        } else {
-            res.status(403).json({ error: "Deny Permission: Spectator ID already exist inside tournament" });
+        if(tournament.meta.ticket.viewer === 0){
+            // Check if the current user is a spectator
+            if (!tournament.meta.spectator_id.includes(user.email)) {
+                // Update the tournament by pushing the user email to spectator_id
+                const updatedTournament = await tournamentDB.findByIdAndUpdate(
+                    tourid,
+                    { $push: { 'meta.spectator_id': { id: user.email } } },
+                    { new: true } // This option returns the updated document
+                );
+        
+                res.status(200).json(updatedTournament);
+            } else {
+                res.status(403).json({ error: "Deny Permission: Spectator ID already exist inside tournament" });
+            }
+        }else{
+            // Check if the user has uploaded a receipt
+            const payment = await paymentDB.findOne({ payerid: id, tournamentid: tourid, status: "pending" });
+
+            if (!payment) {
+                return res.status(400).json({ error: "Receipt is required for registration" });
+            }
+
+            res.status(200).json("Your registration will be evaluated! Will update sooner")
         }
+        
     } catch (error) {
         res.status(400).json({ error: "Deny Permission: Spectate" });
     }

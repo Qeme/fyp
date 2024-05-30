@@ -16,6 +16,7 @@ import gameRoutes from './routes/gameRoutes.js'
 import venueRoutes from './routes/venueRoutes.js'
 import roundRoutes from './routes/roundRoutes.js'
 import fileRoutes from './routes/fileRoutes.js'
+import paymentRoutes from './routes/paymentRoutes.js'
 
 // Connect to the TournamentDB database
 mongoose.connect(process.env.MONGOURI);
@@ -47,6 +48,7 @@ app.use('/api/games',gameRoutes)
 app.use('/api/venues',venueRoutes)
 app.use('/api/rounds',roundRoutes)
 app.use('/api/files',ExpressFormidable(),fileRoutes)
+app.use('/api/payments',paymentRoutes)
 
 app.listen(process.env.PORT, () => 
     {console.log(`Server started on port ${process.env.PORT}`)

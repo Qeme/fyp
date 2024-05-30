@@ -48,7 +48,7 @@ export const getAllFiles = async (req, res) => {
 export const getAFile = async (req,res)=>{
     const {filename} = req.params
     try {
-        const file = await gfs.files.findOne({filename: filename});
+        const file = await gfs.find({ filename: filename }).toArray();
         
         // If no files found
         if (!file || file.length === 0) {
@@ -91,7 +91,7 @@ export const getAnImage = async (req, res) => {
 // post upload new file
 export const uploadFile = (req, res) => {
     const file = req.files.file;
-    const { userid, topic } = req.fields; 
+    const { userid, payertype, tournamentid, teamid, topic } = req.fields; 
     /* 
         userid -> the person that upload the file into database
         topic -> which file does it belongs to ['tour_header','tour_bg','tour_qr','receipt']
@@ -121,8 +121,11 @@ export const uploadFile = (req, res) => {
         if (topic === "receipt") {
             try {
                 const payment = await paymentDB.create({ 
-                    receiptid: fileId, // Use the new file ID here
+                    receiptid: fileId, 
                     payerid: userid,
+                    payertype: payertype,
+                    teamid: teamid,
+                    tournamentid: tournamentid,
                     status: "pending"
                 });
                 res.status(200).json(payment);
@@ -141,12 +144,18 @@ export const uploadFile = (req, res) => {
 };
 
 
+// edit the file........
+
+
 // delete an file
 export const deleteFile = async (req, res) => {
     const {id} = req.params;
     try {
         await gfs.delete(new ObjectId(id)); // Ensure _id is converted to an ObjectId
         res.status(200).json({ message: 'Successfully deleted the file' });
+
+        // if file is receipt, delete payment inside paymentDB
+
     } catch (error) {
         console.error('Error deleting file:', error); // Good for debugging
         res.status(500).json({ error: 'An error occurred while deleting the file' });
