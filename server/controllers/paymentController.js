@@ -11,8 +11,11 @@ import { removeFetchTournament } from '../functions/removeFetchTournament.js';
 
 // get all payments
 export const getAllPayments = async (req, res) => {
-    try{
-        const payments = await paymentDB.find({}).sort({createdAt: -1})
+    const {status} = req.body;
+    try {
+        // Determine the query based on the status request
+        const query = status ? { 'status': status } : {};
+        const payments = await paymentDB.find(query).sort({createdAt: -1})
         res.status(200).json(payments)
     }catch(error){
         res.status(400).json({error: `An error occurred while fetching all payments. Additional information: ${error.message}`})
