@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { useWorkoutContext } from '../hooks/useWorkoutContext'
+import { useTournamentContext } from '../hooks/useTournamentContext'
 
-const WorkoutForm = () =>{
+const TournamentForm = () =>{
     // take the dispatch components from the hooks
-    const { dispatch } = useWorkoutContext()
+    const { dispatch } = useTournamentContext()
     // set up the useState for 3 properties
-    const [title,setTitle] = useState('')
-    const [load,setLoad] = useState('')
-    const [reps,setReps] = useState('')
+    const [name,setName] = useState('')
+    // const [load,setLoad] = useState('')
+    // const [reps,setReps] = useState('')
+
     // add additional state for emptyFields
     const [emptyFields, setEmptyFields] = useState([])
 
@@ -22,16 +23,16 @@ const WorkoutForm = () =>{
         e.preventDefault()
 
         // take those 3 variables that already being altered in the form
-        const workout = {title, load, reps}
+        const tournament = {name}
 
         // fetch the data to db to create
-        const response = await fetch('http://localhost:3002/api/workouts',{
-            /*  1. we add method POST, cause it is to create workout
-                2. body must include the workout as json format...so we use JSON.stringify
+        const response = await fetch('http://localhost:3002/api/tournaments/',{
+            /*  1. we add method POST, cause it is to create tournament
+                2. body must include the tournament as json format...so we use JSON.stringify
                 3. header with content-type as JSON
             */
             method: 'POST',
-            body: JSON.stringify(workout),
+            body: JSON.stringify(tournament),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -48,40 +49,40 @@ const WorkoutForm = () =>{
         }
         if(response.ok){
             // after all done, reset all the variables including error 
-            setTitle('')
-            setLoad('')
-            setReps('')
+            setName('')
+            // setLoad('')
+            // setReps('')
             setError(null)
             // if no error, set back the EmptyFields to empty array
             setEmptyFields([])
 
             // checking 
-            console.log("New workout inserted ",json)
+            console.log("New tournament inserted ",json)
 
-            // now call the dispatch from useWorkoutContext hook to create new workout
-            // we put payload : json as value because json has body of workout: { title, load, reps }
-            dispatch({type: 'CREATE_WORKOUT', payload: json})
+            // now call the dispatch from useTournamentContext hook to create new tournament
+            // we put payload : json as value because json has body of tournament: { name }
+            dispatch({type: 'CREATE_TOURNAMENT', payload: json})
         }
 
     }
 
     return (
         <form className='create' onSubmit={handleSubmit}>
-            <h3>Add A New Workout</h3>
+            <h3>Add A New Tournament</h3>
 
-            <label>Title Workout: </label>
+            <label>Name Tournament: </label>
             {/* onChange where e is event, when it is changed from null to certain value, we take the e.target.value
-                value={title} it takes the value from title that currently null */}
+                value={name} it takes the value from name that currently null */}
             <input 
                 type="text"
-                onChange={(e)=> setTitle(e.target.value)}
-                value={title}
+                onChange={(e)=> setName(e.target.value)}
+                value={name}
                 // setup the input className into error if there is error
-                // if the emptyFields includes 'title' then we make the className into 'error' if not ''
-                className={emptyFields.includes('title') ? 'error' : ''}
+                // if the emptyFields includes 'name' then we make the className into 'error' if not ''
+                className={emptyFields.includes('name') ? 'error' : ''}
             />
 
-            <label>Load (in Kg): </label>
+            {/* <label>Load (in Kg): </label>
             <input 
                 type="number"
                 onChange={(e)=> setLoad(e.target.value)}
@@ -95,13 +96,13 @@ const WorkoutForm = () =>{
                 onChange={(e)=> setReps(e.target.value)}
                 value={reps}
                 className={emptyFields.includes('reps') ? 'error' : ''}
-            />
+            /> */}
 
             {/* as you can see, there is no need to put action="" inside form tag,
                 we just need to create onSubmit function 
-                For this case we create handleSubmit func where it will be triggered when Add Workout button is clicked*/}
+                For this case we create handleSubmit func where it will be triggered when Add Tournament button is clicked*/}
             
-            <button>Add Workout</button>
+            <button>Add Tournament</button>
 
             {/* to see the error down there
                 Description: {error && ...}: This is a JavaScript logical AND operator (&&). 
@@ -113,4 +114,4 @@ const WorkoutForm = () =>{
     )
 }
 
-export default WorkoutForm
+export default TournamentForm

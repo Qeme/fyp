@@ -2,14 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css'
-import { WorkoutContextProvider } from './context/WorkoutContext';
+import { TournamentContextProvider } from './context/TournamentContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <WorkoutContextProvider>
-      <App /> {/* So this App will become childer parameter for WorkoutContextProvider */}
-    </WorkoutContextProvider>
+      <TournamentContextProvider>
+        <App /> {/* So this App will become childer parameter for TournamentContextProvider */}
+      </TournamentContextProvider>
   </React.StrictMode>
 );
 

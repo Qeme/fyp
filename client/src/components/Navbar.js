@@ -10,6 +10,9 @@ const Navbar = () =>{
             <Link to='/'>
                 <h1>Workout Buddy</h1>
             </Link>
+            <Link to='/tournament'>
+                <h3>Tournament</h3>
+            </Link>
             </div>
         </header>
     )
