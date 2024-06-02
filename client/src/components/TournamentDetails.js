@@ -1,4 +1,5 @@
 // call the useTournamentContext hook
+import { Link } from "react-router-dom"
 import { useTournamentContext } from "../hooks/useTournamentContext"
 // call date-fns package
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
@@ -30,7 +31,11 @@ const TournamentDetails = ({tournament})=>{
     // just return to output the section
     return (
         <div className="tournament-details">
-        <h4>{tournament.name}</h4>
+        <h4>
+            <Link to={`/tournament/${tournament._id}`} className="tournament-link">
+                {tournament.name}
+            </Link>
+        </h4>
         <p><strong>Representative: </strong>{tournament.meta.representative.repType}</p>
         <p><strong>Best Of: </strong>{tournament.setting.scoring.bestOf}</p>
         {/* <p><strong>Load(Kg): </strong>{tournament.load}</p>

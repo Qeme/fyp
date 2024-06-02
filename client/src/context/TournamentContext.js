@@ -15,6 +15,10 @@ export const tournamentReducer = (state,action) => {
                 // just put back the value of tournaments to the tournaments list ... lol
                 tournaments: action.payload
             }
+        case 'SET_TOURNAMENT_DETAILS':
+            return {
+                tournament: action.payload
+            }
         case 'CREATE_TOURNAMENT':
             return {
                 // action.payload where we access the value that being passed using dispatch
@@ -36,7 +40,7 @@ export const tournamentReducer = (state,action) => {
 export const TournamentContextProvider = ({ children }) => {
 
     // apply useReducer here the useState, but we need to put funct as first argument to handle the state
-    const [state, dispatch] = useReducer(tournamentReducer, { tournaments : null } )
+    const [state, dispatch] = useReducer(tournamentReducer, { tournaments : null , tournament : null} )
 
     // this will cover the context section to the index.js <App /> tag
     return (

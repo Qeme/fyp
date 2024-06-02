@@ -100,3 +100,12 @@ div.error {
 input.error {
   border: 1px solid var(--error)
 }
+
+.tournament-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.tournament-link:hover {
+  color: darkgreen; 
+}

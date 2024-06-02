@@ -8,7 +8,7 @@ const Navbar = () =>{
             <div className="container">
             {/* now create a link to the Home */}
             <Link to='/'>
-                <h1>Workout Buddy</h1>
+                <h1>ESMS</h1>
             </Link>
             <Link to='/tournament'>
                 <h3>Tournament</h3>
