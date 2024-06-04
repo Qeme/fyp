@@ -1,20 +1,22 @@
-// import Link to do link components
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom"
 
 // create a Navbar function
-const Navbar = () =>{
+function Navbar() {
     return (
-        <header>
-            <div className="container">
+    <nav>
+        <ul>
             {/* now create a link to the Home */}
-            <Link to='/'>
-                <h1>ESMS</h1>
-            </Link>
-            <Link to='/tournament'>
-                <h3>Tournament</h3>
-            </Link>
-            </div>
-        </header>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/tournaments">Tournaments</Link></li>
+            <li><Link to="/users">Users</Link></li>
+            <li><Link to="/teams">Teams</Link></li>
+            <li><Link to="/games">Games</Link></li>
+            <li><Link to="/venues">Venues</Link></li>
+            <li><Link to="/payments">Payments</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+        </ul>
+    </nav>
     )
 }
 

@@ -47,6 +47,9 @@ export const createGame = async (req,res)=>{
     if(!name){
         emptyFields.push('name')
     }
+    if(!platform){
+        emptyFields.push('platform')
+    }
     if(emptyFields.length > 0){
         // if the emptyFields have value, we return universal error message means we avoid the system from continuing/proceeding
         return res.status(400).json({ error: 'Please fill in all the fields', emptyFields})

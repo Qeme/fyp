@@ -9,7 +9,7 @@ const gameSchema = new Schema({
     },
     platform:{
         type: String,
-        enum: ["online" , "physical" , "to be announced"],
+        enum: ["online" , "physical" , "hybrid" ,"to be announced"],
         required: false,
         default: "to be announced"
     }
