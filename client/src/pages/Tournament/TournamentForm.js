@@ -14,6 +14,8 @@ const TournamentForm = () => {
   const [name, setName] = useState("");
   const [game_id, setGameid] = useState("");
   const [venue_id, setVenueid] = useState("");
+  const [stageone, setStageone] = useState({});
+  const [stagetwo, setStagetwo] = useState({});
   // to handle error message, we might use useState as well
   const [error, setError] = useState(null);
   // add additional state for emptyFields
