@@ -10,8 +10,42 @@ import TeamRoutes from "./routes/TeamRoutes";
 import GameRoutes from "./routes/GameRoutes";
 import VenueRoutes from "./routes/VenueRoutes";
 import PaymentRoutes from "./routes/PaymentRoutes";
+import { useTournamentContext } from "./hooks/useTournamentContext";
+import { useGameContext } from "./hooks/useGameContext";
+import { useVenueContext } from "./hooks/useVenueContext";
+import { useEffect } from "react";
 
 function App() {
+  const { dispatch: dispatchTournament } = useTournamentContext();
+  const { dispatch: dispatchGame } = useGameContext();
+  const { dispatch: dispatchVenue } = useVenueContext();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch tournaments
+        const tournamentsResponse = await fetch("http://localhost:3002/api/tournaments");
+        const tournamentsData = await tournamentsResponse.json();
+        dispatchTournament({ type: "SET_TOURNAMENTS", payload: tournamentsData });
+
+        // Fetch games
+        const gamesResponse = await fetch("http://localhost:3002/api/games");
+        const gamesData = await gamesResponse.json();
+        dispatchGame({ type: "SET_GAMES", payload: gamesData });
+
+        // Fetch venues
+        const venuesResponse = await fetch("http://localhost:3002/api/venues");
+        const venuesData = await venuesResponse.json();
+        dispatchVenue({ type: "SET_VENUES", payload: venuesData });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // Call the fetch data function when component mounts
+    fetchData();
+  }, [dispatchTournament, dispatchGame, dispatchVenue]);
+
   return (
     <>
     {/* this nav have links to navigate through pages easily */}

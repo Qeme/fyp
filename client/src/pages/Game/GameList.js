@@ -71,7 +71,7 @@ const GameList = () => {
           iterate all the games that you have found where games ISNT NULL
           we also use () instead of {} because we return a template 
 
-          we use key (key={game._id}) for unique properties only & to optimize the rendering process and taking workout parameter as well
+          we use key (key={game._id}) for unique properties only & to optimize the rendering process and taking games parameter as well
         */}
         {games &&
           games.map((game) => (

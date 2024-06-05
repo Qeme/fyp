@@ -47,6 +47,9 @@ export const createVenue = async (req,res)=>{
     let emptyFields = []
 
     // so for each field that empty, push the field properties to the array
+    if(!block){
+        emptyFields.push('block')
+    }
     if(!place){
         emptyFields.push('place')
     }

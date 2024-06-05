@@ -12,7 +12,7 @@ export const GameContext = createContext();
   just remember useReducer is like a condition logic where repetetitive or complex one can be here
 
   state is the value that you are currently working on (games in this case)
-  action is {{type: 'SET_WORKOUTS', payload: workouts / book: { title: A , author: B }}} 
+  action is {{type: 'SET_GAMES', payload: games / book: { title: A , author: B }}} 
 */
 export const gameReducer = (state, action) => {
   switch (action.type) {
@@ -24,12 +24,12 @@ export const gameReducer = (state, action) => {
     case "CREATE_GAME":
       return {
         ...state,
-        games: [action.payload, ...state.games], // ...state.workouts is basically set up the current value (if not mentioned, it will completely replaced the original one)
+        games: [action.payload, ...state.games], // ...state.games is basically set up the current value (if not mentioned, it will completely replaced the original one)
       };
     case "DELETE_GAME":
       return {
         ...state,
-        games: state.games.filter((game) => game._id !== action.payload._id),  // the workouts value will be replaced by using filter->only take the workout that id is not same with the id that is being
+        games: state.games.filter((game) => game._id !== action.payload._id),  // the games value will be replaced by using filter->only take the games that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
