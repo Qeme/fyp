@@ -266,7 +266,7 @@ const tournamentSchema = new Schema({
     meta:{
         organizer_id:{
             type: String,
-            required: false
+            required: true
         },
         game_id:{
             type: String,

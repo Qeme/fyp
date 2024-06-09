@@ -1,5 +1,6 @@
 // call the express router
 import express from 'express'
+import requireAuth from '../middleware/requireAuth.js'
 const router = express.Router()
 
 // import the functions from the controller
@@ -10,6 +11,9 @@ import {
     deleteVenue,
     updateVenue
 } from '../controllers/venueController.js'
+
+// call for the requireAuth middleware where only admin can acess
+router.use(requireAuth)
 
 // put the router API for get('/api/venues/') all
 router.get('/',getAllVenues)

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useVenueContext } from "../../hooks/useVenueContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 // create a function to handle venue creation form
 const VenueForm = () => {
   // take the dispatch components from the hooks
   const { dispatch } = useVenueContext();
-  // set up the useState for 9 properties 
+  const { user } = useAuthContext;
+
+  // set up the useState for 9 properties
   const [block, setBlock] = useState("");
   const [floorLevel, setFloorLevel] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
@@ -23,8 +26,22 @@ const VenueForm = () => {
     // prevent from by default to refresh the page
     e.preventDefault();
 
+    // if no user, just return
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
     // take those 7 variables that already being altered in the form
-    const venue = { block, floorLevel, roomNumber, place, postcode, state, country };
+    const venue = {
+      block,
+      floorLevel,
+      roomNumber,
+      place,
+      postcode,
+      state,
+      country,
+    };
 
     /*  
       1. we add method POST, cause it is to create venues
@@ -34,7 +51,10 @@ const VenueForm = () => {
     const response = await fetch("http://localhost:3002/api/venues", {
       method: "POST",
       body: JSON.stringify(venue),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
     });
 
     /* 
@@ -93,7 +113,7 @@ const VenueForm = () => {
         onChange={(e) => setFloorLevel(e.target.value)}
         value={floorLevel}
       />
-      
+
       <label>Room Number: </label>
       <input
         type="number"

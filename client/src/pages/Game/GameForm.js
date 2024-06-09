@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useGameContext } from "../../hooks/useGameContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 // create a function to handle game creation form
 const GameForm = () => {
   // take the dispatch components from the hooks
   const { dispatch } = useGameContext();
+  const { user } = useAuthContext;
+
   // set up the useState for 4 properties
   const [name, setName] = useState("");
   const [platform, setPlatform] = useState("");
@@ -18,7 +21,13 @@ const GameForm = () => {
     // prevent from by default to refresh the page
     e.preventDefault();
 
-    // take those 3 variables that already being altered in the form
+    // if no user at all, we can return
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
+    // take those 2 variables that already being altered in the form
     const game = { name, platform };
 
     /*  
@@ -29,7 +38,10 @@ const GameForm = () => {
     const response = await fetch("http://localhost:3002/api/games", {
       method: "POST",
       body: JSON.stringify(game),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
     });
 
     /* 

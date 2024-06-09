@@ -10,11 +10,19 @@ import { org } from '../index.js';
 
 // get all tournaments
 export const getAllTournaments = async (req,res)=>{
+    // grab the req.user from the middleware 'requireAuth.js' before we pass it into find argument
+    const user = req.user
+    
     try{
         // use .find({}) empty parantheses to find all the data
         // then .sort({createdAt: -1}) by descending order means from newest to oldest
-        const tournaments = await tournamentDB.find({}).sort({createdAt: -1})
-        res.status(200).json(tournaments)
+        if(user.role === "admin"){
+            const tournaments = await tournamentDB.find({}).sort({createdAt: -1})
+            res.status(200).json(tournaments)
+        }else if( user.role === "user"){
+            const tournaments = await tournamentDB.find({ 'meta.organizer_id' : user._id }).sort({createdAt: -1})
+            res.status(200).json(tournaments)
+        }
     }catch(error){
         res.status(400).json({error: error.message})
     }
@@ -86,7 +94,9 @@ export const publishTournament = async (req,res)=>{
 
 // post new tournament
 export const createTournament = async (req,res)=>{
-    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, colored, sorting, scoring, organizer_id} = req.body;
+    const {name, game_id, venue_id, stageOne, stageTwo, register, running, checkin, notification, ticket, representative, colored, sorting, scoring} = req.body;
+    // grab the req.user from the middleware 'requireAuth.js' before we pass it into find argument
+    const user = req.user
 
     // check the field that is empty
     let emptyFields = []
@@ -109,7 +119,7 @@ export const createTournament = async (req,res)=>{
             sorting,
             scoring,
             meta: {
-                organizer_id,
+                organizer_id : user._id,
                 game_id,
                 venue_id,
                 register,

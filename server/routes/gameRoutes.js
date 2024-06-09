@@ -1,5 +1,6 @@
 // call the express router
 import express from 'express'
+import requireAuth from '../middleware/requireAuth.js'
 const router = express.Router()
 
 // import the functions from the controller
@@ -10,6 +11,9 @@ import {
     deleteGame,
     updateGame
 } from '../controllers/gameController.js'
+
+// call for the middleware for requireAuth 
+router.use(requireAuth)
 
 // put the router API for get('/api/games/') all
 router.get('/',getAllGames)

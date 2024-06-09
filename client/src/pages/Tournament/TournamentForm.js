@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useGameContext } from "../../hooks/useGameContext";
 import { useVenueContext } from "../../hooks/useVenueContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
@@ -9,6 +10,7 @@ const TournamentForm = () => {
   const { dispatch } = useTournamentContext();
   const { games } = useGameContext();
   const { venues } = useVenueContext();
+  const { user } = useAuthContext();
 
   // set up the useState for 9 properties
   const [name, setName] = useState("");
@@ -26,6 +28,12 @@ const TournamentForm = () => {
     // prevent from by default to refresh the page
     e.preventDefault();
 
+    // if no user at all, we can return
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
     // take those 7 variables that already being altered in the form
     const tournament = { name, game_id, venue_id };
 
@@ -37,7 +45,10 @@ const TournamentForm = () => {
     const response = await fetch("http://localhost:3002/api/tournaments", {
       method: "POST",
       body: JSON.stringify(tournament),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
     });
 
     /* 

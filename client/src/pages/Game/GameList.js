@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { useGameContext } from "../../hooks/useGameContext";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // create a function to handle Listing all games to user
 const GameList = () => {
   // grab the games and dispatch context data from GameContext by using custom hook
   const { games, dispatch } = useGameContext();
+  // grab the current user context data (it has _id and token information)
+  const { user } = useAuthContext();
 
   /* 
     useEffect hook where it uses () => {} because we just want to call it once, not infinitly
@@ -17,7 +20,11 @@ const GameList = () => {
     const fetchGame = async () => {
       try {
         // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/games");
+        const response = await fetch("http://localhost:3002/api/games", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         // take the user input and pass it as json
         const json = await response.json();
 
@@ -35,16 +42,27 @@ const GameList = () => {
       }
     };
 
-    fetchGame(); // call the fetchGame here
-
-  }, [dispatch]);
-
+    // call the function if the user exist only
+    if (user) {
+      fetchGame(); // call the fetchGame here
+    }
+    
+  }, [dispatch, user]); //include user as well, as it acts as depedencies
+ 
   // create a function to handle DELETE game by grabbing the id of the game as argument
   const handleClick = async (id) => {
+    // if no user at all, just disable the delete button functionality
+    if (!user) {
+      return;
+    }
+
     try {
       // create a variable to delete one particular id, make sure include method: DELETE
       const response = await fetch("http://localhost:3002/api/games/" + id, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       });
 
       // pass the json data from response either as single data (deleted) or error data
@@ -77,7 +95,9 @@ const GameList = () => {
           games.map((game) => (
             <div key={game._id}>
               {/* we use the Link routes to link to detail of one particular game, we did pass the GAME._ID as PARAMS */}
-              <h4><Link to={`/games/${game._id}`}>Name: {game.name}</Link></h4>
+              <h4>
+                <Link to={`/games/${game._id}`}>Name: {game.name}</Link>
+              </h4>
               <p>
                 <strong>Platform: </strong>
                 {game.platform}
@@ -89,11 +109,11 @@ const GameList = () => {
                 })}
               </p>
               <span
-              className="material-symbols-outlined"
-              onClick={() => handleClick(game._id)}
-            >
-              delete
-            </span>
+                className="material-symbols-outlined"
+                onClick={() => handleClick(game._id)}
+              >
+                delete
+              </span>
             </div>
           ))}
       </div>

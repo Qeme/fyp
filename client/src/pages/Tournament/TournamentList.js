@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // create a function to handle Listing all tournaments to user
 const TournamentList = () => {
   // grab the tournaments and dispatch context data from TournamentContext by using custom hook
   const { tournaments, dispatch } = useTournamentContext();
+  // grab the current user context data (it has _id and token information)
+  const { user } = useAuthContext();
 
   /* 
     useEffect hook where it uses () => {} because we just want to call it once, not infinitly
@@ -17,7 +20,11 @@ const TournamentList = () => {
     const fetchTournament = async () => {
       try {
         // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/tournaments");
+        const response = await fetch("http://localhost:3002/api/tournaments", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         // take the user input and pass it as json
         const json = await response.json();
 
@@ -35,17 +42,30 @@ const TournamentList = () => {
       }
     };
 
-    fetchTournament(); // call the fetchTournament here
-
-  }, [dispatch]);
+    // if user is there, call the function
+    if (user) {
+      fetchTournament();
+    }
+  }, [dispatch, user]);
 
   // create a function to handle DELETE tournament by grabbing the id of the tournament as argument
   const handleClick = async (id) => {
+    // if no user at all, just disable the delete button functionality
+    if (!user) {
+      return;
+    }
+
     try {
       // create a variable to delete one particular id, make sure include method: DELETE
-      const response = await fetch("http://localhost:3002/api/tournaments/" + id, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        "http://localhost:3002/api/tournaments/" + id,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
 
       // pass the json data from response either as single data (deleted) or error data
       const json = await response.json();
@@ -77,7 +97,11 @@ const TournamentList = () => {
           tournaments.map((tournament) => (
             <div key={tournament._id}>
               {/* we use the Link routes to link to detail of one particular tournament, we did pass the TOURNAMENT._ID as PARAMS */}
-              <h4><Link to={`/tournaments/${tournament._id}`}>Name: {tournament.name}</Link></h4>
+              <h4>
+                <Link to={`/tournaments/${tournament._id}`}>
+                  Name: {tournament.name}
+                </Link>
+              </h4>
               {/* <p>
                 <strong>Platform: </strong>
                 {tournament.platform}
@@ -89,11 +113,11 @@ const TournamentList = () => {
                 })}
               </p>
               <span
-              className="material-symbols-outlined"
-              onClick={() => handleClick(tournament._id)}
-            >
-              delete
-            </span>
+                className="material-symbols-outlined"
+                onClick={() => handleClick(tournament._id)}
+              >
+                delete
+              </span>
             </div>
           ))}
       </div>

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
@@ -12,62 +12,36 @@ import VenueRoutes from "./routes/VenueRoutes";
 import PaymentRoutes from "./routes/PaymentRoutes";
 import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
-import { useTournamentContext } from "./hooks/useTournamentContext";
-import { useGameContext } from "./hooks/useGameContext";
-import { useVenueContext } from "./hooks/useVenueContext";
-import { useEffect } from "react";
+import { useInitialFetch } from "./hooks/useInitialFetch";
+import { useAuthContext } from "./hooks/useAuthContext";
 
 function App() {
-  const { dispatch: dispatchTournament } = useTournamentContext();
-  const { dispatch: dispatchGame } = useGameContext();
-  const { dispatch: dispatchVenue } = useVenueContext();
+  // Call the custom hook to fetch initial data
+  useInitialFetch();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch tournaments
-        const tournamentsResponse = await fetch("http://localhost:3002/api/tournaments");
-        const tournamentsData = await tournamentsResponse.json();
-        dispatchTournament({ type: "SET_TOURNAMENTS", payload: tournamentsData });
-
-        // Fetch games
-        const gamesResponse = await fetch("http://localhost:3002/api/games");
-        const gamesData = await gamesResponse.json();
-        dispatchGame({ type: "SET_GAMES", payload: gamesData });
-
-        // Fetch venues
-        const venuesResponse = await fetch("http://localhost:3002/api/venues");
-        const venuesData = await venuesResponse.json();
-        dispatchVenue({ type: "SET_VENUES", payload: venuesData });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // Call the fetch data function when component mounts
-    fetchData();
-  }, [dispatchTournament, dispatchGame, dispatchVenue]);
+  // extract user context
+  const { user } = useAuthContext();
 
   return (
     <>
-    {/* this nav have links to navigate through pages easily */}
-    <Navbar />
+      {/* this nav have links to navigate through pages easily */}
+      <Navbar />
 
-    {/* this routes only be used for the URL...however we need Link to navigate through pages */}
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/tournaments/*" element={<TournamentRoutes />}/>
-      <Route path="/users/*" element={<UserRoutes />}/>
-      <Route path="/teams/*" element={<TeamRoutes />}/>
-      <Route path="/games/*" element={<GameRoutes />}/>
-      <Route path="/venues/*" element={<VenueRoutes />}/>
-      <Route path="/payments/*" element={<PaymentRoutes />}/>
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="*" element={<NotFound />}/>
-    </Routes>
+      {/* this routes only be used for the URL...however we need Link to navigate through pages */}
+      <Routes>
+        <Route path="/" element={user ? <Home /> : <Navigate to="/login"/>} />
+        <Route path="/tournaments/*" element={user ? <TournamentRoutes /> : <Navigate to="/login"/>} />
+        <Route path="/users/*" element={<UserRoutes />} />
+        <Route path="/teams/*" element={<TeamRoutes />} />
+        <Route path="/games/*" element={user ? <GameRoutes /> : <Navigate to="/login"/>} />
+        <Route path="/venues/*" element={user ? <VenueRoutes /> : <Navigate to="/login"/>} />
+        <Route path="/payments/*" element={<PaymentRoutes />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
+        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   );
 }

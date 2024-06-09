@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { useVenueContext } from "../../hooks/useVenueContext";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 // create a function to handle Listing all venues to user
 const VenueList = () => {
   // grab the venues and dispatch context data from VenueContext by using custom hook
   const { venues, dispatch } = useVenueContext();
+  // grab the current user context data (it has _id and token information)
+  const { user } = useAuthContext();
 
   /* 
     useEffect hook where it uses () => {} because we just want to call it once, not infinitly
@@ -17,7 +20,11 @@ const VenueList = () => {
     const fetchVenue = async () => {
       try {
         // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/venues");
+        const response = await fetch("http://localhost:3002/api/venues", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
         // take the user input and pass it as json
         const json = await response.json();
 
@@ -35,16 +42,26 @@ const VenueList = () => {
       }
     };
 
-    fetchVenue(); // call the fetchVenue here
-
-  }, [dispatch]);
+    // when there is user, then run
+    if (user) {
+      fetchVenue(); // call the fetchVenue here
+    }
+  }, [dispatch, user]);
 
   // create a function to handle DELETE venue by grabbing the id of the venue as argument
   const handleClick = async (id) => {
+    // if no user at all, just disable the delete button functionality
+    if (!user) {
+      return;
+    }
+
     try {
       // create a variable to delete one particular id, make sure include method: DELETE
       const response = await fetch("http://localhost:3002/api/venues/" + id, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       });
 
       // pass the json data from response either as single data (deleted) or error data
@@ -77,7 +94,11 @@ const VenueList = () => {
           venues.map((venue) => (
             <div key={venue._id}>
               {/* we use the Link routes to link to detail of one particular venue, we did pass the VENUE._ID as PARAMS */}
-              <h4><Link to={`/venues/${venue._id}`}>Venue: {venue.building}, {venue.place}</Link></h4>
+              <h4>
+                <Link to={`/venues/${venue._id}`}>
+                  Venue: {venue.building}, {venue.place}
+                </Link>
+              </h4>
               <p>
                 <strong>State: </strong>
                 {venue.state}
@@ -93,11 +114,11 @@ const VenueList = () => {
                 })}
               </p>
               <span
-              className="material-symbols-outlined"
-              onClick={() => handleClick(venue._id)}
-            >
-              delete
-            </span>
+                className="material-symbols-outlined"
+                onClick={() => handleClick(venue._id)}
+              >
+                delete
+              </span>
             </div>
           ))}
       </div>
