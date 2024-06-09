@@ -5,9 +5,23 @@ import teamDB from '../models/teamModel.js'
 import paymentDB from '../models/paymentModel.js'
 // to handle _id format (if u use it), need to import back mongoose
 import mongoose from 'mongoose'
+import jwt from 'jsonwebtoken'
 import { addFetchTournament } from '../functions/addFetchTournament.js'
 import { updateFetchToDatabase } from '../functions/updateFetchToDatabase.js'
 import { removeFetchTournament } from '../functions/removeFetchTournament.js'
+
+
+//create a function to create the token whenever the user login/signup
+// we take the _id as argument to be part of the token
+const createToken = (_id) => {
+    /* 
+      1. use jwt.sign , we pass _id as payload information (dont put any sensitive data)
+      2. second argument, the secret string that you only know
+      3. the expired time taken for the token to exist and deceased
+    */
+    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
+  };
+
 
 // get all users
 export const getAllUsers = async (req,res)=>{
@@ -254,4 +268,37 @@ export const updateUser = async (req,res)=>{
     }
 
     res.status(200).json(user)
+}
+
+// post signup
+export const signupUser = async (req,res)=>{
+    const { name, email, password } = req.body
+    try {
+        // now apply the userDB.signup here
+        const user = await userDB.signup(name, email, password);
+
+         // create a token by passing the user._id
+        const token = createToken(user._id) //maybe we need to pass the role as well
+    
+        // pass the user information for testing
+        res.status(200).json({email, token});
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+}
+
+// post login
+export const loginUser = async (req,res)=>{
+    const { email, password } = req.body
+
+    try{
+        const user = await userDB.login(email, password);
+
+        // create token
+        const token = createToken(user._id)
+
+        res.status(200).json({email, token});
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
 }

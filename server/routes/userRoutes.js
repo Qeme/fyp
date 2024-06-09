@@ -11,7 +11,9 @@ import {
     updateUser,
     competeTournament,
     spectateTournament,
-    monitorTournament
+    monitorTournament,
+    loginUser,
+    signupUser
 } from '../controllers/userController.js'
 
 // put the router API for get('/api/users/') all
@@ -22,6 +24,12 @@ router.get('/:id',getAUser)
 
 // put the router API for post('/api/users/')
 router.post('/', createUser)
+
+// put the router API for post('/api/users/signup') 
+router.post('/signup', signupUser)
+
+// put the router API for post('/api/users/login')
+router.post('/login', loginUser)
 
 // put the router API for post('/api/users/compete/:tourid')
 router.post('/compete/:tourid', competeTournament)
