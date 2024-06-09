@@ -10,6 +10,8 @@ import TeamRoutes from "./routes/TeamRoutes";
 import GameRoutes from "./routes/GameRoutes";
 import VenueRoutes from "./routes/VenueRoutes";
 import PaymentRoutes from "./routes/PaymentRoutes";
+import Signup from "./pages/User/Signup";
+import Login from "./pages/User/Login";
 import { useTournamentContext } from "./hooks/useTournamentContext";
 import { useGameContext } from "./hooks/useGameContext";
 import { useVenueContext } from "./hooks/useVenueContext";
@@ -62,6 +64,8 @@ function App() {
       <Route path="/payments/*" element={<PaymentRoutes />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
       <Route path="*" element={<NotFound />}/>
     </Routes>
     </>
