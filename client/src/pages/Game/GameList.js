@@ -46,9 +46,8 @@ const GameList = () => {
     if (user) {
       fetchGame(); // call the fetchGame here
     }
-    
   }, [dispatch, user]); //include user as well, as it acts as depedencies
- 
+
   // create a function to handle DELETE game by grabbing the id of the game as argument
   const handleClick = async (id) => {
     // if no user at all, just disable the delete button functionality
@@ -108,12 +107,17 @@ const GameList = () => {
                   addSuffix: true,
                 })}
               </p>
-              <span
-                className="material-symbols-outlined"
-                onClick={() => handleClick(game._id)}
-              >
-                delete
-              </span>
+              {/* remove the delete button for the user */}
+              {user && user.role === "admin" ? (
+                <span
+                  className="material-symbols-outlined"
+                  onClick={() => handleClick(game._id)}
+                >
+                  delete
+                </span>
+              ) : (
+                ""
+              )}
             </div>
           ))}
       </div>

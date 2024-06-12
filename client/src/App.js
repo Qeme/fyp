@@ -4,6 +4,7 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Navbar from "./components/Navbar";
+import NavbarUser from "./components/NavbarUser";
 import TournamentRoutes from "./routes/TournamentRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import TeamRoutes from "./routes/TeamRoutes";
@@ -25,7 +26,7 @@ function App() {
   return (
     <>
       {/* this nav have links to navigate through pages easily */}
-      <Navbar />
+      {user&&user.role==="admin" ? <Navbar /> : <NavbarUser />}
 
       {/* this routes only be used for the URL...however we need Link to navigate through pages */}
       <Routes>

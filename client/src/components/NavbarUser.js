@@ -31,15 +31,19 @@ function Navbar() {
           <Link to="/teams">Teams</Link>
         </li>
         <li>
-          <Link to="/games">Games</Link> /{" "}
-          <Link to="/games/create">Create</Link>
+          <Link to="/games">Games</Link>
         </li>
         <li>
-          <Link to="/venues">Venues</Link> /{" "}
-          <Link to="/venues/create">Create</Link>
+          <Link to="/venues">Venues</Link>
         </li>
         <li>
           <Link to="/payments">Payments</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact</Link>
         </li>
       </ul>
       {!user && (

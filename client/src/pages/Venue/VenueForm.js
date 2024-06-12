@@ -6,7 +6,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 const VenueForm = () => {
   // take the dispatch components from the hooks
   const { dispatch } = useVenueContext();
-  const { user } = useAuthContext;
+  const { user } = useAuthContext();
 
   // set up the useState for 9 properties
   const [block, setBlock] = useState("");

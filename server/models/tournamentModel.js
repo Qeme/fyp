@@ -240,7 +240,7 @@ const tournamentSchema = new Schema({
                 required: false,
                 default: 1
             },
-            draw: {
+            draw: { 
                 type: Number,
                 required: false,
                 default: 0.5

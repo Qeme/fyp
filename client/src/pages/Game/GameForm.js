@@ -6,7 +6,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 const GameForm = () => {
   // take the dispatch components from the hooks
   const { dispatch } = useGameContext();
-  const { user } = useAuthContext;
+  const { user } = useAuthContext();
 
   // set up the useState for 4 properties
   const [name, setName] = useState("");

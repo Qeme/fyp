@@ -113,12 +113,16 @@ const VenueList = () => {
                   addSuffix: true,
                 })}
               </p>
-              <span
-                className="material-symbols-outlined"
-                onClick={() => handleClick(venue._id)}
-              >
-                delete
-              </span>
+              {user && user.role === "admin" ? (
+                <span
+                  className="material-symbols-outlined"
+                  onClick={() => handleClick(venue._id)}
+                >
+                  delete
+                </span>
+              ) : (
+                ""
+              )}
             </div>
           ))}
       </div>
