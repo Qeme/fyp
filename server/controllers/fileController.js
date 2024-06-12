@@ -91,10 +91,11 @@ export const getAnImage = async (req, res) => {
 // post upload new file
 export const uploadFile = (req, res) => {
     const file = req.files.file;
-    const { userid, payertype, tournamentid, teamid, topic } = req.fields; 
+    const user = req.user
+    const { payertype, tournamentid, teamid, topic } = req.fields; 
     /* 
         userid -> the person that upload the file into database
-        topic -> which file does it belongs to ['tour_header','tour_bg','tour_qr','receipt']
+        topic -> which file does it belongs to ['tour_banner','tour_bg','tour_qr','receipt']
     */
 
     const filePath = (new Date().getTime()) + "-" + file.name;
@@ -106,7 +107,8 @@ export const uploadFile = (req, res) => {
             name: file.name,
             size: file.size,
             type: file.type,
-            userid: userid, 
+            uploader: user._id, 
+            tournamentid: tournamentid,
             topic: topic 
         }
     });
@@ -122,7 +124,7 @@ export const uploadFile = (req, res) => {
             try {
                 const payment = await paymentDB.create({ 
                     receiptid: fileId, 
-                    payerid: userid,
+                    payerid: user._id,
                     payertype: payertype,
                     teamid: teamid,
                     tournamentid: tournamentid,

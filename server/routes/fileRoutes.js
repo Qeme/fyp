@@ -5,6 +5,7 @@ import path from 'path'
 import multer from 'multer';
 import { GridFsStorage } from 'multer-gridfs-storage'
 import dotenv from 'dotenv';
+import requireAuth from '../middleware/requireAuth.js';
 dotenv.config();
 
 const router = express.Router()
@@ -38,6 +39,8 @@ const storage = new GridFsStorage({
     }
   });
 const upload = multer({ storage });
+
+router.use(requireAuth)
 
 // put the router API for get('/api/files/') all
 router.get('/',getAllFiles)

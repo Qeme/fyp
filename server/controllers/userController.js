@@ -281,7 +281,7 @@ export const signupUser = async (req,res)=>{
         const token = createToken(user._id) //maybe we need to pass the role as well
     
         // pass the user information for testing
-        res.status(200).json({email, role: user.role, token}); //pass the role into the json for frontend
+        res.status(200).json({email, _id: user._id, role: user.role, token}); //pass the role into the json for frontend
       } catch (error) {
         res.status(400).json({ error: error.message });
       }
@@ -297,7 +297,7 @@ export const loginUser = async (req,res)=>{
         // create token
         const token = createToken(user._id)
 
-        res.status(200).json({email, role: user.role, token}); //pass the role into the json for frontend
+        res.status(200).json({email, _id: user._id, role: user.role, token}); //pass the role into the json for frontend
     }catch(error){
         res.status(400).json({error: error.message})
     }

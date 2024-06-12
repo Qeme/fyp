@@ -21,8 +21,7 @@ function Navbar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/tournaments">Tournaments</Link> /{" "}
-          <Link to="/tournaments/create">Create</Link>
+          <Link to="/tournaments/type">Tournaments</Link>
         </li>
         <li>
           <Link to="/users">Users</Link>

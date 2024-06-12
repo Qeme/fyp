@@ -3,9 +3,12 @@ import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useGameContext } from "../../hooks/useGameContext";
 import { useVenueContext } from "../../hooks/useVenueContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
+  const navigate = useNavigate();
+
   // take the dispatch components from the hooks
   const { dispatch } = useTournamentContext();
   const { games } = useGameContext();
@@ -144,6 +147,8 @@ const TournamentForm = () => {
         we put payload : json as value because json has body of tournament: { _id, name, venue_id, game_id, createdAt, updatedAt }
       */
       dispatch({ type: "CREATE_TOURNAMENT", payload: json });
+
+      navigate(`/tournaments/upload-image/${json._id}`)
     }
   };
 

@@ -26,16 +26,16 @@ function App() {
   return (
     <>
       {/* this nav have links to navigate through pages easily */}
-      {user&&user.role==="admin" ? <Navbar /> : <NavbarUser />}
+      {user && user.role === "admin" ? <Navbar /> : <NavbarUser />}
 
       {/* this routes only be used for the URL...however we need Link to navigate through pages */}
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Navigate to="/login"/>} />
-        <Route path="/tournaments/*" element={user ? <TournamentRoutes /> : <Navigate to="/login"/>} />
+        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+        <Route path="/tournaments/*" element={<TournamentRoutes />} />
         <Route path="/users/*" element={<UserRoutes />} />
         <Route path="/teams/*" element={<TeamRoutes />} />
-        <Route path="/games/*" element={user ? <GameRoutes /> : <Navigate to="/login"/>} />
-        <Route path="/venues/*" element={user ? <VenueRoutes /> : <Navigate to="/login"/>} />
+        <Route path="/games/*" element={user ? <GameRoutes /> : <Navigate to="/login" />} />
+        <Route path="/venues/*" element={user ? <VenueRoutes /> : <Navigate to="/login" />} />
         <Route path="/payments/*" element={<PaymentRoutes />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
