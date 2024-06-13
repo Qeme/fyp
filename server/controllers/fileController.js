@@ -31,9 +31,9 @@ export const getAllFiles = async (req, res) => {
         const filesInfo = files.map(file => ({
             filename: file.filename,
             fileId: file._id,
-            contentType: file.contentType,
             size: file.length,
-            uploadDate: file.uploadDate
+            uploadDate: file.uploadDate,
+            metadata: file.metadata
         }));
 
         res.json(filesInfo); // Send the file information as JSON

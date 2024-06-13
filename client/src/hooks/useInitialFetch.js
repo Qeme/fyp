@@ -3,11 +3,13 @@ import { useGameContext } from "./useGameContext";
 import { useTournamentContext } from "./useTournamentContext";
 import { useVenueContext } from "./useVenueContext";
 import { useAuthContext } from "./useAuthContext";
+import { useFileContext } from "./useFileContext";
 
 export const useInitialFetch = () => {
   const { dispatch: dispatchTournament } = useTournamentContext();
   const { dispatch: dispatchGame } = useGameContext();
   const { dispatch: dispatchVenue } = useVenueContext();
+  const { dispatch: dispatchFile } = useFileContext();
   const { user } = useAuthContext();
 
   useEffect(() => {
@@ -45,6 +47,15 @@ export const useInitialFetch = () => {
         });
         const venuesData = await venuesResponse.json();
         dispatchVenue({ type: "SET_VENUES", payload: venuesData });
+
+        // Fetch files
+        const filesResponse = await fetch("http://localhost:3002/api/files", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const filesData = await filesResponse.json();
+        dispatchFile({ type: "SET_FILES", payload: filesData });
       } catch (error) {
         console.error("Error fetching data:", error);
       }

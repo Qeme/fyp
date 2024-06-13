@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useFileContext } from "../hooks/useFileContext";
 
-function UploadImage({ tournamentid , topic }) {
-
+function UploadImage({ tournamentid, topic }) {
+  // call for file context
+  const { dispatch } = useFileContext();
   // have a state to handle that particular file
   const [file, setFile] = useState(null);
   const { user } = useAuthContext();
@@ -17,6 +19,16 @@ function UploadImage({ tournamentid , topic }) {
   };
 
   const fileUploadHandler = () => {
+    if (!user) {
+      console.log("Non Authorized User Detected");
+      return;
+    }
+
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
+
     // construct a formData which you need to pass it to axios, make sure the properties file is equal to backend file
     const fd = new FormData();
     fd.append("file", file, file.name);
@@ -40,9 +52,16 @@ function UploadImage({ tournamentid , topic }) {
 
     // use Axios to handle that file upload
     // first argument is the URL API, pass the fd data, third argument would be the progress of uploading the file
-    axios.post("http://localhost:3002/api/files", fd, config).then((res) => {
-      console.log(res);
-    });
+    axios
+      .post("http://localhost:3002/api/files", fd, config)
+      .then((res) => {
+        console.log(res);
+        dispatch({ type: "UPLOAD_FILE", payload: res.data });
+        setFile(null);
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+      });
   };
 
   return (

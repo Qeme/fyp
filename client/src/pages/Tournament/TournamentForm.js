@@ -148,7 +148,7 @@ const TournamentForm = () => {
       */
       dispatch({ type: "CREATE_TOURNAMENT", payload: json });
 
-      navigate(`/tournaments/upload-image/${json._id}`)
+      navigate(`/tournaments/upload-image/${json._id}`);
     }
   };
 
@@ -221,6 +221,10 @@ const TournamentForm = () => {
         <strong>Basic Configuration: </strong>
       </h2>
 
+      <h3>
+        <strong>Order & Sorting: </strong>
+      </h3>
+
       <label>Players Order: </label>
       <select onChange={(e) => setColored(e.target.value)} value={colored}>
         <option value="">--Choose--</option>
@@ -274,6 +278,10 @@ const TournamentForm = () => {
         onChange={(e) => setScoring({ ...scoring, bye: e.target.value })}
         value={scoring.bye}
       />
+
+      <h3>
+        <strong>3rd Placement: </strong>
+      </h3>
 
       <label>Tiebreaker Format: </label>
       <select

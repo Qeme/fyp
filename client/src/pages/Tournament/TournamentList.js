@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -10,43 +9,6 @@ const TournamentList = () => {
   const { tournaments, dispatch } = useTournamentContext();
   // grab the current user context data (it has _id and token information)
   const { user } = useAuthContext();
-
-  /* 
-    useEffect hook where it uses () => {} because we just want to call it once, not infinitly
-    it has [] to be passed, so if [dispatch] changed, means it will rerun the useEffect hook
-  */
-  useEffect(() => {
-    // create a function to fetch ALL the tournaments
-    const fetchTournament = async () => {
-      try {
-        // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/tournaments", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        // take the user input and pass it as json
-        const json = await response.json();
-
-        // check if response is ok or not
-        if (response.ok) {
-          // as we grab all the json tournaments data, we now SET the TOURNAMENTS by using the dispatch (from null to tournaments: tournaments)
-          dispatch({ type: "SET_TOURNAMENTS", payload: json });
-        } else {
-          // if no response, send error to console
-          console.error("Error fetching tournaments:", response.statusText);
-        }
-      } catch (error) {
-        // this error indicates the fetching process not working at all, has backend problem
-        console.error("Error fetching tournaments:", error);
-      }
-    };
-
-    // if user is there, call the function
-    if (user) {
-      fetchTournament();
-    }
-  }, [dispatch, user]);
 
   // create a function to handle DELETE tournament by grabbing the id of the tournament as argument
   const handleClick = async (id) => {
@@ -102,10 +64,6 @@ const TournamentList = () => {
                   Name: {tournament.name}
                 </Link>
               </h4>
-              {/* <p>
-                <strong>Platform: </strong>
-                {tournament.platform}
-              </p> */}
               {/* instead of just showing the string of the date, u can use the date-fns to format them */}
               <p>
                 {formatDistanceToNow(new Date(tournament.createdAt), {
