@@ -8,6 +8,7 @@ import { VenueContextProvider } from "./context/VenueContext";
 import { TournamentContextProvider } from "./context/TournamentContext";
 import { AuthContextProvider } from "./context/AuthContext";
 import { FileContextProvider } from "./context/FileContext";
+import { UserContextProvider } from "./context/UserContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -16,11 +17,13 @@ root.render(
       <AuthContextProvider>
         <GameContextProvider>
           <VenueContextProvider>
-            <FileContextProvider>
-              <TournamentContextProvider>
-                <App />
-              </TournamentContextProvider>
-            </FileContextProvider>
+            <UserContextProvider>
+              <FileContextProvider>
+                <TournamentContextProvider>
+                  <App />
+                </TournamentContextProvider>
+              </FileContextProvider>
+            </UserContextProvider>
           </VenueContextProvider>
         </GameContextProvider>
       </AuthContextProvider>

@@ -98,7 +98,7 @@ export const verifyPayment = async (req, res) => {
             if(payment.payertype === 'competitor'){
                 if (tournament.meta.representative.repType === 'individual') {
                     NAME = user.name;
-                    ID = user.email;
+                    ID = user._id;
                 } else if (tournament.meta.representative.repType === 'team') {
                     try {
                         const team = await teamDB.findById(payment.teamid);

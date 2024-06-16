@@ -34,7 +34,7 @@ function App() {
         <Route path="/tournaments/*" element={<TournamentRoutes />} />
         <Route path="/users/*" element={<UserRoutes />} />
         <Route path="/teams/*" element={<TeamRoutes />} />
-        <Route path="/games/*" element={user ? <GameRoutes /> : <Navigate to="/login" />} />
+        <Route path="/games/*" element={<GameRoutes />} />
         <Route path="/venues/*" element={user ? <VenueRoutes /> : <Navigate to="/login" />} />
         <Route path="/payments/*" element={<PaymentRoutes />} />
         <Route path="/about" element={<About />} />

@@ -187,7 +187,7 @@ export const assignTournament = async (req, res) => {
     for (const referee of referees) {
       await tournamentDB.updateOne(
         { _id: id },
-        { $push: { "meta.referee_id": { id: referee.email } } }
+        { $push: { "meta.referee_id": { id: referee._id } } }
       );
     }
 
@@ -195,7 +195,7 @@ export const assignTournament = async (req, res) => {
 
     // create player to the tour
     players.map((player) => {
-      tour.createPlayer(player.name, player.email);
+      tour.createPlayer(player.name, player._id);
     });
 
     // update the tournament DB

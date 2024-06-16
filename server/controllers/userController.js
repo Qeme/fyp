@@ -28,7 +28,7 @@ export const getAllUsers = async (req,res)=>{
     try{
         // use .find({}) empty parantheses to find all the data
         // then .sort({createdAt: -1}) by descending order means from newest to oldest
-        const users = await userDB.find({}).sort({createdAt: -1})
+        const users = await userDB.find({}).select("_id name email").sort({createdAt: -1})
         res.status(200).json(users)
     }catch(error){
         res.status(400).json({error: error.message})
@@ -108,7 +108,7 @@ export const competeTournament = async (req,res) => {
 
             if(tournament.meta.representative.repType === 'individual'){
                 NAME = user.name
-                ID = user.email
+                ID = user._id
             }
             if(tournament.meta.representative.repType === 'team'){
                 try{
@@ -159,11 +159,11 @@ export const spectateTournament = async (req,res) => {
     
         if(tournament.meta.ticket.viewer === 0){
             // Check if the current user is a spectator
-            if (!tournament.meta.spectator_id.includes(user.email)) {
-                // Update the tournament by pushing the user email to spectator_id
+            if (!tournament.meta.spectator_id.includes(user._id)) {
+                // Update the tournament by pushing the user id to spectator_id
                 const updatedTournament = await tournamentDB.findByIdAndUpdate(
                     tourid,
-                    { $push: { 'meta.spectator_id': { id: user.email } } },
+                    { $push: { 'meta.spectator_id': { id: user._id } } },
                     { new: true } // This option returns the updated document
                 );
         
@@ -199,11 +199,11 @@ export const monitorTournament = async (req,res) => {
         const tournament = await tournamentDB.findById(tourid);
     
         // Check if the current user is a referee
-        if (!tournament.meta.referee_id.includes(user.email)) {
-            // Update the tournament by pushing the user email to referee_id
+        if (!tournament.meta.referee_id.includes(user._id)) {
+            // Update the tournament by pushing the user id to referee_id
             const updatedTournament = await tournamentDB.findByIdAndUpdate(
                 tourid,
-                { $push: { 'meta.referee_id': { id: user.email } } },
+                { $push: { 'meta.referee_id': { id: user._id } } },
                 { new: true } // This option returns the updated document
             );
     

@@ -1,7 +1,10 @@
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useUserContext } from "../../hooks/useUserContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { useGameContext } from "../../hooks/useGameContext";
+import { useVenueContext } from "../../hooks/useVenueContext";
 
 // create a function to handle Listing all tournaments to user
 const TournamentList = () => {
@@ -9,6 +12,9 @@ const TournamentList = () => {
   const { tournaments, dispatch } = useTournamentContext();
   // grab the current user context data (it has _id and token information)
   const { user } = useAuthContext();
+  const { users } = useUserContext();
+  const { games } = useGameContext();
+  const { venues } = useVenueContext();
 
   // create a function to handle DELETE tournament by grabbing the id of the tournament as argument
   const handleClick = async (id) => {
@@ -47,36 +53,53 @@ const TournamentList = () => {
 
   return (
     <>
-      <div>
-        <h3>Tournaments List:</h3>
-        {/* 
-          iterate all the tournaments that you have found where tournaments ISNT NULL
-          we also use () instead of {} because we return a template 
-
-          we use key (key={tournament._id}) for unique properties only & to optimize the rendering process and taking tournaments parameter as well
-        */}
+      <div className="tournament-details">
+        <h2>Tournaments List:</h2>
         {tournaments &&
           tournaments.map((tournament) => (
-            <div key={tournament._id}>
-              {/* we use the Link routes to link to detail of one particular tournament, we did pass the TOURNAMENT._ID as PARAMS */}
-              <h4>
-                <Link to={`/tournaments/${tournament._id}`}>
-                  Name: {tournament.name}
-                </Link>
-              </h4>
-              {/* instead of just showing the string of the date, u can use the date-fns to format them */}
-              <p>
-                {formatDistanceToNow(new Date(tournament.createdAt), {
-                  addSuffix: true,
-                })}
-              </p>
-              <span
-                className="material-symbols-outlined"
-                onClick={() => handleClick(tournament._id)}
-              >
-                delete
-              </span>
-            </div>
+            <Link
+              to={`/tournaments/${tournament._id}`}
+              key={tournament._id}
+              className="tournament-link"
+            >
+              <div className="tournament-item">
+                <h3>{tournament.name}</h3>
+                <div className="details">
+                  <p>
+                    Game:{" "}
+                    {games.find((game) => game._id === tournament.meta.game_id)
+                      ?.name || "Game not found"}
+                  </p>
+                  <p>
+                    Venue:{" "}
+                    {venues.find(
+                      (venue) => venue._id === tournament.meta.venue_id
+                    )?.building || "Venue not found"}
+                  </p>
+                  <p>
+                    Organizer:{" "}
+                    {users.find(
+                      (user) => user._id === tournament.meta.organizer_id
+                    )?.name || "Organizer not found"}
+                  </p>
+                </div>
+                <p>
+                  {formatDistanceToNow(new Date(tournament.createdAt), {
+                    addSuffix: true,
+                  })}
+                </p>
+
+                <span
+                  className="material-symbols-outlined delete-icon"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleClick(tournament._id);
+                  }}
+                >
+                  delete
+                </span>
+              </div>
+            </Link>
           ))}
       </div>
     </>

@@ -32,39 +32,57 @@ header a {
   margin: 0 auto;
 }
 
-/* homepage */
-.home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
-}
+/* tournament */
 .tournament-details {
-  background: #fff;
-  border-radius: 4px;
-  margin: 20px auto;
-  padding: 20px;
+  margin: 20px;
+}
+.tournament-link {
+  text-decoration: none;
+  color: inherit;
+}
+.tournament-item {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
 }
-.tournament-details h4 {
-  margin: 0 0 10px 0;
-  font-size: 1.2em;
-  color: var(--primary);
+
+.details {
+  padding: 10px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
-.tournament-details p {
-  margin: 0;
-  font-size: 0.9em;
+
+.details p {
+  margin: 5px 0;
+  font-size: 14px;
   color: #555;
 }
-.tournament-details span {
+
+.tournament-item:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.tournament-item h3 {
+  margin: 0 0 10px;
+}
+.tournament-item p {
+  margin: 5px 0;
+}
+.delete-icon {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   cursor: pointer;
-  background: #f1f1f1;
-  padding: 6px;
-  border-radius: 50%;
-  color: #333;
+}
+
+.delete-icon:hover {
+  color: red;
 }
 
 /* new tournament form */
@@ -101,16 +119,97 @@ input.error {
   border: 1px solid var(--error)
 }
 
-.tournament-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.tournament-link:hover {
-  color: darkgreen; 
-}
-
 /* navbar */
+.logo h1 {
+  margin: 0;
+  color: yellowgreen;
+}
+
+.navbar {
+  background-color: #333;
+  color: white;
+  padding: 10px 0;
+}
+
+.nav-links,
+.auth-links,
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+}
+
+.nav-links li {
+  margin: 0 10px;
+}
+
+.nav-links a,
+.auth-links a,
+.user-info span {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  transition: background-color 0.3s;
+}
+
+.nav-links a:hover,
+.auth-links a:hover,
+.user-info span:hover {
+  background-color: #575757;
+  border-radius: 5px;
+}
+.user-info button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  border: none;
+  background-color: #575757;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.user-info button:hover {
+  background-color: #444;
+}
+
+/* Dropdown Styles */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #333;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: white;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #575757;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 nav {
   display: flex;
   align-items: center;
@@ -129,6 +228,7 @@ nav button {
   font-size: 1em;
   margin-left: 10px;
 }
+
 /* auth forms */
 form.signup, form.login {
   max-width: 400px;
@@ -166,4 +266,11 @@ form.signup, form.login {
   margin: 0;
   font-size: 18px;
   font-weight: bold;
+}
+
+/* game */
+.game-home {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 100px;
 }
