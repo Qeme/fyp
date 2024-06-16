@@ -1,280 +1,76 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
+  @tailwind components;
+  @tailwind utilities;
 
-/* google font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+  @layer base {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222.2 84% 4.9%;
 
-/* layout */
-:root {
-  --primary: #1aac83;
-  --error: #e7195a;
-}
-body {
-  background: #f1f1f1;
-  margin: 0;
-  font-family: "Poppins";
-}
-header {
-  background: #fff;
-}
-header .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-header a {
-  color: #333;
-  text-decoration: none;
-}
-.pages{
-  max-width: 1400px;
-  padding: 20px;
-  margin: 0 auto;
-}
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
 
-/* tournament */
-.tournament-details {
-  margin: 20px;
-}
-.tournament-link {
-  text-decoration: none;
-  color: inherit;
-}
-.tournament-item {
-  border: 1px solid #ccc;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
 
-.details {
-  padding: 10px;
-  background-color: #f4f4f4;
-  border-radius: 5px;
-  margin-bottom: 5px;
-}
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
 
-.details p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #555;
-}
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
 
-.tournament-item:hover {
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.tournament-item h3 {
-  margin: 0 0 10px;
-}
-.tournament-item p {
-  margin: 5px 0;
-}
-.delete-icon {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  cursor: pointer;
-}
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
 
-.delete-icon:hover {
-  color: red;
-}
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
 
-/* new tournament form */
-label, input {
-  display: block;
-}
-input {
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-form button {
-  background: var(--primary);
-  border: 0;
-  color: #fff;
-  padding: 10px;
-  font-family: "Poppins";
-  border-radius: 4px;
-  cursor: pointer;
-}
-div.error {
-  padding: 10px;
-  background: #ffefef;
-  border: 1px solid var(--error);
-  color: var(--error);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-input.error {
-  border: 1px solid var(--error)
-}
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 210 40% 98%;
 
-/* navbar */
-.logo h1 {
-  margin: 0;
-  color: yellowgreen;
-}
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --ring: 222.2 84% 4.9%;
 
-.navbar {
-  background-color: #333;
-  color: white;
-  padding: 10px 0;
-}
+      --radius: 0.5rem;
+    }
 
-.nav-links,
-.auth-links,
-.user-info {
-  display: flex;
-  align-items: center;
-}
+    .dark {
+      --background: 222.2 84% 4.9%;
+      --foreground: 210 40% 98%;
 
-.nav-links {
-  list-style: none;
-  padding: 0;
-}
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
 
-.nav-links li {
-  margin: 0 10px;
-}
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
 
-.nav-links a,
-.auth-links a,
-.user-info span {
-  color: white;
-  text-decoration: none;
-  padding: 8px 12px;
-  transition: background-color 0.3s;
-}
+      --primary: 210 40% 98%;
+      --primary-foreground: 222.2 47.4% 11.2%;
 
-.nav-links a:hover,
-.auth-links a:hover,
-.user-info span:hover {
-  background-color: #575757;
-  border-radius: 5px;
-}
-.user-info button {
-  margin-left: 10px;
-  padding: 8px 12px;
-  border: none;
-  background-color: #575757;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
+      --secondary: 217.2 32.6% 17.5%;
+      --secondary-foreground: 210 40% 98%;
 
-.user-info button:hover {
-  background-color: #444;
-}
+      --muted: 217.2 32.6% 17.5%;
+      --muted-foreground: 215 20.2% 65.1%;
 
-/* Dropdown Styles */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
+      --accent: 217.2 32.6% 17.5%;
+      --accent-foreground: 210 40% 98%;
 
-.dropbtn {
-  cursor: pointer;
-}
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 210 40% 98%;
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #333;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
+      --border: 217.2 32.6% 17.5%;
+      --input: 217.2 32.6% 17.5%;
+      --ring: 212.7 26.8% 83.9%;
+    }
+  }
 
-.dropdown-content a {
-  color: white;
-  padding: 8px 12px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #575757;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-nav {
-  display: flex;
-  align-items: center;
-}
-nav a {
-  margin-left: 10px;
-}
-nav button {
-  background: #fff;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-family: "Poppins";
-  cursor: pointer;
-  font-size: 1em;
-  margin-left: 10px;
-}
-
-/* auth forms */
-form.signup, form.login {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #fff;
-  border-radius: 4px;
-}
-
-.tournament-type-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 20px;
-  gap: 20px;
-}
-
-.tournament-type-box {
-  flex: 1;
-  max-width: 300px; /* Adjust as needed */
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  transition: transform 0.2s;
-}
-
-.tournament-type-box:hover {
-  transform: scale(1.05);
-}
-
-.tournament-type-box p {
-  margin: 0;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-/* game */
-.game-home {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 100px;
-}
+  @layer base {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+  }

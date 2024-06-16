@@ -1,4 +1,5 @@
 import React from 'react'
+import { Button } from "src/components/ui/button"
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
             As a user, you can join tournaments either as a player or a spectator. 
             ESMS also provides a seamless experience to track the bracket progress, having social interaction as well as streaming section to watch the game at your home.
         </p>
+        <Button>Hi</Button>
     </div>
   )
 }
