@@ -20,16 +20,23 @@ export const gameReducer = (state, action) => {
       return {
         ...state, //please do not forget to spread the state
         games: action.payload, //this part basically SETTING UP the games value
-      }; 
+      };
     case "CREATE_GAME":
       return {
         ...state,
         games: [action.payload, ...state.games], // ...state.games is basically set up the current value (if not mentioned, it will completely replaced the original one)
       };
+    case "UPDATE_GAME":
+      return {
+        ...state,
+        games: state.games.map((game) =>
+          game._id === action.payload._id ? action.payload : game
+        ),
+      };
     case "DELETE_GAME":
       return {
         ...state,
-        games: state.games.filter((game) => game._id !== action.payload._id),  // the games value will be replaced by using filter->only take the games that id is not same with the id that is being
+        games: state.games.filter((game) => game._id !== action.payload._id), // the games value will be replaced by using filter->only take the games that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
@@ -41,7 +48,6 @@ export const gameReducer = (state, action) => {
   export it as well, take the children argument and insert it into <Provider> tag
 */
 export const GameContextProvider = ({ children }) => {
-
   // apply useReducer(the function, the initial value for the state)
   const [state, dispatch] = useReducer(gameReducer, { games: [] });
 
@@ -49,7 +55,7 @@ export const GameContextProvider = ({ children }) => {
   return (
     // we then put value argument -> state: the current value here -> dispatch: the funct that will help sending the {type,payload}
     <GameContext.Provider value={{ ...state, dispatch }}>
-      {children} 
+      {children}
     </GameContext.Provider>
   );
 };

@@ -1,10 +1,15 @@
 import { useEffect } from "react";
 import { useGameContext } from "../../hooks/useGameContext";
-import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { Card, CardContent, CardFooter, CardHeader } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
+import { GameEditTrigger } from "./GameEditTrigger";
 
 // create a function to handle Listing all games to user
 const GameList = () => {
@@ -48,7 +53,7 @@ const GameList = () => {
     if (user) {
       fetchGame(); // call the fetchGame here
     }
-  }, [dispatch, user]); //include user as well, as it acts as depedencies
+  }, [dispatch, user, games]); //include user and games as well, as it acts as depedencies
 
   // create a function to handle DELETE game by grabbing the id of the game as argument
   const handleClick = async (id) => {
@@ -84,20 +89,17 @@ const GameList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h3 className="text-2xl font-semibold mb-4">Games List:</h3>
+      <h3 className="text-2xl font-bold mb-4 text-left">Games List:</h3>
       {games &&
         games.map((game) => (
           <Card key={game._id} className="mb-2 shadow-sm p-2">
             <CardHeader className="p-2">
-              <h4 className="text-lg font-bold">
-                <Link to={`/games/${game._id}`} className="text-blue-600 hover:underline">
-                  {game.name}
-                </Link>
-              </h4>
+              <h4 className="text-lg font-bold">{game.name}</h4>
             </CardHeader>
             <CardContent className="p-2">
               <p className="text-gray-700 text-sm">
-                <strong>Platform: </strong>{game.platform}
+                <strong>Platform: </strong>
+                {game.platform}
               </p>
               <p className="text-gray-500 text-sm">
                 {formatDistanceToNow(new Date(game.createdAt), {
@@ -105,11 +107,16 @@ const GameList = () => {
                 })}
               </p>
             </CardContent>
-            {user && user.role === 'admin' && (
+            {user && user.role === "admin" && (
               <CardFooter className="text-right p-2">
-                <Button variant="destructive" size="sm" onClick={() => handleClick(game._id)}>
+                <Button
+                  size="sm"
+                  onClick={() => handleClick(game._id)}
+                  className="mr-4 bg-red-500 hover:bg-red-700"
+                >
                   Delete
                 </Button>
+                <GameEditTrigger game={game} />
               </CardFooter>
             )}
           </Card>

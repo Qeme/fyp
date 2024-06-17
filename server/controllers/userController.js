@@ -28,7 +28,7 @@ export const getAllUsers = async (req,res)=>{
     try{
         // use .find({}) empty parantheses to find all the data
         // then .sort({createdAt: -1}) by descending order means from newest to oldest
-        const users = await userDB.find({}).select("_id name email").sort({createdAt: -1})
+        const users = await userDB.find({ role: { $ne: "admin" } }).select("-password -role").sort({createdAt: -1})
         res.status(200).json(users)
     }catch(error){
         res.status(400).json({error: error.message})

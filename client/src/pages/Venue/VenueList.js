@@ -1,10 +1,15 @@
 import { useEffect } from "react";
 import { useVenueContext } from "../../hooks/useVenueContext";
-import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { Card, CardContent, CardFooter, CardHeader } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
+import { VenueEditTrigger } from "./VenueEditTrigger";
 
 // create a function to handle Listing all venues to user
 const VenueList = () => {
@@ -48,7 +53,7 @@ const VenueList = () => {
     if (user) {
       fetchVenue(); // call the fetchVenue here
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, venues]);
 
   // create a function to handle DELETE venue by grabbing the id of the venue as argument
   const handleClick = async (id) => {
@@ -84,23 +89,27 @@ const VenueList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h3 className="text-2xl font-semibold mb-4">Venues List:</h3>
+      <h3 className="text-2xl font-bold mb-4 text-left">Venues List:</h3>
       {venues &&
         venues.map((venue) => (
           <Card key={venue._id} className="mb-2 shadow-sm p-2">
             <CardHeader className="p-2">
               <h4 className="text-lg font-bold">
-                <Link to={`/venues/${venue._id}`} className="text-blue-600 hover:underline">
-                  {venue.building}, {venue.place}
-                </Link>
+                {venue.building}, {venue.place}
               </h4>
             </CardHeader>
             <CardContent className="p-2">
               <p className="text-gray-700 text-sm">
-                <strong>State: </strong>{venue.state}
+                <strong>Postcode: </strong>
+                {venue.postcode}
               </p>
               <p className="text-gray-700 text-sm">
-                <strong>Country: </strong>{venue.country}
+                <strong>State: </strong>
+                {venue.state}
+              </p>
+              <p className="text-gray-700 text-sm">
+                <strong>Country: </strong>
+                {venue.country}
               </p>
               <p className="text-gray-500 text-sm">
                 {formatDistanceToNow(new Date(venue.createdAt), {
@@ -108,11 +117,16 @@ const VenueList = () => {
                 })}
               </p>
             </CardContent>
-            {user && user.role === 'admin' && (
+            {user && user.role === "admin" && (
               <CardFooter className="text-right p-2">
-                <Button variant="destructive" size="sm" onClick={() => handleClick(venue._id)}>
+                <Button
+                  size="sm"
+                  onClick={() => handleClick(venue._id)}
+                  className="mr-4 bg-red-500 hover:bg-red-700"
+                >
                   Delete
                 </Button>
+                <VenueEditTrigger venue={venue} />
               </CardFooter>
             )}
           </Card>

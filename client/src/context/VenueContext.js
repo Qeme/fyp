@@ -20,16 +20,25 @@ export const venueReducer = (state, action) => {
       return {
         ...state, //please do not forget to spread the state
         venues: action.payload, //this part basically SETTING UP the venues value
-      }; 
+      };
     case "CREATE_VENUE":
       return {
         ...state,
         venues: [action.payload, ...state.venues], // ...state.venues is basically set up the current value (if not mentioned, it will completely replaced the original one)
       };
+    case "UPDATE_VENUE":
+      return {
+        ...state,
+        venues: state.venues.map((venue) =>
+          venue._id === action.payload._id ? action.payload : venue //updating the venue based on its id, if found replace, if not just put it back
+        ),
+      };
     case "DELETE_VENUE":
       return {
         ...state,
-        venues: state.venues.filter((venue) => venue._id !== action.payload._id),  // the venues value will be replaced by using filter->only take the venue that id is not same with the id that is being
+        venues: state.venues.filter(
+          (venue) => venue._id !== action.payload._id
+        ), // the venues value will be replaced by using filter->only take the venue that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
@@ -41,7 +50,6 @@ export const venueReducer = (state, action) => {
   export it as well, take the children argument and insert it into <Provider> tag
 */
 export const VenueContextProvider = ({ children }) => {
-
   // apply useReducer(the function, the initial value for the state)
   const [state, dispatch] = useReducer(venueReducer, { venues: [] });
 
@@ -49,7 +57,7 @@ export const VenueContextProvider = ({ children }) => {
   return (
     // we then put value argument -> state: the current value here -> dispatch: the funct that will help sending the {type,payload}
     <VenueContext.Provider value={{ ...state, dispatch }}>
-      {children} 
+      {children}
     </VenueContext.Provider>
   );
 };

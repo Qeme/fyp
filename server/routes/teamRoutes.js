@@ -1,5 +1,6 @@
 // call the express router
 import express from 'express'
+import requireAuth from '../middleware/requireAuth.js'
 const router = express.Router()
 
 // import the functions from the controller
@@ -11,6 +12,9 @@ import {
     updateTeam,
     getManagedTeams
 } from '../controllers/teamController.js'
+
+// call for the middleware requireAuth where only admin/user can acess here
+router.use(requireAuth)
 
 // put the router API for get('/api/teams/') all
 router.get('/',getAllTeams)

@@ -5,6 +5,7 @@ import { useVenueContext } from "./useVenueContext";
 import { useAuthContext } from "./useAuthContext";
 import { useFileContext } from "./useFileContext";
 import { useUserContext } from "./useUserContext";
+import { useTeamContext } from "./useTeamContext";
 
 export const useInitialFetch = () => {
   const { dispatch: dispatchTournament } = useTournamentContext();
@@ -12,6 +13,7 @@ export const useInitialFetch = () => {
   const { dispatch: dispatchVenue } = useVenueContext();
   const { dispatch: dispatchFile } = useFileContext();
   const { dispatch: dispatchUser } = useUserContext();
+  const { dispatch: dispatchTeam } = useTeamContext();
   const { user } = useAuthContext();
 
   useEffect(() => {
@@ -64,6 +66,15 @@ export const useInitialFetch = () => {
         const usersData = await usersResponse.json();
         dispatchUser({ type: "SET_USERS", payload: usersData });
 
+        // Fetch teams
+        const teamsResponse = await fetch("http://localhost:3002/api/teams", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const teamsData = await teamsResponse.json();
+        dispatchTeam({ type: "SET_TEAMS", payload: teamsData });
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -73,5 +84,5 @@ export const useInitialFetch = () => {
       // Call the fetch data function when component mounts
       fetchData();
     }
-  }, [dispatchTournament, dispatchGame, dispatchVenue, dispatchFile, dispatchUser, user]);
+  }, [dispatchTournament, dispatchGame, dispatchVenue, dispatchFile, dispatchUser, dispatchTeam, user]);
 };

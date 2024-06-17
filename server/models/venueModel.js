@@ -3,25 +3,37 @@ const Schema = mongoose.Schema
 
 // add second argument 'timestamp: true' to make sure if any new object created, the time will be recorded as well
 const venueSchema = new Schema({
+    block:{
+        type: String,
+        required: true
+    },
+    floorLevel:{
+        type: Number,
+        required: false
+    },
+    roomNumber:{
+        type: Number,
+        required: false
+    },
     building: {
         type: String,
         required: false,
     },
     place: {
         type: String,
-        required: false
+        required: true
     },
     postcode: {
         type: String,
-        required: false
+        required: true
     },
     state: {
         type: String,
-        required: false
+        required: true
     },
     country: {
         type: String,
-        required: false
+        required: true
     }
 },{timestamps: true})
 

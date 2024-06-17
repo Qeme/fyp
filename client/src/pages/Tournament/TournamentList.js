@@ -1,108 +1,127 @@
-import { useTournamentContext } from "../../hooks/useTournamentContext";
-import { Link } from "react-router-dom";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { useUserContext } from "../../hooks/useUserContext";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { useGameContext } from "../../hooks/useGameContext";
-import { useVenueContext } from "../../hooks/useVenueContext";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "src/components/ui/table";
+import React from "react";
+import { useTournamentContext } from "src/hooks/useTournamentContext";
+import { format } from "date-fns";
+import { useGameContext } from "src/hooks/useGameContext";
+import { useVenueContext } from "src/hooks/useVenueContext";
+import { useUserContext } from "src/hooks/useUserContext";
+import { Button } from "src/components/ui/button";
+import { useAuthContext } from "src/hooks/useAuthContext";
 
-// create a function to handle Listing all tournaments to user
 const TournamentList = () => {
-  // grab the tournaments and dispatch context data from TournamentContext by using custom hook
   const { tournaments, dispatch } = useTournamentContext();
-  // grab the current user context data (it has _id and token information)
-  const { user } = useAuthContext();
-  const { users } = useUserContext();
   const { games } = useGameContext();
   const { venues } = useVenueContext();
+  const { users } = useUserContext();
+  const { user } = useAuthContext();
 
-  // create a function to handle DELETE tournament by grabbing the id of the tournament as argument
-  const handleClick = async (id) => {
-    // if no user at all, just disable the delete button functionality
+  const handleClick = async ({ id }) => {
     if (!user) {
       return;
     }
 
-    try {
-      // create a variable to delete one particular id, make sure include method: DELETE
-      const response = await fetch(
-        "http://localhost:3002/api/tournaments/" + id,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+    // fetch the delete API
+    const response = await fetch("http://localhost:3002/api/tournaments/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
 
-      // pass the json data from response either as single data (deleted) or error data
-      const json = await response.json();
+    // get the json response
+    const json = await response.json();
 
-      if (response.ok) {
-        // as we grab all the json tournaments data, we now DELETE that TOURNAMENT by using the dispatch (filter the tournaments)
-        dispatch({ type: "DELETE_TOURNAMENT", payload: json });
-      } else {
-        // if no response, send error to console
-        console.error("Error deleting the tournament:", response.statusText);
-      }
-    } catch (error) {
-      // this error indicates the fetching process not working at all, has backend problem
-      console.error("Error fetching tournaments:", error);
+    // if ok, proceed
+    if (response.ok) {
+      dispatch({ type: "DELETE_TOURNAMENT", payload: json });
     }
   };
 
   return (
-    <>
-      <div className="tournament-details">
-        <h2>Tournaments List:</h2>
-        {tournaments &&
-          tournaments.map((tournament) => (
-            <Link
-              to={`/tournaments/${tournament._id}`}
-              key={tournament._id}
-              className="tournament-link"
-            >
-              <div className="tournament-item">
-                <h3>{tournament.name}</h3>
-                <div className="details">
-                  <p>
-                    Game:{" "}
-                    {games.find((game) => game._id === tournament.meta.game_id)
-                      ?.name || "Game not found"}
-                  </p>
-                  <p>
-                    Venue:{" "}
-                    {venues.find(
-                      (venue) => venue._id === tournament.meta.venue_id
-                    )?.building || "Venue not found"}
-                  </p>
-                  <p>
-                    Organizer:{" "}
-                    {users.find(
-                      (user) => user._id === tournament.meta.organizer_id
-                    )?.name || "Organizer not found"}
-                  </p>
-                </div>
-                <p>
-                  {formatDistanceToNow(new Date(tournament.createdAt), {
-                    addSuffix: true,
-                  })}
-                </p>
-
-                <span
-                  className="material-symbols-outlined delete-icon"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleClick(tournament._id);
-                  }}
-                >
-                  delete
-                </span>
-              </div>
-            </Link>
+    <div className="bg-white p-6 rounded-lg shadow-md my-12">
+      <h2 className="text-2xl font-bold mb-6 text-center">Tournaments List</h2>
+      <Table className="min-w-full divide-y divide-gray-200">
+        <TableHeader className="bg-gray-50">
+          <TableRow>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[100px]">
+              Tournament ID
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Tournament Name
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Organizer
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Game
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Venue
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Stage One
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Stage Two
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Participants
+            </TableHead>
+            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Created Date
+            </TableHead>
+            <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Action
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="bg-white divide-y divide-gray-200">
+          {tournaments.map((tournament) => (
+            <TableRow key={tournament._id}>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {tournament._id}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {tournament.name}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {users.find(user => user._id === tournament.meta.organizer_id)?.name}  
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {games.find(game => game._id === tournament.meta.game_id)?.name}  
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {venues.find(venue => venue._id === tournament.meta.venue_id)?.building}  
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {tournament.setting.stageOne.format}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {tournament.setting.stageTwo.format}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {tournament.setting.players.length}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {format(new Date(tournament.createdAt), "dd/MM/yyyy")}
+              </TableCell>
+              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                <Button onClick={() => handleClick({ id: tournament._id })}>
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-      </div>
-    </>
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 
