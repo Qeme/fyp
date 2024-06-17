@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSignup } from "../../hooks/useSignup";
+import { Button } from "src/components/ui/button";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -39,7 +40,7 @@ const Signup = () => {
       />
       
       {/* add disabled to the button, so if true, means the user cant spamming the Sign up button while the sign up process ongoing  */}
-      <button disabled={isLoading}>Sign Up</button>
+      <Button disabled={isLoading}>Sign Up</Button>
       {/* put error message downhere as if there are error, show div section with error message there */}
       {error && <div className="error">{error}</div>}
     </form>

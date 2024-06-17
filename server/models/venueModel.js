@@ -12,7 +12,7 @@ const venueSchema = new Schema({
         required: false
     },
     postcode: {
-        type: Number,
+        type: String,
         required: false
     },
     state: {

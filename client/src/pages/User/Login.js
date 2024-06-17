@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
+import { Button } from "src/components/ui/button";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -30,8 +31,7 @@ const Login = () => {
         onChange={(e) => setPassword(e.target.value)}
         value={password}
       />
-
-      <button disabled={isLoading}>Log In</button>
+      <Button disabled={isLoading}>Log In</Button>
       {error && <div className="error">{error}</div>}
     </form>
   );

@@ -1,175 +1,249 @@
-import { useState } from "react";
-import { useVenueContext } from "../../hooks/useVenueContext";
-import { useAuthContext } from "../../hooks/useAuthContext";
+"use client";
 
-// create a function to handle venue creation form
-const VenueForm = () => {
-  // take the dispatch components from the hooks
-  const { dispatch } = useVenueContext();
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "src/components/ui/form";
+import { Input } from "src/components/ui/input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "src/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
+import { useAuthContext } from "src/hooks/useAuthContext";
+import { useVenueContext } from "src/hooks/useVenueContext";
+
+const formSchema = z.object({
+  block: z.string().min(1, "Required field"),
+  floorLevel: z.string(),
+  roomNumber: z.string(),
+  place: z.string().min(1, "Required field"),
+  postcode: z.string().min(1, "Required field"),
+  state: z.string().min(1, "Required field"),
+  country: z.string().min(1, "Required field"),
+});
+
+const GameForm = () => {
   const { user } = useAuthContext();
+  const { dispatch } = useVenueContext();
 
-  // set up the useState for 9 properties
-  const [block, setBlock] = useState("");
-  const [floorLevel, setFloorLevel] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [place, setPlace] = useState("");
-  const [postcode, setPostcode] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  // to handle error message, we might use useState as well
-  const [error, setError] = useState(null);
-  // add additional state for emptyFields
-  const [emptyFields, setEmptyFields] = useState([]);
-
-  // create a function to handle CREATE submit button
-  const handleSubmit = async (e) => {
-    // prevent from by default to refresh the page
-    e.preventDefault();
-
-    // if no user, just return
-    if (!user) {
-      setError("You must be logged in");
-      return;
-    }
-
-    // take those 7 variables that already being altered in the form
-    const venue = {
-      block,
-      floorLevel,
-      roomNumber,
-      place,
-      postcode,
-      state,
-      country,
-    };
-
-    /*  
-      1. we add method POST, cause it is to create venues
-      2. body must include the venues as json format...so we use JSON.stringify
-      3. header with content-type as JSON
-    */
+  const onSubmit = async (values) => {
+    // call the fetch API
     const response = await fetch("http://localhost:3002/api/venues", {
       method: "POST",
-      body: JSON.stringify(venue),
+      body: JSON.stringify(values),
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
     });
 
-    /* 
-      basically we take back the json from the server to here
-      if we got error as well, it will be return into json 
-    */
+    // grab the json data
     const json = await response.json();
 
-    // take the json error message and change the error variable
-    if (!response.ok) {
-      setError(json.error);
-      setEmptyFields(json.emptyFields);
-    }
-
-    // after all done, reset all the variables including error and set back the EmptyFields to empty array
     if (response.ok) {
-      setBlock("");
-      setFloorLevel("");
-      setRoomNumber("");
-      setPlace("");
-      setPostcode("");
-      setState("");
-      setCountry("");
-      setError(null);
-      setEmptyFields([]);
-
-      /* 
-        now call the dispatch from useVenueContext hook to create new venue
-        we put payload : json as value because json has body of venue: { _id, block, floorLevel, roomNumber, place, postcode, state, country, createdAt, updatedAt }
-      */
       dispatch({ type: "CREATE_VENUE", payload: json });
+      form.reset();
     }
   };
 
+  // define form object
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      block: "",
+      floorLevel: "",
+      roomNumber: "",
+      place: "",
+      postcode: "",
+      state: "",
+      country: "",
+    },
+  });
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Add A New Venue</h2>
-      <label>Block: </label>
-      {/* 
-        onChange where e is event, when it is changed from null to certain value, we take the e.target.value
-        value={block} it takes the value from block that currently null 
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full bg-white p-6 rounded-lg shadow-md"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Add Venues</h2>
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="block"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Block</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="BM"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        setup the input classBlock into error if there is error
-        if the emptyFields includes 'block' then we make the classBlock into 'error' if not ''
-      */}
-      <input
-        type="text"
-        onChange={(e) => setBlock(e.target.value)}
-        value={block}
-        className={emptyFields.includes("block") ? "error" : ""}
-      />
+          <FormField
+            control={form.control}
+            name="floorLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Floor Level</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="03"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <label>Floor Level: </label>
-      <input
-        type="number"
-        onChange={(e) => setFloorLevel(e.target.value)}
-        value={floorLevel}
-      />
+          <FormField
+            control={form.control}
+            name="roomNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Room Number</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="23"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <label>Room Number: </label>
-      <input
-        type="number"
-        onChange={(e) => setRoomNumber(e.target.value)}
-        value={roomNumber}
-      />
+          <FormField
+            control={form.control}
+            name="place"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Place</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Universiti Tenaga Nasional"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <label>Place: </label>
-      <input
-        type="text"
-        onChange={(e) => setPlace(e.target.value)}
-        value={place}
-        className={emptyFields.includes("place") ? "error" : ""}
-      />
+          <FormField
+            control={form.control}
+            name="postcode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postcode</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="43000"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <label>Postcode: </label>
-      <input
-        type="number"
-        onChange={(e) => setPostcode(e.target.value)}
-        value={postcode}
-        className={emptyFields.includes("postcode") ? "error" : ""}
-      />
+          <FormField
+            control={form.control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>State</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="border-gray-300 rounded-lg">
+                      <SelectValue
+                        placeholder="-- Choose --"
+                        className="text-center"
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Selangor">Selangor</SelectItem>
+                        <SelectItem value="Negeri Sembilan">
+                          Negeri Sembilan
+                        </SelectItem>
+                        <SelectItem value="Johor">Johor</SelectItem>
+                        <SelectItem value="Kedah">Kedah</SelectItem>
+                        <SelectItem value="Terengganu">Terengganu</SelectItem>
+                        <SelectItem value="Kelantan">Kelantan</SelectItem>
+                        <SelectItem value="Melaka">Melaka</SelectItem>
+                        <SelectItem value="Pahang">Pahang</SelectItem>
+                        <SelectItem value="Perak">Perak</SelectItem>
+                        <SelectItem value="Perlis">Perlis</SelectItem>
+                        <SelectItem value="Pulau Pinang">
+                          Pulau Pinang
+                        </SelectItem>
+                        <SelectItem value="Sabah">Sabah</SelectItem>
+                        <SelectItem value="Sarawak">Sarawak</SelectItem>
+                        <SelectItem value="others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <label>State: </label>
-      <input
-        type="text"
-        onChange={(e) => setState(e.target.value)}
-        value={state}
-        className={emptyFields.includes("state") ? "error" : ""}
-      />
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Malaysia"
+                    {...field}
+                    className="border-gray-300 rounded-lg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-      <label>Country: </label>
-      <input
-        type="text"
-        onChange={(e) => setCountry(e.target.value)}
-        value={country}
-        className={emptyFields.includes("country") ? "error" : ""}
-      />
-
-      {/* 
-        as you can see, there is no need to put action="" inside form tag,
-        we just need to create onSubmit function 
-        For this case we create handleSubmit func where it will be triggered when Add Venue button is clicked
-      */}
-      <button>Add Venue</button>
-
-      {/* 
-        to see the error down there
-        Description: {error && ...}: This is a JavaScript logical AND operator (&&). 
-                    It checks if the error variable has a truthy value.
-                    If error is truthy (i.e., not null, undefined, 0, false, or an empty string), 
-                    the expression evaluates to true. Otherwise, it evaluates to false. 
-      */}
-      {error && <div className="error">{error}</div>}
-    </form>
+        <Button className="w-full mt-6" type="submit">
+          Submit
+        </Button>
+      </form>
+    </Form>
   );
 };
 
-export default VenueForm;
+export default GameForm;

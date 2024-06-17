@@ -1,17 +1,17 @@
 import React from "react";
-import GameList from "./GameList";
-import GameForm from "./GameForm";
+import VenueList from "./VenueList";
+import VenueForm from "./VenueForm";
 
-function GamePage() {
+function VenuePage() {
   return (
     <div className="container mx-auto my-8 p-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="md:col-span-3">
-          <GameList />
+          <VenueList />
         </div>
         <div className="md:col-span-1">
           <div className="sticky top-4 ">
-            <GameForm />
+            <VenueForm />
           </div>
         </div>
       </div>
@@ -19,4 +19,4 @@ function GamePage() {
   );
 }
 
-export default GamePage;
+export default VenuePage;

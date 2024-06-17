@@ -3,6 +3,8 @@ import { useGameContext } from "../../hooks/useGameContext";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { Card, CardContent, CardFooter, CardHeader } from "src/components/ui/card";
+import { Button } from "src/components/ui/button";
 
 // create a function to handle Listing all games to user
 const GameList = () => {
@@ -81,47 +83,38 @@ const GameList = () => {
   };
 
   return (
-    <>
-      <div>
-        <h3>Games List:</h3>
-        {/* 
-          iterate all the games that you have found where games ISNT NULL
-          we also use () instead of {} because we return a template 
-
-          we use key (key={game._id}) for unique properties only & to optimize the rendering process and taking games parameter as well
-        */}
-        {games &&
-          games.map((game) => (
-            <div key={game._id}>
-              {/* we use the Link routes to link to detail of one particular game, we did pass the GAME._ID as PARAMS */}
-              <h4>
-                <Link to={`/games/${game._id}`}>Name: {game.name}</Link>
+    <div className="container mx-auto p-4">
+      <h3 className="text-2xl font-semibold mb-4">Games List:</h3>
+      {games &&
+        games.map((game) => (
+          <Card key={game._id} className="mb-2 shadow-sm p-2">
+            <CardHeader className="p-2">
+              <h4 className="text-lg font-bold">
+                <Link to={`/games/${game._id}`} className="text-blue-600 hover:underline">
+                  {game.name}
+                </Link>
               </h4>
-              <p>
-                <strong>Platform: </strong>
-                {game.platform}
+            </CardHeader>
+            <CardContent className="p-2">
+              <p className="text-gray-700 text-sm">
+                <strong>Platform: </strong>{game.platform}
               </p>
-              {/* instead of just showing the string of the date, u can use the date-fns to format them */}
-              <p>
+              <p className="text-gray-500 text-sm">
                 {formatDistanceToNow(new Date(game.createdAt), {
                   addSuffix: true,
                 })}
               </p>
-              {/* remove the delete button for the user */}
-              {user && user.role === "admin" ? (
-                <span
-                  className="material-symbols-outlined"
-                  onClick={() => handleClick(game._id)}
-                >
-                  delete
-                </span>
-              ) : (
-                ""
-              )}
-            </div>
-          ))}
-      </div>
-    </>
+            </CardContent>
+            {user && user.role === 'admin' && (
+              <CardFooter className="text-right p-2">
+                <Button variant="destructive" size="sm" onClick={() => handleClick(game._id)}>
+                  Delete
+                </Button>
+              </CardFooter>
+            )}
+          </Card>
+        ))}
+    </div>
   );
 };
 

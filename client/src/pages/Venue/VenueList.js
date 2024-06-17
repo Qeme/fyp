@@ -3,6 +3,8 @@ import { useVenueContext } from "../../hooks/useVenueContext";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { Card, CardContent, CardFooter, CardHeader } from "src/components/ui/card";
+import { Button } from "src/components/ui/button";
 
 // create a function to handle Listing all venues to user
 const VenueList = () => {
@@ -81,52 +83,41 @@ const VenueList = () => {
   };
 
   return (
-    <>
-      <div>
-        <h3>Venues List:</h3>
-        {/* 
-          iterate all the venues that you have found where venues ISNT NULL
-          we also use () instead of {} because we return a template 
-
-          we use key (key={venue._id}) for unique properties only & to optimize the rendering process and taking venue parameter as well
-        */}
-        {venues &&
-          venues.map((venue) => (
-            <div key={venue._id}>
-              {/* we use the Link routes to link to detail of one particular venue, we did pass the VENUE._ID as PARAMS */}
-              <h4>
-                <Link to={`/venues/${venue._id}`}>
-                  Venue: {venue.building}, {venue.place}
+    <div className="container mx-auto p-4">
+      <h3 className="text-2xl font-semibold mb-4">Venues List:</h3>
+      {venues &&
+        venues.map((venue) => (
+          <Card key={venue._id} className="mb-2 shadow-sm p-2">
+            <CardHeader className="p-2">
+              <h4 className="text-lg font-bold">
+                <Link to={`/venues/${venue._id}`} className="text-blue-600 hover:underline">
+                  {venue.building}, {venue.place}
                 </Link>
               </h4>
-              <p>
-                <strong>State: </strong>
-                {venue.state}
+            </CardHeader>
+            <CardContent className="p-2">
+              <p className="text-gray-700 text-sm">
+                <strong>State: </strong>{venue.state}
               </p>
-              <p>
-                <strong>Country: </strong>
-                {venue.country}
+              <p className="text-gray-700 text-sm">
+                <strong>Country: </strong>{venue.country}
               </p>
-              {/* instead of just showing the string of the date, u can use the date-fns to format them */}
-              <p>
+              <p className="text-gray-500 text-sm">
                 {formatDistanceToNow(new Date(venue.createdAt), {
                   addSuffix: true,
                 })}
               </p>
-              {user && user.role === "admin" ? (
-                <span
-                  className="material-symbols-outlined"
-                  onClick={() => handleClick(venue._id)}
-                >
-                  delete
-                </span>
-              ) : (
-                ""
-              )}
-            </div>
-          ))}
-      </div>
-    </>
+            </CardContent>
+            {user && user.role === 'admin' && (
+              <CardFooter className="text-right p-2">
+                <Button variant="destructive" size="sm" onClick={() => handleClick(venue._id)}>
+                  Delete
+                </Button>
+              </CardFooter>
+            )}
+          </Card>
+        ))}
+    </div>
   );
 };
 
