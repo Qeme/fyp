@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useSignup } from "../../hooks/useSignup";
 import { Button } from "src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { Label } from "src/components/ui/label";
+import { Input } from "src/components/ui/input";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -12,38 +21,62 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // it takes sometimes to finish the logic, so we put await
+    // console.log({name,password,email})
+    // need sometimes to fetch the data
     await signup(name, email, password);
   };
 
   return (
-    <form className="signup" onSubmit={handleSubmit}>
-      <h3>Sign up</h3>
-
-      <label>Name</label>
-      <input
-        type="text"
-        onChange={(e) => setName(e.target.value)}
-        value={name}
-      />
-      <label>Email</label>
-      <input
-        type="email"
-        onChange={(e) => setEmail(e.target.value)}
-        value={email}
-      />
-      <label>Password</label>
-      <input
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-      />
-      
-      {/* add disabled to the button, so if true, means the user cant spamming the Sign up button while the sign up process ongoing  */}
-      <Button disabled={isLoading}>Sign Up</Button>
-      {/* put error message downhere as if there are error, show div section with error message there */}
-      {error && <div className="error">{error}</div>}
-    </form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Sign Up</CardTitle>
+          <CardDescription>
+            Create a new account to enjoy the experience
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Harry Smitch"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="harrysmitch@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Complex Password Combination"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+            <Button className="w-full mt-6" type="submit" disabled={isLoading}>
+              Sign Up
+            </Button>
+            {error && <div className="text-red-500 mt-2">{error}</div>}
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

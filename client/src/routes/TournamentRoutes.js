@@ -14,11 +14,11 @@ function TournamentRoutes() {
     <Routes>
       <Route index element={<TournamentList />} />
       <Route path=":id" element={<Tournament />} />
-      <Route path="join/:id" element={<TournamentJoinForm />} />
+      <Route path="joins/:id" element={<TournamentJoinForm />} />
       <Route path="type" element={<TournamentType />} />
-      <Route path="type/join" element={<TournamentJoin />} />
-      <Route path="type/monitor" element={<TournamentMonitor />} />
-      <Route path="type/create" element={<TournamentForm />} />
+      <Route path="join" element={<TournamentJoin />} />
+      <Route path="monitor" element={<TournamentMonitor />} />
+      <Route path="create" element={<TournamentForm />} />
       <Route path="upload-image/:id" element={<TournamentImage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -28,7 +28,7 @@ export const getAllUsers = async (req,res)=>{
     try{
         // use .find({}) empty parantheses to find all the data
         // then .sort({createdAt: -1}) by descending order means from newest to oldest
-        const users = await userDB.find({ role: { $ne: "admin" } }).select("-password -role").sort({createdAt: -1})
+        const users = await userDB.find({ role: { $ne: "admin" } }).select("-password").sort({createdAt: -1})
         res.status(200).json(users)
     }catch(error){
         res.status(400).json({error: error.message})
@@ -58,36 +58,17 @@ export const getAUser = async (req,res)=>{
 
 // post new user
 export const createUser = async (req,res)=>{
-    const {name, email, password} = req.body;
+    const {name, email, password, role} = req.body;
 
-    // check the field that is empty
-    let emptyFields = []
-
-    // so for each field that empty, push the field properties to the array
-    if(!name){
-        emptyFields.push('name')
-    }
-    if(!email){
-        emptyFields.push('email')
-    }
-    if(!password){
-        emptyFields.push('password')
-    }
-    if(emptyFields.length > 0){
-        // if the emptyFields have value, we return universal error message means we avoid the system from continuing/proceeding
-        return res.status(400).json({ error: 'Please fill in all the fields', emptyFields})
-    }
-
-    try{
-        // use .create() to generate and save the data
-        const user = await userDB.create({ 
-            name, email, password
-        })
-
-        res.status(200).json(user)
-    }catch(error){
-        res.status(400).json({error: error.message})
-    }
+    try {
+        // now apply the userDB.signup here
+        const user = await userDB.createuser(name, email, password, role);
+    
+        // pass the user information for testing
+        res.status(200).json(user);
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
 
 }
 

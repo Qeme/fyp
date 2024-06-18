@@ -21,6 +21,18 @@ export const userReducer = (state, action) => {
         ...state, //please do not forget to spread the state
         users: action.payload, //this part basically SETTING UP the users value
       }; 
+      case "CREATE_USER":
+      return {
+        ...state,
+        users: [action.payload, ...state.users], // ...state.users is basically set up the current value (if not mentioned, it will completely replaced the original one)
+      };
+    case "UPDATE_USER":
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user._id === action.payload._id ? action.payload : user //updating the user based on its id, if found replace, if not just put it back
+        ),
+      };
     case "DELETE_USER":
       return {
         ...state,

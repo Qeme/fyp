@@ -58,6 +58,10 @@ function Navbar() {
             <MenubarItem>
               <Link to="/venues" className="block px-4 py-2 text-white hover:bg-gray-600">Venues</Link>
             </MenubarItem>
+            <MenubarSeparator className="border-t border-gray-600" />
+            <MenubarItem>
+              <Link to="/referees" className="block px-4 py-2 text-white hover:bg-gray-600">Referees</Link>
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
       </Menubar>

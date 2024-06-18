@@ -15,6 +15,7 @@ import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
 import { useInitialFetch } from "./hooks/useInitialFetch";
 import { useAuthContext } from "./hooks/useAuthContext";
+import RefereeRoutes from "./routes/RefereeRoutes";
 
 function App() {
   // Call the custom hook to fetch initial data
@@ -30,13 +31,14 @@ function App() {
 
       {/* this routes only be used for the URL...however we need Link to navigate through pages */}
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
-        <Route path="/tournaments/*" element={<TournamentRoutes />} />
-        <Route path="/users/*" element={<UserRoutes />} />
-        <Route path="/teams/*" element={<TeamRoutes />} />
-        <Route path="/games/*" element={<GameRoutes />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/tournaments/*" element={user ? <TournamentRoutes /> : <Navigate to="/login" />} />
+        <Route path="/users/*" element={user ? <UserRoutes /> : <Navigate to="/login" />} />
+        <Route path="/teams/*" element={user ? <TeamRoutes /> : <Navigate to="/login" />} />
+        <Route path="/games/*" element={user ? <GameRoutes /> : <Navigate to="/login" />} />
         <Route path="/venues/*" element={user ? <VenueRoutes /> : <Navigate to="/login" />} />
-        <Route path="/payments/*" element={<PaymentRoutes />} />
+        <Route path="/referees/*" element={user ? <RefereeRoutes /> : <Navigate to="/login" />} />
+        <Route path="/payments/*" element={user ? <PaymentRoutes /> : <Navigate to="/login" />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />

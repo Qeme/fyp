@@ -20,7 +20,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ["admin", "user"],
+        enum: ["admin", "user", "referee"],
         required: true,
         default: "user",
     }
@@ -94,6 +94,44 @@ userSchema.statics.login = async function (email, password) {
   
     // pass the user ... any JWT process handled in server not in database
     return user
+};
+
+userSchema.statics.createuser = async function (name, email, password, role) {
+    
+  // validation part
+  // check if the email and password exist or not
+  if (!name || !email || !password) {
+      throw Error("All fields must be filled");
+  }
+  // check if the email is REALLY an email or not
+  if (!validator.isEmail(email)) {
+      throw Error("Email is not valid");
+  }
+  // check if the password is STRONG or not
+  if (!validator.isStrongPassword(password)) {
+      throw Error("Password is weak");
+  }
+
+  const exist = await this.findOne({ email });
+
+  // check if the email already exist or not
+  if (exist) {
+    throw Error("The email already exist");
+  }
+
+  // create a salt to generate how long the hashing will be (argument)
+  // await because it took some times to generate them
+  const salt = await bcrypt.genSalt(10);
+
+  // then put the salt into hash key
+  // it took 2 arguments (the thing that you want to hash, the salt or rounds)
+  const hash = await bcrypt.hash(password, salt);
+
+  // then, we create a new user based on the email and hashed password
+  const user = await this.create({ name, email, password: hash, role});
+
+  // return the user information, for testing
+  return user;
 };
 
 // users is the name of the collection in DB
