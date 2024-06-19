@@ -20,11 +20,23 @@ export const userReducer = (state, action) => {
       return {
         ...state, //please do not forget to spread the state
         teams: action.payload, //this part basically SETTING UP the teams value
-      }; 
+      };
+    case "CREATE_TEAM":
+      return {
+        ...state,
+        teams: [action.payload, ...state.teams], // ...state.teams is basically set up the current value (if not mentioned, it will completely replaced the original one)
+      };
+    case "UPDATE_TEAM":
+      return {
+        ...state,
+        teams: state.teams.map((team) =>
+          team._id === action.payload._id ? action.payload : team
+        ),
+      };
     case "DELETE_TEAM":
       return {
         ...state,
-        teams: state.teams.filter((team) => team._id !== action.payload._id),  // the teams value will be replaced by using filter->only take the team that id is not same with the id that is being
+        teams: state.teams.filter((team) => team._id !== action.payload._id), // the teams value will be replaced by using filter->only take the team that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
@@ -36,7 +48,6 @@ export const userReducer = (state, action) => {
   export it as well, take the children argument and insert it into <Provider> tag
 */
 export const TeamContextProvider = ({ children }) => {
-
   // apply useReducer(the function, the initial value for the state)
   const [state, dispatch] = useReducer(userReducer, { teams: [] });
 
@@ -44,7 +55,7 @@ export const TeamContextProvider = ({ children }) => {
   return (
     // we then put value argument -> state: the current value here -> dispatch: the funct that will help sending the {type,payload}
     <TeamContext.Provider value={{ ...state, dispatch }}>
-      {children} 
+      {children}
     </TeamContext.Provider>
   );
 };

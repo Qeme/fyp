@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
 
-const UserList = () => {
+const TeamList = () => {
   const { teams, dispatch } = useTeamContext();
   const { user } = useAuthContext();
 
@@ -119,4 +119,4 @@ const UserList = () => {
   );
 };
 
-export default UserList;
+export default TeamList;
