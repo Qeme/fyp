@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useVenueContext } from "../../hooks/useVenueContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import {
@@ -10,50 +8,14 @@ import {
 } from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { VenueEditTrigger } from "./VenueEditTrigger";
+import { useInitialVenue } from "src/hooks/useInitialVenue";
 
 // create a function to handle Listing all venues to user
 const VenueList = () => {
   // grab the venues and dispatch context data from VenueContext by using custom hook
-  const { venues, dispatch } = useVenueContext();
+  const { venues, dispatch } = useInitialVenue();
   // grab the current user context data (it has _id and token information)
   const { user } = useAuthContext();
-
-  /* 
-    useEffect hook where it uses () => {} because we just want to call it once, not infinitly
-    it has [] to be passed, so if [dispatch] changed, means it will rerun the useEffect hook
-  */
-  useEffect(() => {
-    // create a function to fetch ALL the venues
-    const fetchVenue = async () => {
-      try {
-        // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/venues", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        // take the user input and pass it as json
-        const json = await response.json();
-
-        // check if response is ok or not
-        if (response.ok) {
-          // as we grab all the json venues data, we now SET the VENUES by using the dispatch (from null to venues: venues)
-          dispatch({ type: "SET_VENUES", payload: json });
-        } else {
-          // if no response, send error to console
-          console.error("Error fetching venues:", response.statusText);
-        }
-      } catch (error) {
-        // this error indicates the fetching process not working at all, has backend problem
-        console.error("Error fetching venues:", error);
-      }
-    };
-
-    // when there is user, then run
-    if (user) {
-      fetchVenue(); // call the fetchVenue here
-    }
-  }, [dispatch, user, venues]);
 
   // create a function to handle DELETE venue by grabbing the id of the venue as argument
   const handleClick = async (id) => {

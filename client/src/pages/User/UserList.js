@@ -7,40 +7,36 @@ import {
   TableRow,
 } from "src/components/ui/table";
 import React from "react";
-import { useUserContext } from "src/hooks/useUserContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { format } from "date-fns";
 import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
+import { useInitialUser } from "src/hooks/useInitialUser";
 
 const UserList = () => {
-  const { users, dispatch } = useUserContext();
+  const { users, dispatch } = useInitialUser();
   const { user } = useAuthContext();
 
   const handleClick = async ({ id }) => {
-    if(!user){
-      return
+    if (!user) {
+      return;
     }
 
     // fetch the delete API
-    const response = await fetch(
-      "http://localhost:3002/api/users/" + id,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    );
+    const response = await fetch("http://localhost:3002/api/users/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
 
     // get the json response
-    const json = await response.json()
+    const json = await response.json();
 
     // if ok, proceed
-    if(response.ok){
-      dispatch({type: "DELETE_USER",payload: json})
+    if (response.ok) {
+      dispatch({ type: "DELETE_USER", payload: json });
     }
-
   };
 
   return (
@@ -96,7 +92,9 @@ const UserList = () => {
                 })}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-              <Button onClick={() => handleClick({ id: user._id })}>Delete</Button>
+                <Button onClick={() => handleClick({ id: user._id })}>
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}

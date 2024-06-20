@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useFileContext } from "../hooks/useFileContext";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 function UploadImage({ tournamentid, topic }) {
   // call for file context
@@ -65,14 +68,26 @@ function UploadImage({ tournamentid, topic }) {
   };
 
   return (
-    <div>
-      {/* input has:
-            1. type of file, as we uploading file
-            2. onChange means whenever the user change the file, we can see it (fileSelectedHandler)*/}
-      <input type="file" onChange={fileSelectedHandler} />
-      <button onClick={fileUploadHandler}>Upload</button>
+    <div className="grid w-full max-w-sm gap-1.5">
+      <Label htmlFor="picture">File/Picture</Label>
+      <div className="flex items-center">
+        <Input id="picture" type="file" onChange={fileSelectedHandler} className="flex-1" />
+        <Button onClick={fileUploadHandler} className="ml-2">Upload</Button>
+      </div>
     </div>
   );
+  
+
+  // return (
+  //   <div>
+  //     {/* input has:
+  //           1. type of file, as we uploading file
+  //           2. onChange means whenever the user change the file, we can see it (fileSelectedHandler)*/}
+  //     <p>Hi</p>
+  //     <input type="file" onChange={fileSelectedHandler} />
+  //     <button onClick={fileUploadHandler}>Upload</button>
+  //   </div>
+  // );
 }
 
 export default UploadImage;

@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useGameContext } from "../../hooks/useGameContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import {
@@ -10,50 +8,14 @@ import {
 } from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { GameEditTrigger } from "./GameEditTrigger";
+import { useInitialGame } from "src/hooks/useInitialGame";
 
 // create a function to handle Listing all games to user
 const GameList = () => {
   // grab the games and dispatch context data from GameContext by using custom hook
-  const { games, dispatch } = useGameContext();
+  const { games, dispatch } = useInitialGame();
   // grab the current user context data (it has _id and token information)
   const { user } = useAuthContext();
-
-  /* 
-    useEffect hook where it uses () => {} because we just want to call it once, not infinitly
-    it has [] to be passed, so if [dispatch] changed, means it will rerun the useEffect hook
-  */
-  useEffect(() => {
-    // create a function to fetch ALL the games
-    const fetchGame = async () => {
-      try {
-        // create a variable to fetch
-        const response = await fetch("http://localhost:3002/api/games", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        // take the user input and pass it as json
-        const json = await response.json();
-
-        // check if response is ok or not
-        if (response.ok) {
-          // as we grab all the json games data, we now SET the GAMES by using the dispatch (from null to games: games)
-          dispatch({ type: "SET_GAMES", payload: json });
-        } else {
-          // if no response, send error to console
-          console.error("Error fetching games:", response.statusText);
-        }
-      } catch (error) {
-        // this error indicates the fetching process not working at all, has backend problem
-        console.error("Error fetching games:", error);
-      }
-    };
-
-    // call the function if the user exist only
-    if (user) {
-      fetchGame(); // call the fetchGame here
-    }
-  }, [dispatch, user, games]); //include user and games as well, as it acts as depedencies
 
   // create a function to handle DELETE game by grabbing the id of the game as argument
   const handleClick = async (id) => {
@@ -116,7 +78,8 @@ const GameList = () => {
                 >
                   Delete
                 </Button>
-                <GameEditTrigger game={game} />
+                {/* pass the dispatch function to the GameEditTrigger component */}
+                <GameEditTrigger game={game} dispatch={dispatch}/> 
               </CardFooter>
             )}
           </Card>

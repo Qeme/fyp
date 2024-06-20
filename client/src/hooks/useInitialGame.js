@@ -3,7 +3,7 @@ import { useAuthContext } from "./useAuthContext";
 import { useGameContext } from "./useGameContext";
 
 export const useInitialGame = () => {
-  const { dispatch } = useGameContext();
+  const { games, dispatch } = useGameContext();
   const { user } = useAuthContext();
 
   useEffect(() => {
@@ -25,4 +25,7 @@ export const useInitialGame = () => {
         fetchInit();
     }
   },[dispatch, user]);
+
+  // we then return these 2 things to be used for context
+  return { games, dispatch };
 };

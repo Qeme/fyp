@@ -13,13 +13,12 @@ import VenueRoutes from "./routes/VenueRoutes";
 import PaymentRoutes from "./routes/PaymentRoutes";
 import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
-import { useInitialFetch } from "./hooks/useInitialFetch";
 import { useAuthContext } from "./hooks/useAuthContext";
 import RefereeRoutes from "./routes/RefereeRoutes";
 
 function App() {
   // Call the custom hook to fetch initial data
-  useInitialFetch();
+  // useInitialFetch();
 
   // extract user context
   const { user } = useAuthContext();

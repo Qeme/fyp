@@ -111,7 +111,7 @@ export const updateGame = async (req,res)=>{
         This can be useful if you want to clone or merge the properties of req.body into another object. It will not affect the original req.body
         */
         ...req.body
-    })
+    },{ new: true }) // give the latest one
 
     // if no game found by that id, we need to return the function so that it will not proceed
     if(!game){

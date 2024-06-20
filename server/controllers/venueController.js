@@ -129,7 +129,7 @@ export const updateVenue = async (req,res)=>{
         postcode: postcode,
         state: state,
         country: country,
-    })
+    },{new : true}) //give the latest venue update
 
     // if no venue found by that id, we need to return the function so that it will not proceed
     if(!venue){

@@ -6,6 +6,7 @@ import { useAuthContext } from "./useAuthContext";
 import { useFileContext } from "./useFileContext";
 import { useUserContext } from "./useUserContext";
 import { useTeamContext } from "./useTeamContext";
+import { usePaymentContext } from "./usePaymentContext";
 
 export const useInitialFetch = () => {
   const { dispatch: dispatchTournament } = useTournamentContext();
@@ -14,6 +15,7 @@ export const useInitialFetch = () => {
   const { dispatch: dispatchFile } = useFileContext();
   const { dispatch: dispatchUser } = useUserContext();
   const { dispatch: dispatchTeam } = useTeamContext();
+  const { dispatch: dispatchPayment } = usePaymentContext();
   const { user } = useAuthContext();
 
   useEffect(() => {
@@ -61,6 +63,15 @@ export const useInitialFetch = () => {
         const filesData = await filesResponse.json();
         dispatchFile({ type: "SET_FILES", payload: filesData });
 
+        // Fetch payments
+        const paymentsResponse = await fetch("http://localhost:3002/api/payments", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        const paymentsData = await paymentsResponse.json();
+        dispatchPayment({ type: "SET_PAYMENTS", payload: paymentsData });
+
         // Fetch users
         const usersResponse = await fetch("http://localhost:3002/api/users");
         const usersData = await usersResponse.json();
@@ -84,5 +95,5 @@ export const useInitialFetch = () => {
       // Call the fetch data function when component mounts
       fetchData();
     }
-  }, [dispatchTournament, dispatchGame, dispatchVenue, dispatchFile, dispatchUser, dispatchTeam, user]);
+  }, [dispatchTournament, dispatchGame, dispatchVenue, dispatchFile, dispatchUser, dispatchTeam, dispatchPayment, user]);
 };

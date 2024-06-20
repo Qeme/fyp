@@ -12,14 +12,17 @@ import {
 } from "src/components/ui/dialog";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
-import { useGameContext } from "src/hooks/useGameContext";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "src/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "src/components/ui/select";
 
-export function GameEditTrigger({
-  game
-}) {
+export function GameEditTrigger({ game, dispatch }) {
   const { user } = useAuthContext();
-  const { dispatch } = useGameContext();
 
   const [name, setName] = useState(game.name);
   const [platform, setPlatform] = useState(game.platform);
@@ -30,14 +33,17 @@ export function GameEditTrigger({
       return;
     }
 
-    const response = await fetch(`http://localhost:3002/api/games/${game._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify({ name, platform }),
-    });
+    const response = await fetch(
+      `http://localhost:3002/api/games/${game._id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ name, platform }),
+      }
+    );
 
     const json = await response.json();
 
@@ -50,7 +56,10 @@ export function GameEditTrigger({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-800 w-30 h-15" onClick={() => setIsDialogOpen(true)}>
+        <Button
+          className="bg-blue-500 hover:bg-blue-800 w-30 h-15"
+          onClick={() => setIsDialogOpen(true)}
+        >
           Edit
         </Button>
       </DialogTrigger>
@@ -77,11 +86,12 @@ export function GameEditTrigger({
             <Label htmlFor="platform" className="text-right">
               Platform
             </Label>
-            <Select onValueChange={(value) => setPlatform(value)} value={platform}>
+            <Select
+              onValueChange={(value) => setPlatform(value)}
+              value={platform}
+            >
               <SelectTrigger className="col-span-3 border-gray-300 rounded-lg">
-                <SelectValue
-                  className="text-center"
-                />
+                <SelectValue className="text-center" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>

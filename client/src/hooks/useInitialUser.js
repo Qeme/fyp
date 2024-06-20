@@ -1,23 +1,19 @@
 import { useEffect } from "react";
 import { useAuthContext } from "./useAuthContext";
-import { useVenueContext } from "./useVenueContext";
+import { useUserContext } from "./useUserContext";
 
-export const useInitialVenue = () => {
-  const { venues, dispatch } = useVenueContext();
+export const useInitialUser = () => {
+  const { users, dispatch } = useUserContext();
   const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchInit = async () => {
-      const response = await fetch("http://localhost:3002/api/venues", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await fetch("http://localhost:3002/api/users");
 
       const json = await response.json()
 
       if(response.ok){
-        dispatch({type: "SET_VENUES", payload: json})
+        dispatch({type: "SET_USERS", payload: json})
       }
     };
 
@@ -27,5 +23,5 @@ export const useInitialVenue = () => {
   },[dispatch, user]);
 
   // we then return these 2 things to be used for context
-  return { venues, dispatch };
+  return { users, dispatch };
 };

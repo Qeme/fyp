@@ -7,19 +7,20 @@ import {
   TableRow,
 } from "src/components/ui/table";
 import React from "react";
-import { useTournamentContext } from "src/hooks/useTournamentContext";
 import { format } from "date-fns";
-import { useGameContext } from "src/hooks/useGameContext";
-import { useVenueContext } from "src/hooks/useVenueContext";
-import { useUserContext } from "src/hooks/useUserContext";
 import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
+import { useInitialTournament } from "src/hooks/useInitialTournament";
+import { useInitialGame } from "src/hooks/useInitialGame";
+import { useInitialVenue } from "src/hooks/useInitialVenue";
+import { useInitialUser } from "src/hooks/useInitialUser";
 
 const TournamentList = () => {
-  const { tournaments, dispatch } = useTournamentContext();
-  const { games } = useGameContext();
-  const { venues } = useVenueContext();
-  const { users } = useUserContext();
+
+  const { tournaments, dispatch } = useInitialTournament();
+  const { games } = useInitialGame();
+  const { venues } = useInitialVenue();
+  const { users } = useInitialUser();
   const { user } = useAuthContext();
 
   const handleClick = async ({ id }) => {
@@ -92,7 +93,7 @@ const TournamentList = () => {
                 {tournament.name}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {users.find(user => user._id === tournament.meta.organizer_id)?.name}  
+                {users.find(user => user._id === tournament.meta.organizer_id)?.email}  
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {games.find(game => game._id === tournament.meta.game_id)?.name}  

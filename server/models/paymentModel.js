@@ -31,6 +31,11 @@ const paymentSchema = new Schema(
       required: false,
       default: "pending",
     },
+    organizer_message: {
+      type: String,
+      required: false,
+      default: ""
+    }
   },
   { timestamps: true }
 );

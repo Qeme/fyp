@@ -7,14 +7,17 @@ import {
   TableRow,
 } from "src/components/ui/table";
 import React from "react";
-import { useTeamContext } from "src/hooks/useTeamContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { format } from "date-fns";
 import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
+import { useInitialUser } from "src/hooks/useInitialUser";
+import { useInitialTeam } from "src/hooks/useInitialTeam";
 
 const TeamList = () => {
-  const { teams, dispatch } = useTeamContext();
+
+  const { teams, dispatch } = useInitialTeam();
+  const { users } = useInitialUser();
   const { user } = useAuthContext();
 
   const handleClick = async ({ id }) => {
@@ -81,7 +84,8 @@ const TeamList = () => {
                 {team.name}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {team.manager}
+                {users &&
+                  users.find((user) => user._id === team.manager)?.email}
               </TableCell>
               <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <ol>

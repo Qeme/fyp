@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useFileContext } from "../hooks/useFileContext";
+import { AspectRatio } from "./ui/aspect-ratio";
 
 function PreviewImage({ topic, tournamentid }) {
   const [imageUrl, setImageUrl] = useState("");
@@ -9,7 +10,9 @@ function PreviewImage({ topic, tournamentid }) {
 
   useEffect(() => {
     const foundFile = files.find(
-      (file) => file.metadata.tournamentid === tournamentid && file.metadata.topic === topic
+      (file) =>
+        file.metadata.tournamentid === tournamentid &&
+        file.metadata.topic === topic
     );
 
     if (foundFile) {
@@ -35,19 +38,29 @@ function PreviewImage({ topic, tournamentid }) {
         preview();
       }
     } else {
-      setImageUrl(""); // Reset imageUrl and file when no file is found
+      setImageUrl("https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"); // Reset imageUrl and file when no file is found
     }
   }, [files, topic, tournamentid, user]);
 
   return (
-    <div>
-      {imageUrl ? (
-        <img src={imageUrl} alt="Preview" />
-      ) : (
-        <p>No image available</p>
-      )}
-    </div>
+    <AspectRatio ratio={4 / 3} className="bg-muted">
+      <img
+        src={imageUrl}
+        alt={`Preview of ${topic}`}
+        className="rounded-md object-cover"
+      />
+    </AspectRatio>
   );
+
+  // return (
+  //   <div>
+  //     {imageUrl ? (
+  //       <img src={imageUrl} alt="Preview" />
+  //     ) : (
+  //       <p>No image available</p>
+  //     )}
+  //   </div>
+  // );
 }
 
 export default PreviewImage;
