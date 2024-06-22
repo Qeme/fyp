@@ -6,7 +6,6 @@ import {
   CardFooter,
   CardHeader,
 } from "src/components/ui/card";
-import { useAuthContext } from "src/hooks/useAuthContext";
 import { useInitialPayment } from "src/hooks/useInitialPayment";
 import { useInitialTournament } from "src/hooks/useInitialTournament";
 import { useInitialTeam } from "src/hooks/useInitialTeam";
@@ -15,7 +14,6 @@ const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
   const { payments } = useInitialPayment();
   const { tournaments } = useInitialTournament();
   const { teams } = useInitialTeam();
-  const { user } = useAuthContext();
 
   return (
     <div className="container mx-auto p-4">

@@ -16,7 +16,6 @@ import { useInitialVenue } from "src/hooks/useInitialVenue";
 import { useInitialUser } from "src/hooks/useInitialUser";
 
 const TournamentList = () => {
-
   const { tournaments, dispatch } = useInitialTournament();
   const { games } = useInitialGame();
   const { venues } = useInitialVenue();
@@ -29,12 +28,15 @@ const TournamentList = () => {
     }
 
     // fetch the delete API
-    const response = await fetch("http://localhost:3002/api/tournaments/" + id, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
+    const response = await fetch(
+      "http://localhost:3002/api/tournaments/" + id,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
 
     // get the json response
     const json = await response.json();
@@ -84,42 +86,54 @@ const TournamentList = () => {
           </TableRow>
         </TableHeader>
         <TableBody className="bg-white divide-y divide-gray-200">
-          {tournaments.map((tournament) => (
-            <TableRow key={tournament._id}>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {tournament._id}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {tournament.name}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {users.find(user => user._id === tournament.meta.organizer_id)?.email}  
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {games.find(game => game._id === tournament.meta.game_id)?.name}  
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {venues.find(venue => venue._id === tournament.meta.venue_id)?.building}  
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {tournament.setting.stageOne.format}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {tournament.setting.stageTwo.format}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {tournament.setting.players.length}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {format(new Date(tournament.createdAt), "dd/MM/yyyy")}
-              </TableCell>
-              <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                <Button onClick={() => handleClick({ id: tournament._id })}>
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {tournaments &&
+            tournaments.map((tournament) => (
+              <TableRow key={tournament._id}>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {tournament._id}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {tournament.name}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {
+                    users.find(
+                      (user) => user._id === tournament.meta.organizer_id
+                    )?.email
+                  }
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {
+                    games.find((game) => game._id === tournament.meta.game_id)
+                      ?.name
+                  }
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {
+                    venues.find(
+                      (venue) => venue._id === tournament.meta.venue_id
+                    )?.building
+                  }
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {tournament.setting.stageOne.format}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {tournament.setting.stageTwo.format}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {tournament.setting.players.length}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {format(new Date(tournament.createdAt), "dd/MM/yyyy")}
+                </TableCell>
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                  <Button onClick={() => handleClick({ id: tournament._id })}>
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </div>
