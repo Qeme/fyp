@@ -22,7 +22,7 @@ const paymentSchema = new Schema(
     },
     payertype: {
       type: String,
-      enum: ["competitor", "spectator"],
+      enum: ["competitor", "viewer"],
       required: false,
     },
     status: {

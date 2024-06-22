@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useFileContext } from "../hooks/useFileContext";
 import { AspectRatio } from "./ui/aspect-ratio";
+import { useInitialFiles } from "src/hooks/useInitialFiles";
 
 function PreviewImage({ topic, tournamentid }) {
   const [imageUrl, setImageUrl] = useState("");
   const { user } = useAuthContext();
-  const { files } = useFileContext();
+  const { files } = useInitialFiles();
 
   useEffect(() => {
     const foundFile = files.find(
       (file) =>
         file.metadata.tournamentid === tournamentid &&
-        file.metadata.topic === topic
+        file.metadata.topic === topic &&
+        (file.metadata.uploader.$oid || file.metadata.uploader) === user._id
     );
+
+    // console.log(foundFile)
 
     if (foundFile) {
       const preview = async () => {
@@ -43,7 +46,7 @@ function PreviewImage({ topic, tournamentid }) {
   }, [files, topic, tournamentid, user]);
 
   return (
-    <AspectRatio ratio={4 / 3} className="bg-muted">
+    <AspectRatio ratio={9 / 10} className="bg-muted">
       <img
         src={imageUrl}
         alt={`Preview of ${topic}`}

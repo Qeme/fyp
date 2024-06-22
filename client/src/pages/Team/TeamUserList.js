@@ -6,37 +6,16 @@ import {
   TableHeader,
   TableRow,
 } from "src/components/ui/table";
-import React, { useEffect } from "react";
-import { useTeamContext } from "src/hooks/useTeamContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { format } from "date-fns";
 import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
 import { TeamEditTrigger } from "./TeamEditTrigger";
+import { useInitialTeam } from "src/hooks/useInitialTeam";
 
 const TeamUserList = () => {
-  const { teams, dispatch } = useTeamContext();
+  const { teams, dispatch } = useInitialTeam();
   const { user } = useAuthContext();
-
-  useEffect(() => {
-    const fetchInit = async () => {
-      const response = await fetch("http://localhost:3002/api/teams", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-
-      const json = await response.json();
-
-      if (response.ok) {
-        dispatch({ type: "SET_TEAMS", payload: json });
-      }
-    };
-
-    if (user) {
-      fetchInit();
-    }
-  }, [dispatch, user, teams]);
 
   const handleClick = async ({ id }) => {
     if (!user) {

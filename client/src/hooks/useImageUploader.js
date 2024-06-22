@@ -15,6 +15,8 @@ const useImageUploader = () => {
   };
 
   const uploadFile = async (tournamentid, topic) => {
+    console.log(file);  // Debug: Output the current file state
+    
     if (!user) {
       console.error("Non Authorized User Detected");
       return;
