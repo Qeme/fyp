@@ -49,9 +49,9 @@ const tournamentSchema = new Schema({
             },
             format:{
                 type: String,
-                enum: ["single-elimination", "double-elimination", "stepladder"],
+                enum: ["single-elimination", "double-elimination", "stepladder",""],
                 required: false,
-                default: null
+                default: ""
             },
             advance:{
                 method:{

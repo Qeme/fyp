@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
-import { useInitialGame } from "src/hooks/useInitialGame";
-import { useInitialTournament } from "src/hooks/useInitialTournament";
-import { useInitialVenue } from "src/hooks/useInitialVenue";
 import {
   Card,
   CardContent,
@@ -22,15 +19,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/components/ui/select";
+import { DatePickerWithRange } from "src/components/CalendarInput";
+import { addDays, format } from "date-fns";
+import { Textarea } from "src/components/ui/textarea";
+import { useTournamentContext } from "src/hooks/useTournamentContext";
+import { useGameContext } from "src/hooks/useGameContext";
+import { useVenueContext } from "src/hooks/useVenueContext";
+import { Button } from "src/components/ui/button";
+import BackButton from "src/components/BackButton";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
   const navigate = useNavigate();
 
   // take the dispatch components from the hooks
-  const { dispatch } = useInitialTournament();
-  const { games } = useInitialGame();
-  const { venues } = useInitialVenue();
+  const { dispatch } = useTournamentContext();
+  const { games } = useGameContext();
+  const { venues } = useVenueContext();
   const { user } = useAuthContext();
 
   // set up the useState for 9 properties
@@ -40,10 +45,16 @@ const TournamentForm = () => {
   const [stageOne, setStageOne] = useState({ format: "", maxPlayers: "" });
   const [stageTwo, setStageTwo] = useState({
     format: "",
-    advance: { method: "", value: "" },
+    advance: { method: "all", value: "" },
   });
-  const [register, setRegister] = useState({ open: "", close: "" });
-  const [running, setRunning] = useState({ start: "", end: "" });
+  const [register, setRegister] = useState({
+    open: format(new Date(), "yyyy-MM-dd"),
+    close: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+  });
+  const [running, setRunning] = useState({
+    start: format(new Date(), "yyyy-MM-dd"),
+    end: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+  });
   const [checkin, setCheckin] = useState("");
   const [notification, setNotification] = useState({
     rules: "",
@@ -55,7 +66,7 @@ const TournamentForm = () => {
     numPlayers: "",
   });
   const [colored, setColored] = useState("");
-  const [sorting, setSorting] = useState("");
+  const [sorting, setSorting] = useState("none");
   const [scoring, setScoring] = useState({
     win: "",
     loss: "",
@@ -103,7 +114,7 @@ const TournamentForm = () => {
       setDisableInputSort(false); // Enable Players Sorting
     } else {
       setDisableInputSort(true); // Disable Players Sorting
-      setSorting(""); // Reset sorting when disabling
+      setSorting("none"); // Reset sorting when disabling
     }
   };
 
@@ -124,7 +135,7 @@ const TournamentForm = () => {
       setDisableInputStage(true); // Disable Players Stage Two format and advance setting
       setStageTwo({
         format: "",
-        advance: { method: "", value: "" },
+        advance: { method: "all", value: "" },
       });
     }
   };
@@ -192,10 +203,16 @@ const TournamentForm = () => {
       setStageOne({ format: "", maxPlayers: "" });
       setStageTwo({
         format: "",
-        advance: { method: "", value: "" },
+        advance: { method: "all", value: "" },
       });
-      setRegister({ open: "", close: "" });
-      setRunning({ start: "", end: "" });
+      setRegister({
+        open: format(new Date(), "yyyy-MM-dd"),
+        close: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+      });
+      setRunning({
+        start: format(new Date(), "yyyy-MM-dd"),
+        end: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+      });
       setCheckin("");
       setNotification({
         rules: "",
@@ -207,7 +224,7 @@ const TournamentForm = () => {
         numPlayers: "",
       });
       setColored("");
-      setSorting("");
+      setSorting("none");
       setScoring({
         win: "",
         loss: "",
@@ -230,7 +247,7 @@ const TournamentForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-20 bg-gray-100">
+    <div className="flex items-center justify-center my-20 bg-gray-100">
       <Card className="w-[500px]">
         <CardHeader>
           <CardTitle>Create tournament</CardTitle>
@@ -402,6 +419,9 @@ const TournamentForm = () => {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
+                            <SelectItem value="none">
+                                Not Applicable
+                              </SelectItem>
                               <SelectItem value="ascending">
                                 Ascending
                               </SelectItem>
@@ -725,107 +745,120 @@ const TournamentForm = () => {
                 </div>
               </div>
 
-              <h2>
-                <strong>Registration</strong>
-              </h2>
+              <div>
+                <h2>
+                  <strong>Date</strong>
+                </h2>
 
-              <label>Open Date Time: </label>
-              <input
-                type="date"
-                onChange={(e) =>
-                  setRegister({ ...register, open: e.target.value })
-                }
-                value={register.open}
-              ></input>
+                <div>
+                  <Label htmlFor="registerDate">Registration: </Label>
+                  <DatePickerWithRange
+                    value={register}
+                    onChange={setRegister}
+                  />
+                </div>
 
-              <label>Close Date Time: </label>
-              <input
-                type="date"
-                onChange={(e) =>
-                  setRegister({ ...register, close: e.target.value })
-                }
-                value={register.close}
-              ></input>
+                <div className="w-full">
+                  <Label htmlFor="runningDate">Running: </Label>
+                  <DatePickerWithRange value={running} onChange={setRunning} />
+                </div>
 
-              <h2>
-                <strong>Running</strong>
-              </h2>
+                <div>
+                  <Label htmlFor="checkin" className="w-1/3 text-left">
+                    Check In Time (minutes):{" "}
+                  </Label>
+                  <Input
+                    id="checkin"
+                    type="number"
+                    min="1"
+                    placeholder="Eg: 10"
+                    onChange={(e) => setCheckin(e.target.value)}
+                    value={checkin}
+                    className="border border-gray-300 rounded p-2 w-1/4 mr-2"
+                  ></Input>
+                </div>
+              </div>
 
-              <label>Start Date Time: </label>
-              <input
-                type="date"
-                onChange={(e) =>
-                  setRunning({ ...running, start: e.target.value })
-                }
-                value={running.start}
-              ></input>
+              <div>
+                <h2>
+                  <strong>Notification</strong>
+                </h2>
 
-              <label>End Date Time: </label>
-              <input
-                type="date"
-                onChange={(e) =>
-                  setRunning({ ...running, end: e.target.value })
-                }
-                value={running.end}
-              ></input>
+                <div>
+                  <div>
+                    <Label htmlFor="rules">Rules: </Label>
+                    <Textarea
+                      id="rules"
+                      type="text"
+                      placeholder="Tournament rules must be set so everyone can notice and remind themselves"
+                      onChange={(e) =>
+                        setNotification({
+                          ...notification,
+                          rules: e.target.value,
+                        })
+                      }
+                    ></Textarea>
+                  </div>
+                  <div>
+                    <Label htmlFor="regulation">Regulation: </Label>
+                    <Textarea
+                      id="regulation"
+                      type="text"
+                      placeholder="Tournament regulation must be mentioning about things that can control the situation"
+                      onChange={(e) =>
+                        setNotification({
+                          ...notification,
+                          regulation: e.target.value,
+                        })
+                      }
+                    ></Textarea>
+                  </div>
+                </div>
+              </div>
 
-              <label>Check In Time (minutes): </label>
-              <input
-                type="number"
-                onChange={(e) => setCheckin(e.target.value)}
-                value={checkin}
-              ></input>
+              <div>
+                <h2>
+                  <strong>Ticket Price</strong>
+                </h2>
 
-              <h2>
-                <strong>Notification</strong>
-              </h2>
+                <div className="flex">
+                  <div className="w-1/2 pr-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="competitor">Competitor: </Label>
+                      <Input
+                        id="competitor"
+                        type="number"
+                        min="0"
+                        placeholder="RM 5.50"
+                        onChange={(e) =>
+                          setTicket({ ...ticket, competitor: e.target.value })
+                        }
+                        value={ticket.competitor}
+                      ></Input>
+                    </div>
+                  </div>
 
-              <label>Rules: </label>
-              <input
-                type="text"
-                onChange={(e) =>
-                  setNotification({ ...notification, rules: e.target.value })
-                }
-                value={notification.rules}
-              ></input>
-
-              <label>Regulation: </label>
-              <input
-                type="text"
-                onChange={(e) =>
-                  setNotification({
-                    ...notification,
-                    regulation: e.target.value,
-                  })
-                }
-                value={notification.regulation}
-              ></input>
-
-              <h2>
-                <strong>Ticket Price</strong>
-              </h2>
-
-              <label>Competitor: </label>
-              <input
-                type="number"
-                onChange={(e) =>
-                  setTicket({ ...ticket, competitor: e.target.value })
-                }
-                value={ticket.competitor}
-              ></input>
-
-              <label>Spectator: </label>
-              <input
-                type="number"
-                onChange={(e) =>
-                  setTicket({ ...ticket, viewer: e.target.value })
-                }
-                value={ticket.viewer}
-              ></input>
-
-              <button>Submit</button>
+                  <div className="w-1/2 pr-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <Label htmlFor="viewer">Viewer: </Label>
+                      <Input
+                        id="viewer"
+                        type="number"
+                        min="0"
+                        placeholder="RM 2.50"
+                        onChange={(e) =>
+                          setTicket({ ...ticket, viewer: e.target.value })
+                        }
+                        value={ticket.viewer}
+                      ></Input>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <Button className="my-4 w-full">Submit</Button>
           </form>
+          <BackButton className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full" />
         </CardContent>
         <CardFooter>{error && <div className="error">{error}</div>}</CardFooter>
       </Card>

@@ -112,6 +112,10 @@ export const createTournament = async (req, res) => {
   // check the field that is empty
   let emptyFields = [];
 
+  if(stageTwo.format === ""){
+    stageTwo.format = null
+  }
+  
   // so for each field that empty, push the field properties to the array
   if (!name) {
     emptyFields.push("name");

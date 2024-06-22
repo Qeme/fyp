@@ -15,10 +15,11 @@ import Signup from "./pages/User/Signup";
 import Login from "./pages/User/Login";
 import { useAuthContext } from "./hooks/useAuthContext";
 import RefereeRoutes from "./routes/RefereeRoutes";
+import { useInitialFetch } from "./hooks/useInitialFetch";
 
 function App() {
   // Call the custom hook to fetch initial data
-  // useInitialFetch();
+  useInitialFetch();
 
   // extract user context
   const { user } = useAuthContext();
