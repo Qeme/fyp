@@ -65,11 +65,9 @@ export const getStandingTournament = async (req, res) => {
 
     res.status(200).json(ranking);
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error: `Deny Permission: Assign . Additional info : ${error.message}`,
-      });
+    res.status(400).json({
+      error: `Deny Permission: Assign . Additional info : ${error.message}`,
+    });
   }
 };
 
@@ -79,9 +77,13 @@ export const publishTournament = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const updatedTournament = await tournamentDB.findByIdAndUpdate(id, {
-      $set: { "meta.status": "published" },
-    });
+    const updatedTournament = await tournamentDB.findByIdAndUpdate(
+      id,
+      {
+        $set: { "meta.status": "published" },
+      },
+      { new: true }
+    );
     res.status(200).json(updatedTournament);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -112,10 +114,10 @@ export const createTournament = async (req, res) => {
   // check the field that is empty
   let emptyFields = [];
 
-  if(stageTwo.format === ""){
-    stageTwo.format = null
+  if (stageTwo.format === "") {
+    stageTwo.format = null;
   }
-  
+
   // so for each field that empty, push the field properties to the array
   if (!name) {
     emptyFields.push("name");
@@ -171,11 +173,9 @@ export const createTournament = async (req, res) => {
 
     res.status(200).json(tournament);
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error: `Tournament can't be created. Additional info: ${error.message}`,
-      });
+    res.status(400).json({
+      error: `Tournament can't be created. Additional info: ${error.message}`,
+    });
   }
 };
 
@@ -252,7 +252,7 @@ export const startTournament = async (req, res) => {
 
     res.status(200).json(updatedTournament);
   } catch (error) {
-    res.status(400).json({ error: "Deny Permission: Start" });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -330,7 +330,7 @@ export const updateTournament = async (req, res) => {
         */
       ...req.body,
     },
-    {new: true} //give the updated one
+    { new: true } //give the updated one
   );
 
   // if no tournament found by that id, we need to return the function so that it will not proceed

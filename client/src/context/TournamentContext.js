@@ -20,16 +20,25 @@ export const tournamentReducer = (state, action) => {
       return {
         ...state, //please do not forget to spread the state
         tournaments: action.payload, //this part basically SETTING UP the tournaments value
-      }; 
+      };
     case "CREATE_TOURNAMENT":
       return {
         ...state,
         tournaments: [action.payload, ...state.tournaments], // ...state.tournaments is basically set up the current value (if not mentioned, it will completely replaced the original one)
       };
+    case "UPDATE_TOURNAMENT":
+      return {
+        ...state,
+        tournaments: state.tournaments.map((tournament) =>
+          tournament._id === action.payload._id ? action.payload : tournament
+        ),
+      };
     case "DELETE_TOURNAMENT":
       return {
         ...state,
-        tournaments: state.tournaments.filter((tournament) => tournament._id !== action.payload._id),  // the tournaments value will be replaced by using filter->only take the tournament that id is not same with the id that is being
+        tournaments: state.tournaments.filter(
+          (tournament) => tournament._id !== action.payload._id
+        ), // the tournaments value will be replaced by using filter->only take the tournament that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
@@ -41,7 +50,6 @@ export const tournamentReducer = (state, action) => {
   export it as well, take the children argument and insert it into <Provider> tag
 */
 export const TournamentContextProvider = ({ children }) => {
-
   // apply useReducer(the function, the initial value for the state)
   const [state, dispatch] = useReducer(tournamentReducer, { tournaments: [] });
 
@@ -49,7 +57,7 @@ export const TournamentContextProvider = ({ children }) => {
   return (
     // we then put value argument -> state: the current value here -> dispatch: the funct that will help sending the {type,payload}
     <TournamentContext.Provider value={{ ...state, dispatch }}>
-      {children} 
+      {children}
     </TournamentContext.Provider>
   );
 };
