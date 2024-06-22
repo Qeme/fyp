@@ -1,10 +1,10 @@
 import React from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { Link } from "react-router-dom";
+import { useInitialTournament } from "src/hooks/useInitialTournament";
 
 function TournamentMonitor() {
-  const { tournaments, dispatch } = useTournamentContext();
+  const { tournaments, dispatch } = useInitialTournament();
   const { user } = useAuthContext();
 
   const monitoredTournament = tournaments?.filter(

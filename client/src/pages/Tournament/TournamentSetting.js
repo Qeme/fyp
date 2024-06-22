@@ -1,8 +1,6 @@
 import { useInitialGame } from "src/hooks/useInitialGame";
-import React from "react";
-import { useGameContext } from "src/hooks/useGameContext";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
-import { useVenueContext } from "src/hooks/useVenueContext";
+
 import {
   Card,
   CardContent,
@@ -15,11 +13,8 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import { Badge } from "src/components/ui/badge";
 
 function TournamentSetting() {
-  useInitialGame();
-  useInitialVenue();
-
-  const { games } = useGameContext();
-  const { venues } = useVenueContext();
+  const { games } = useInitialGame();
+  const { venues } = useInitialVenue();
 
   return (
     <main>
@@ -73,17 +68,29 @@ function TournamentSetting() {
                     <p>
                       <strong>Block</strong>
                     </p>
-                    {venue.block ? <p>{venue.block}</p> : <p className="italic opacity-55">Not Available</p>}
+                    {venue.block ? (
+                      <p>{venue.block}</p>
+                    ) : (
+                      <p className="italic opacity-55">Not Available</p>
+                    )}
 
                     <p>
                       <strong>Floor</strong>
                     </p>
-                    {venue.floorLevel ? <p>{venue.floorLevel}</p> : <p className="italic opacity-55">Not Available</p>}
+                    {venue.floorLevel ? (
+                      <p>{venue.floorLevel}</p>
+                    ) : (
+                      <p className="italic opacity-55">Not Available</p>
+                    )}
 
                     <p>
                       <strong>Room</strong>
                     </p>
-                    {venue.roomNumber ? <p>{venue.roomNumber}</p> : <p className="italic opacity-55">Not Available</p>}
+                    {venue.roomNumber ? (
+                      <p>{venue.roomNumber}</p>
+                    ) : (
+                      <p className="italic opacity-55">Not Available</p>
+                    )}
 
                     <p>
                       <strong>Place</strong>

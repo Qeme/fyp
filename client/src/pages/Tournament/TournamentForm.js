@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { useTournamentContext } from "../../hooks/useTournamentContext";
-import { useGameContext } from "../../hooks/useGameContext";
-import { useVenueContext } from "../../hooks/useVenueContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+import { useInitialGame } from "src/hooks/useInitialGame";
+import { useInitialTournament } from "src/hooks/useInitialTournament";
+import { useInitialVenue } from "src/hooks/useInitialVenue";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
   const navigate = useNavigate();
 
   // take the dispatch components from the hooks
-  const { dispatch } = useTournamentContext();
-  const { games } = useGameContext();
-  const { venues } = useVenueContext();
+  const { dispatch } = useInitialTournament();
+  const { games } = useInitialGame();
+  const { venues } = useInitialVenue();
   const { user } = useAuthContext();
 
   // set up the useState for 9 properties
@@ -143,7 +143,7 @@ const TournamentForm = () => {
       setEmptyFields([]);
 
       /* 
-        now call the dispatch from useTournamentContext hook to create new tournament
+        now call the dispatch from useInitialTournament hook to create new tournament
         we put payload : json as value because json has body of tournament: { _id, name, venue_id, game_id, createdAt, updatedAt }
       */
       dispatch({ type: "CREATE_TOURNAMENT", payload: json });

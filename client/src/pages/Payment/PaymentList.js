@@ -22,10 +22,6 @@ const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
       <h3 className="text-2xl font-bold mb-4 text-left">Payment History:</h3>
       {payments &&
         payments
-          .filter(
-            (payment) =>
-              payment.payerid === user._id && payment.status !== "pending"
-          )
           .map((payment) => (
             <Card
               key={payment._id}

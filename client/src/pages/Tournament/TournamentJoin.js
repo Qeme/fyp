@@ -1,9 +1,9 @@
+import { useInitialTournament } from "src/hooks/useInitialTournament";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useNavigate } from "react-router-dom";
 
 function TournamentJoin() {
-  const { tournaments } = useTournamentContext();
+  const { tournaments } = useInitialTournament();
   const { user } = useAuthContext();
   const navigate = useNavigate();
 

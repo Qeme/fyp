@@ -30,7 +30,11 @@ const PaymentPreview = ({ tournamentid, payment }) => {
               )}
               <Badge
                 variant={
-                  payment.status === "accepted" ? "accepted" : "rejected"
+                  payment.status === "accepted"
+                    ? "accepted"
+                    : payment.status === "rejected"
+                    ? "rejected"
+                    : "pending"
                 }
               >
                 {payment.status}

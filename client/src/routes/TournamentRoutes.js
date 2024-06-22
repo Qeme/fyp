@@ -4,7 +4,6 @@ import Tournament from "../pages/Tournament/Tournament";
 import TournamentForm from "../pages/Tournament/TournamentForm";
 import NotFound from "../pages/NotFound";
 import TournamentImage from "../pages/Tournament/TournamentImage";
-import TournamentType from "../pages/Tournament/TournamentType";
 import TournamentJoin from "../pages/Tournament/TournamentJoin";
 import TournamentMonitor from "../pages/Tournament/TournamentMonitor";
 import TournamentJoinForm from "../pages/Tournament/TournamentJoinForm";
@@ -16,7 +15,6 @@ function TournamentRoutes() {
       <Route index element={<TournamentList />} />
       <Route path=":id" element={<Tournament />} />
       <Route path="joins/:id" element={<TournamentJoinForm />} />
-      <Route path="type" element={<TournamentType />} />
       <Route path="join" element={<TournamentJoin />} />
       <Route path="monitor" element={<TournamentMonitor />} />
       <Route path="create" element={<TournamentForm />} />
