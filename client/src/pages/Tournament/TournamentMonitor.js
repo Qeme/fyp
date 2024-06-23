@@ -12,6 +12,8 @@ import { useInitialGame } from "src/hooks/useInitialGame";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
 import { Button } from "src/components/ui/button";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
+import { TournamentEditTrigger } from "./TournamentEditTrigger";
 
 function TournamentMonitor() {
   const { tournaments, dispatch } = useInitialTournament();
@@ -198,12 +200,18 @@ function TournamentMonitor() {
                   >
                     Delete
                   </Button>
-                  {tournament.meta.status !== "published" ? (
-                    <Button
-                      onClick={() => handleClickPublish({ id: tournament._id })}
-                    >
-                      Publish
-                    </Button>
+
+                  {tournament.meta.status === "created" ? (
+                    <div>
+                      <TournamentEditTrigger tournament={tournament} />
+                      <Button
+                        onClick={() =>
+                          handleClickPublish({ id: tournament._id })
+                        }
+                      >
+                        Publish
+                      </Button>
+                    </div>
                   ) : (
                     ""
                   )}
@@ -212,6 +220,13 @@ function TournamentMonitor() {
                       onClick={() => handleClickStart({ id: tournament._id })}
                     >
                       Start
+                    </Button>
+                  ) : (
+                    ""
+                  )}
+                  {tournament.meta.status === "running" ? (
+                    <Button asChild>
+                      <Link href="/tournaments/progress">Progress</Link>
                     </Button>
                   ) : (
                     ""

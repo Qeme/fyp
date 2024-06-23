@@ -46,6 +46,15 @@ export function RefereeEditTrigger({ referee }) {
     }
   };
 
+  // Reset the form to the original referee data
+  const handleCancel = () => {
+    // Reset to initial state
+    setName(referee.name);
+    setEmail(referee.email);
+    // Close the dialog
+    setIsDialogOpen(false);
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
@@ -91,9 +100,14 @@ export function RefereeEditTrigger({ referee }) {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleClick} type="button">
-            Save changes
-          </Button>
+          <div>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleClick} type="button" className="ml-2">
+              Save changes
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

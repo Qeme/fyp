@@ -53,6 +53,15 @@ export function GameEditTrigger({ game, dispatch }) {
     }
   };
 
+  // Reset the form to the original game data
+  const handleCancel = () => {
+    // Reset to initial state
+    setName(game.name);
+    setPlatform(game.platform);
+    // Close the dialog
+    setIsDialogOpen(false);
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
@@ -109,9 +118,14 @@ export function GameEditTrigger({ game, dispatch }) {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleClick} type="button">
-            Save changes
-          </Button>
+          <div>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleClick} type="button" className="ml-2">
+              Save changes
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

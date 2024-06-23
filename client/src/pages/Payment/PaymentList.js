@@ -9,17 +9,20 @@ import {
 import { useInitialPayment } from "src/hooks/useInitialPayment";
 import { useInitialTournament } from "src/hooks/useInitialTournament";
 import { useInitialTeam } from "src/hooks/useInitialTeam";
+import { useAuthContext } from "src/hooks/useAuthContext";
 
 const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
   const { payments } = useInitialPayment();
   const { tournaments } = useInitialTournament();
   const { teams } = useInitialTeam();
+  const { user } = useAuthContext();
 
   return (
     <div className="container mx-auto p-4">
       <h3 className="text-2xl font-bold mb-4 text-left">Payment History:</h3>
       {payments &&
         payments
+          .filter((payment) => payment.payerid === user._id)
           .map((payment) => (
             <Card
               key={payment._id}

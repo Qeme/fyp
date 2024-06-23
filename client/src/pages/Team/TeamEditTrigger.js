@@ -49,10 +49,23 @@ export function TeamEditTrigger({ team }) {
     }
   };
 
+  // Reset the form to the original team data
+  const handleCancel = () => {
+    // Reset to initial state
+    setName(team.name);
+    setPlayers(team.players)
+    // Close the dialog
+    setIsDialogOpen(false);
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className="bg-blue-500 hover:bg-blue-800" onClick={() => setIsDialogOpen(true)}>
+        <Button
+          variant="default"
+          className="bg-blue-500 hover:bg-blue-800"
+          onClick={() => setIsDialogOpen(true)}
+        >
           Edit
         </Button>
       </DialogTrigger>
@@ -124,9 +137,14 @@ export function TeamEditTrigger({ team }) {
           ))}
         </div>
         <DialogFooter>
-          <Button onClick={handleClick} type="button">
-            Save changes
-          </Button>
+          <div>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleClick} type="button" className="ml-2">
+              Save changes
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

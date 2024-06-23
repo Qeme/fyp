@@ -68,10 +68,27 @@ export function VenueEditTrigger({ venue }) {
     }
   };
 
+  // Reset the form to the original venue data
+  const handleCancel = () => {
+    // Reset to initial state
+    setBlock(venue.block);
+    setFloorLevel(venue.floorLevel);
+    setRoomNumber(venue.roomNumber);
+    setPlace(venue.place);
+    setPostcode(venue.postcode);
+    setState(venue.state);
+    setCountry(venue.country);
+    // Close the dialog
+    setIsDialogOpen(false);
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-800 w-30 h-15" onClick={() => setIsDialogOpen(true)}>
+        <Button
+          className="bg-blue-500 hover:bg-blue-800 w-30 h-15"
+          onClick={() => setIsDialogOpen(true)}
+        >
           Edit
         </Button>
       </DialogTrigger>
@@ -187,9 +204,14 @@ export function VenueEditTrigger({ venue }) {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleClick} type="button">
-            Save changes
-          </Button>
+          <div>
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleClick} type="button" className="ml-2">
+              Save changes
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
