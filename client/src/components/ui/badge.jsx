@@ -20,6 +20,8 @@ const badgeVariants = cva(
           "border-transparent bg-green-700 text-primary-foreground hover:bg-green-600",
         platform_hybrid:
           "border-transparent bg-yellow-600 text-primary-foreground hover:bg-yellow-500",
+        newly:
+          "border-transparent bg-amber-500 text-primary-foreground hover:bg-amber-600",
         accepted: "border-transparent bg-blue-800 text-primary-foreground",
         rejected: "border-transparent bg-red-700 text-primary-foreground",
         pending: "border-transparent bg-orange-600 text-primary-foreground",

@@ -46,11 +46,11 @@ function PreviewImage({ topic, tournamentid }) {
   }, [files, topic, tournamentid, user]);
 
   return (
-    <AspectRatio ratio={9 / 10} className="bg-muted">
+    <AspectRatio ratio={16 / 9} className="bg-muted">
       <img
         src={imageUrl}
         alt={`Preview of ${topic}`}
-        className="rounded-md object-cover"
+        className="object-cover"
       />
     </AspectRatio>
   );
