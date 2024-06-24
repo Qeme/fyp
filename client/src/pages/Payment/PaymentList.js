@@ -11,7 +11,7 @@ import { useInitialTournament } from "src/hooks/useInitialTournament";
 import { useInitialTeam } from "src/hooks/useInitialTeam";
 import { useAuthContext } from "src/hooks/useAuthContext";
 
-const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
+const PaymentList = ({ onSelectPayment }) => {
   const { payments } = useInitialPayment();
   const { tournaments } = useInitialTournament();
   const { teams } = useInitialTeam();
@@ -28,7 +28,6 @@ const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
               key={payment._id}
               className="mb-6 shadow-sm p-4 border rounded-lg cursor-pointer"
               onClick={() => {
-                onSelectTournament(payment.tournamentid);
                 onSelectPayment(payment);
               }}
             >
@@ -52,12 +51,10 @@ const PaymentList = ({ onSelectTournament, onSelectPayment }) => {
                     Representative
                   </strong>
                   <span className="text-gray-700 w-3/4">
-                    {payment.teamid
-                      ? `team ${
-                          teams.find((team) => team._id === payment.teamid)
-                            ?.name
-                        }`
-                      : "individual"}
+                    {payment.teamid &&
+                      (teams.find((team) => team._id === payment.teamid)
+                        ?.name ||
+                        "individual")}
                   </span>
                 </div>
                 <div className="pl-4 flex">

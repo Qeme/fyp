@@ -14,8 +14,8 @@ function TournamentRoutes() {
     <Routes>
       <Route index element={<TournamentList />} />
       <Route path=":id" element={<Tournament />} />
-      <Route path="joins/:id" element={<TournamentJoinForm />} />
       <Route path="join" element={<TournamentJoin />} />
+      <Route path="join/:id" element={<TournamentJoinForm />} />
       <Route path="monitor" element={<TournamentMonitor />} />
       <Route path="create" element={<TournamentForm />} />
       <Route path="setting" element={<TournamentSetting />} />

@@ -1,9 +1,17 @@
 import React from "react";
 import UploadImage from "../../components/UploadImage";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "src/components/ui/button";
 
 function TournamentImage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const handleNavigateAndRefresh = () => {
+    window.location.reload(); // Force page reload
+    navigate("/tournaments/monitor" ,{ replace: true });
+  };
+
   return (
     <div>
       <div>
@@ -18,6 +26,9 @@ function TournamentImage() {
         <h3>QR Online Banking: </h3>
         <UploadImage tournamentid={id} topic={'tour_qr'}/>
       </div>
+      
+      {/* Button to navigate to "/" and refresh the page */}
+      <Button onClick={handleNavigateAndRefresh}>Proceed</Button>
     </div>
   );
 }

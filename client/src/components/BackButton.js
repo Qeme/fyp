@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 function BackButton({ className }) {
   const navigate = useNavigate();
@@ -9,9 +10,9 @@ function BackButton({ className }) {
   };
 
   return (
-    <button className={className} onClick={handleBack}>
+    <Button className={className} onClick={handleBack}>
       Back
-    </button>
+    </Button>
   );
 }
 

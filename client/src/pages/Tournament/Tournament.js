@@ -1,146 +1,292 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+"use client";
+
+import { useNavigate, useParams } from "react-router-dom";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useVenueContext } from "../../hooks/useVenueContext";
 import { useGameContext } from "../../hooks/useGameContext";
-import BackButton from "../../components/BackButton";
-import JoinButton from "../../components/JoinButton";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
+import { ScrollArea } from "src/components/ui/scroll-area";
+import PreviewImage from "src/components/PreviewImage";
+import AvatarProfile from "src/components/AvatarProfile";
 
-// create a function to get the detail of one particular tournament
 const Tournament = () => {
-  // we grab the id as params, similar to backend
   const { id } = useParams();
-  // grab the updated tournaments from the GameContext()
   const { tournaments } = useTournamentContext();
   const { games } = useGameContext();
   const { venues } = useVenueContext();
-  // create 2 useState variables for this particular page
-  const [tournament, setTournament] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  /* 
-    useEffect hook where it uses () => {} because we just want to call it once, not infinitly
-    it has [] to be passed, so if [id, tournaments] changed, means it will rerun the useEffect hook
-  */
-  useEffect(() => {
-    // during the finding the tournament, make the Loading equals to true
-    setLoading(true);
-    // try find the that particular tournament from the tournaments using id params
-    const foundTournament = tournaments.find((t) => t._id === id);
+  const navigate = useNavigate();
 
-    if (foundTournament) {
-      // if found, execute setTournament to change the value from null to that tournament information
-      setTournament(foundTournament);
-    } else {
-      // if not found, just reset it back to null
-      setTournament(null);
-    }
-    // after all finish, change back Loading to false
-    setLoading(false);
-  }, [id, tournaments]);
+  // find the tournament
+  const tournament = tournaments.find((tournament) => tournament._id === id);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // function for handleJoin
+  const handleJoinCompetitor = () => {
+    navigate(`/tournaments/join/${id}?payertype=competitor`);
+  };
 
-  if (!tournament) {
-    return <div>Tournament not found</div>;
-  }
+  const handleJoinViewer = () => {
+    navigate(`/tournaments/join/${id}?payertype=viewer`);
+  };
 
   return (
-    <div>
-      <h2>Tournament Information</h2>
-      <p>Name: {tournament.name}</p>
-      <p>
-        Game:{" "}
-        {(games &&
-          games.find((g) => g._id === tournament.meta.game_id)?.name) ||
-          "Recently deleted by Admin"}
-      </p>
-
-      <p>
-        Venue:{" "}
-        {(venues &&
-          venues.find((v) => v._id === tournament.meta.venue_id)?.building) ||
-          "Recently deleted by Admin"}
-      </p>
-
-      <h2>Representative</h2>
-      <p>Type: {tournament.meta.representative.repType}</p>
-      {tournament && tournament.meta.representative.repType === "team" ? (
-        <div>
-          Number of players: {tournament.meta.representative.numPlayers}
+    <main>
+      <div className="flex justify-center w-full space-x-4">
+        <div className="flex w-3/5">
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Tournament Details</CardTitle>
+              <CardDescription>
+                Have you interested in joining the tournament? Submit the form
+                now and enjoy the show.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-12">
+              <div>
+                <div>
+                  <p>Name: {tournament.name}</p>
+                  <p>
+                    Game:{" "}
+                    {(games &&
+                      games.find((g) => g._id === tournament.meta.game_id)
+                        ?.name) || <span>Recently deleted by Admin</span>}
+                  </p>
+                  <p>
+                    Venue:{" "}
+                    {(venues &&
+                      venues.find((v) => v._id === tournament.meta.venue_id)
+                        ?.building) || <span>Recently deleted by Admin</span>}
+                  </p>
+                </div>
+                <div>
+                  <h3>Representative</h3>
+                  <div>
+                    <p>Type: {tournament.meta.representative.repType}</p>
+                    {tournament &&
+                    tournament.meta.representative.repType === "team" ? (
+                      <p>
+                        Assigned Teammate:{" "}
+                        {tournament.meta.representative.numPlayers}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                    <p>
+                      Players Order:
+                      {tournament && tournament.setting.colored === "true" ? (
+                        <span>Applicable</span>
+                      ) : (
+                        <span>Not Applicable</span>
+                      )}
+                    </p>
+                    <p>
+                      Players Sorting:
+                      {tournament && tournament.setting.sorting === "none" ? (
+                        <span>Not Applicable</span>
+                      ) : (
+                        <span>{tournament.setting.sorting}</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  <h3>Scoring:</h3>
+                  <table className="w-1/2">
+                    <thead>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <th className="border px-4 py-2 text-center font-bold [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Type
+                        </th>
+                        <th className="border px-4 py-2 text-center font-bold [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Values
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Win
+                        </td>
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          {tournament.setting.scoring.win}
+                        </td>
+                      </tr>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Loss
+                        </td>
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          {tournament.setting.scoring.loss}
+                        </td>
+                      </tr>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Draw
+                        </td>
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          {tournament.setting.scoring.draw}
+                        </td>
+                      </tr>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Bye
+                        </td>
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          {tournament.setting.scoring.bye}
+                        </td>
+                      </tr>
+                      <tr className="m-0 border-t p-0 even:bg-muted">
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          Best Of
+                        </td>
+                        <td className="border px-4 py-2 text-center [&[align=center]]:text-center [&[align=right]]:text-right">
+                          {tournament.setting.scoring.bestOf}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div>
+                  <h2>Stages</h2>
+                  <div>
+                    <h3>Stage One:</h3>
+                    <p>Format: {tournament.setting.stageOne.format}</p>
+                    <p>Max Players: {tournament.setting.stageOne.maxPlayers}</p>
+                  </div>
+                  {tournament.setting.stageOne.format === "swiss" ||
+                  tournament.setting.stageOne.format === "round-robin" ||
+                  tournament.setting.stageOne.format ===
+                    "double-round-robin" ? (
+                    <div>
+                      <h3>Stage Two:</h3>
+                      <p>Format: {tournament.setting.stageTwo.format}</p>
+                      <p>
+                        Advance Method (stage 1 to stage 2):{" "}
+                        {tournament.setting.stageTwo.advance.method}
+                      </p>
+                      <p>
+                        Advance Value (stage 1 to stage 2):{" "}
+                        {tournament.setting.stageTwo.advance.value}
+                      </p>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div>
+                  <h2>Time:</h2>
+                  <div>
+                    <p>
+                      Register Date:{" "}
+                      {new Date(
+                        tournament.meta.register.open
+                      ).toLocaleDateString()}{" "}
+                      to{" "}
+                      {new Date(
+                        tournament.meta.register.close
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p>
+                      Running Date:{" "}
+                      {new Date(
+                        tournament.meta.running.start
+                      ).toLocaleDateString()}{" "}
+                      to{" "}
+                      {new Date(
+                        tournament.meta.running.end
+                      ).toLocaleDateString()}
+                    </p>
+                    <p>Check In: {tournament.meta.checkin} minutes</p>
+                  </div>
+                </div>
+                <div>
+                  <h2>Notification</h2>
+                  <div>
+                    <h3>Rules: </h3>
+                    <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                      {tournament.meta.notification.rules}
+                    </ScrollArea>
+                  </div>
+                  <div>
+                    <h3>Regulation: </h3>
+                    <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                      {tournament.meta.notification.regulation}
+                    </ScrollArea>
+                  </div>
+                </div>
+                <div>
+                  <h2>Tickets</h2>
+                  <div className="flex justify-evenly">
+                    <div>
+                      <p className="text-center">Competitor</p>
+                      <div className="relative w-48 cursor-pointer">
+                        <img
+                          src="/images/blue_ticket.png"
+                          alt="competitor ticket"
+                          onClick={handleJoinCompetitor}
+                        />
+                        <span className="absolute top-20 left-14 ml-2 text-black ">
+                          RM {tournament.meta.ticket.competitor}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-center">Viewer</p>
+                      <div className="relative w-48 cursor-pointer">
+                        <img
+                          src="/images/yellow_ticket.png"
+                          alt="viewer ticket"
+                          onClick={handleJoinViewer}
+                        />
+                        <span className="absolute top-16 left-14 mt-4 ml-2 text-black ">
+                          RM {tournament.meta.ticket.viewer}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      ) : (
-        ""
-      )}
+        <div className="flex flex-col w-2/5 space-y-4">
+          <Card
+            key={tournament._id}
+            className="flex flex-col justify-between overflow-hidden shadow-md"
+          >
+            <PreviewImage topic={"tour_banner"} tournamentid={tournament._id} />
 
-      <p>Players Order: </p>
-      {tournament && tournament.setting.colored === "true" ? (
-        <div>Applicable</div>
-      ) : (
-        <div>Not Applicable</div>
-      )}
-
-      <p>Players Sorting: </p>
-      {tournament && tournament.setting.sorting === "none" ? (
-        <div>Not Applicable</div>
-      ) : (
-        <div>{tournament.setting.sorting}</div>
-      )}
-
-      <h3>Scoring:</h3>
-
-      <p>Win: {tournament.setting.scoring.win}</p>
-      <p>Loss: {tournament.setting.scoring.loss}</p>
-      <p>Draw: {tournament.setting.scoring.draw}</p>
-      <p>Bye: {tournament.setting.scoring.bye}</p>
-      <p>Best Of: {tournament.setting.scoring.bestOf}</p>
-
-      <h2>Stages</h2>
-      <h3>Stage One:</h3>
-      <p>Format: {tournament.setting.stageOne.format}</p>
-      <p>Max Players: {tournament.setting.stageOne.maxPlayers}</p>
-
-      <h3>Stage Two:</h3>
-      <p>Format: {tournament.setting.stageTwo.format}</p>
-      <p>
-        Advance Method (stage 1 to stage 2):{" "}
-        {tournament.setting.stageTwo.advance.method}
-      </p>
-      <p>
-        Advance Value (stage 1 to stage 2):{" "}
-        {tournament.setting.stageTwo.advance.value}
-      </p>
-
-      <h2>Time:</h2>
-      <h3>Registration</h3>
-      <p>
-        Date Time: {tournament.meta.register.open} to{" "}
-        {tournament.meta.register.close}
-      </p>
-      <h3>Running</h3>
-      <p>
-        Date Time: {tournament.meta.running.start} to{" "}
-        {tournament.meta.running.end}
-      </p>
-      <p>Check In: {tournament.meta.checkin} minutes</p>
-
-      <h2>Notification</h2>
-      <h3>Rules: </h3>
-      <p>{tournament.meta.notification.rules}</p>
-      <h3>Regulation: </h3>
-      <p>{tournament.meta.notification.regulation}</p>
-
-      <h2>Tickets To Enter</h2>
-      <h3>Competitor:</h3>
-      <p>RM {tournament.meta.ticket.competitor}</p>
-      <h3>Spectator:</h3>
-      <p>RM {tournament.meta.ticket.viewer}</p>
-
-      <BackButton />
-      <JoinButton tournamentid={tournament._id} />
-    </div>
+            <CardContent>
+              <div>
+                <p>Participants: </p>
+              </div>
+              <div>
+                {tournament && tournament.setting.players.length > 0 ? (
+                  tournament.setting.players.map((player) => (
+                    <AvatarProfile participant={player} key={player.id} />
+                  ))
+                ) : (
+                  <p>No Participants Join Yet</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <p>CHAT BOX</p>
+            <p>.............</p>
+            {/* group chat but disabled for user that is not joining yet */}
+          </Card>
+        </div>
+      </div>
+    </main>
   );
 };
 

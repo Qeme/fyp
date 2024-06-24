@@ -1,5 +1,4 @@
 import { Badge } from "src/components/ui/badge";
-import PreviewImage from "src/components/PreviewImage";
 import {
   Card,
   CardContent,
@@ -7,8 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "src/components/ui/card";
+import PreviewReceipt from "src/components/PreviewReceipt";
 
-const PaymentPreview = ({ tournamentid, payment }) => {
+const PaymentPreview = ({ payment }) => {
   return (
     <Card className="w-[400px] my-16">
       <CardHeader>
@@ -19,26 +19,28 @@ const PaymentPreview = ({ tournamentid, payment }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid w-full items-center mt-4 text-center">
-          <PreviewImage tournamentid={tournamentid} topic={"receipt"} />
+        <div className="grid w-full items-center my-2 text-center">
           {payment ? (
-            <div className="mt-4">
-              {payment.organizer_message && (
-                <blockquote className="italic text-gray-700 mb-2">
-                  "{payment.organizer_message}"
-                </blockquote>
-              )}
-              <Badge
-                variant={
-                  payment.status === "accepted"
-                    ? "accepted"
-                    : payment.status === "rejected"
-                    ? "rejected"
-                    : "pending"
-                }
-              >
-                {payment.status}
-              </Badge>
+            <div>
+              <PreviewReceipt receiptid={payment.receiptid} />
+              <div className="mt-4">
+                {payment.organizer_message && (
+                  <blockquote className="italic text-gray-700 mb-2">
+                    "{payment.organizer_message}"
+                  </blockquote>
+                )}
+                <Badge
+                  variant={
+                    payment.status === "accepted"
+                      ? "accepted"
+                      : payment.status === "rejected"
+                      ? "rejected"
+                      : "pending"
+                  }
+                >
+                  {payment.status}
+                </Badge>
+              </div>
             </div>
           ) : (
             <p>No payment information available.</p>

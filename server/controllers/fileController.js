@@ -95,7 +95,7 @@ export const uploadFile = (req, res) => {
     const { payertype, tournamentid, teamid, topic } = req.fields; 
     /* 
         userid -> the person that upload the file into database
-        topic -> which file does it belongs to ['tour_banner','tour_bg','tour_qr','receipt']
+        topic -> which file does it belongs to ['tour_banner','tour_bg','tour_qr','receipt'] for profile pic we set the topic = "profile"
     */
 
     const filePath = (new Date().getTime()) + "-" + file.name;

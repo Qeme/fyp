@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { AspectRatio } from "./ui/aspect-ratio";
-import { useInitialFiles } from "src/hooks/useInitialFiles";
-import { useTournamentContext } from "src/hooks/useTournamentContext";
+import { useFileContext } from "src/hooks/useFileContext";
 
-function PreviewImage({ topic, tournamentid }) {
+function PreviewReceipt({ receiptid }) {
   const [imageUrl, setImageUrl] = useState("");
-  const { tournaments } = useTournamentContext();
   const { user } = useAuthContext();
-  const { files } = useInitialFiles();
-
-  const tournament = tournaments.find(
-    (tournament) => tournament._id === tournamentid
-  );
+  const { files } = useFileContext();
 
   useEffect(() => {
-    const foundFile = files.find(
-      (file) =>
-        file.metadata.tournamentid === tournament._id &&
-        file.metadata.topic === topic
-    );
-
-    // console.log(foundFile)
+    const foundFile = files.find((file) => file.fileId === receiptid);
 
     if (foundFile) {
       const preview = async () => {
@@ -47,30 +35,20 @@ function PreviewImage({ topic, tournamentid }) {
       }
     } else {
       setImageUrl(
-        "https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
+        ""
       ); // Reset imageUrl and file when no file is found
     }
-  }, [files, topic, tournament._id, user]);
+  }, [files, receiptid, user]);
 
   return (
     <AspectRatio ratio={16 / 9} className="bg-muted">
       <img
         src={imageUrl}
-        alt={`Preview of ${topic}`}
+        alt={`Preview of ${receiptid}`}
         className="w-full h-full object-cover"
       />
     </AspectRatio>
   );
-
-  // return (
-  //   <div>
-  //     {imageUrl ? (
-  //       <img src={imageUrl} alt="Preview" />
-  //     ) : (
-  //       <p>No image available</p>
-  //     )}
-  //   </div>
-  // );
 }
 
-export default PreviewImage;
+export default PreviewReceipt;

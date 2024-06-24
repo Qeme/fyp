@@ -66,7 +66,7 @@ function TournamentCard({ tournaments }) {
                 </Badge>
               )}
               <CardContent>
-                <div className="m-2 pt-4 text-center">
+                <div className="m-2 text-center">
                   <p className="uppercase font-bold text-sm">
                     {tournament.name}
                   </p>
