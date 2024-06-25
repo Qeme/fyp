@@ -118,12 +118,15 @@ const TeamForm = () => {
   };
 
   return (
+    <div className="mt-12">
+
+    
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-screen-sm mx-auto bg-white p-16 rounded-lg shadow-md"
+        className="max-w-screen-sm mx-auto bg-white p-12 rounded-lg shadow-md"
       >
-        <h2 className="text-2xl font-bold mb-12 text-center">Add Your Team</h2>
+        <h2 className="text-2xl font-bold mb-12 text-center">Add Team</h2>
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -206,6 +209,7 @@ const TeamForm = () => {
         {error && <div className="text-red-500 mt-2">{error}</div>}
       </form>
     </Form>
+    </div>
   );
 };
 

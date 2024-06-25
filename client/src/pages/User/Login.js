@@ -3,7 +3,6 @@ import { Button } from "src/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "src/components/ui/card";
@@ -26,11 +25,10 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-60 bg-gray-100">
+    <div className="flex items-center justify-center my-20">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Log In</CardTitle>
-          <CardDescription>Verify your account before entering</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>

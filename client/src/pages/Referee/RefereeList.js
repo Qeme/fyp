@@ -51,7 +51,7 @@ const RefereeList = () => {
         users
           .filter((user) => user.role === "referee")
           .map((referee) => (
-            <Card key={referee._id} className="mb-2 shadow-sm p-2">
+            <Card key={referee._id} className="mb-2 shadow-sm p-4">
               <CardHeader className="p-2">
                 <h4 className="text-lg font-bold">
                   {referee.name}

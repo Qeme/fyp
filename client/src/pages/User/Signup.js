@@ -4,7 +4,6 @@ import { Button } from "src/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "src/components/ui/card";
@@ -27,13 +26,10 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-60 bg-gray-100">
+    <div className="flex items-center justify-center my-20">
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
-          <CardDescription>
-            Create a new account to enjoy the experience
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>

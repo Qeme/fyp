@@ -41,7 +41,7 @@ function PreviewReceipt({ receiptid }) {
   }, [files, receiptid, user]);
 
   return (
-    <AspectRatio ratio={16 / 9} className="bg-muted">
+    <AspectRatio ratio={4 / 3} className="bg-muted">
       <img
         src={imageUrl}
         alt={`Preview of ${receiptid}`}

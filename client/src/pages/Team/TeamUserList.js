@@ -58,7 +58,7 @@ const TeamUserList = () => {
               Number of Players
             </TableHead>
             <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Created Date
+              Creation Date
             </TableHead>
             <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Duration

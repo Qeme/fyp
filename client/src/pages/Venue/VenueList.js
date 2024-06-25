@@ -54,7 +54,7 @@ const VenueList = () => {
       <h3 className="text-2xl font-bold mb-4 text-left">Venues List:</h3>
       {venues &&
         venues.map((venue) => (
-          <Card key={venue._id} className="mb-2 shadow-sm p-2">
+          <Card key={venue._id} className="mb-2 shadow-sm p-4">
             <CardHeader className="p-2">
               <h4 className="text-lg font-bold">
                 {venue.building}, {venue.place}

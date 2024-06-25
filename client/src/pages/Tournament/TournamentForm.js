@@ -247,7 +247,7 @@ const TournamentForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center my-20 bg-gray-100">
+    <div className="flex items-center justify-center my-20">
       <Card className="w-[500px]">
         <CardHeader>
           <CardTitle>Create tournament</CardTitle>

@@ -54,7 +54,7 @@ const GameList = () => {
       <h3 className="text-2xl font-bold mb-4 text-left">Games List:</h3>
       {games &&
         games.map((game) => (
-          <Card key={game._id} className="mb-2 shadow-sm p-2">
+          <Card key={game._id} className="mb-2 shadow-sm p-4">
             <CardHeader className="p-2">
               <h4 className="text-lg font-bold">{game.name}</h4>
             </CardHeader>

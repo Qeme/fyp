@@ -65,7 +65,7 @@ const GameForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Add Games</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Register Game</h2>
         <div className="space-y-4">
           <FormField
             control={form.control}

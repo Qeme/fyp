@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from 'src/components/ui/car
 
 const Home = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 p-6">
+    <div className="flex justify-center items-center mt-12 bg-gray-50 p-6">
       <Card className="max-w-3xl shadow-lg">
         <CardHeader className="text-center">
           <h1 className="text-4xl font-bold text-gray-800">About ESMS</h1>

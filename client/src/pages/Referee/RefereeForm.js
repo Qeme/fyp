@@ -74,7 +74,7 @@ const RefereeForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full bg-white p-6 rounded-lg shadow-md"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center">Add Referee</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Register Referee</h2>
         <div className="space-y-4">
           <FormField
             control={form.control}

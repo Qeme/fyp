@@ -26,7 +26,7 @@ const PaymentList = ({ onSelectPayment }) => {
           .map((payment) => (
             <Card
               key={payment._id}
-              className="mb-6 shadow-sm p-4 border rounded-lg cursor-pointer"
+              className="mb-6 shadow-sm p-2 border rounded-lg cursor-pointer"
               onClick={() => {
                 onSelectPayment(payment);
               }}
