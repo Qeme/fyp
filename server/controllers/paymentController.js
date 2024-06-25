@@ -116,24 +116,25 @@ export const verifyPayment = async (req, res) => {
                 tour.createPlayer(NAME, ID);
 
                 // Update the tournament DB
-                await updateFetchToDatabase(tour.id, tour);
+                const updatedTournament = await updateFetchToDatabase(tour.id, tour);
 
                 // Remove the tournament fetch data
                 removeFetchTournament();
 
-                return res.status(200).json("Payment Accepted Successfully! Player / Team has been registered");
+                return res.status(200).json({message :"Payment Accepted Successfully! Player / Team has been registered" , payment: payment, tournament: updatedTournament });
             }else if(payment.payertype === 'spectator'){
                 
                 // Update the tournament by pushing the user id to spectator_id
-                await tournamentDB.findByIdAndUpdate(
+                const updatedTournament = await tournamentDB.findByIdAndUpdate(
                     payment.tournamentid,
-                    { $push: { 'meta.spectator_id': { id: user._id } } }
+                    { $push: { 'meta.spectator_id': { id: user._id } } },
+                    { new : true }
                 );
         
-                return res.status(200).json("Payment Accepted Successfully! Spectator has been registered");
+                return res.status(200).json({message :"Payment Accepted Successfully! Spectator has been registered" , payment: payment, tournament: updatedTournament });
             }
         } else if (payment.status === "rejected") {
-            return res.status(200).json("Payment Rejected Successfully");
+            return res.status(200).json({message: "Payment Rejected Successfully", payment: payment});
         } else {
             return res.status(400).json({ error: "Invalid payment status" });
         }

@@ -43,7 +43,9 @@ const PaymentPreview = ({ payment }) => {
               </div>
             </div>
           ) : (
-            <p>No payment information available.</p>
+            <div className="p-8">
+              <p>No payment information available.</p>
+            </div>
           )}
         </div>
       </CardContent>

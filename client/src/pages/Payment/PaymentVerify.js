@@ -21,14 +21,15 @@ import { useUserContext } from "src/hooks/useUserContext";
 import { useAuthContext } from "src/hooks/useAuthContext";
 
 const FormSchema = z.object({
-  payments: z.array(z.string()).refine((value) => value.some((payment) => payment), {
+  payments: z.array(z.string()).refine((value) => value.length > 0, {
     message: "You have to select at least one item.",
   }),
+  messages: z.string().optional(),
 });
 
 function PaymentVerify() {
-  const { tournaments } = useTournamentContext();
   const { payments, dispatch } = usePaymentContext();
+  const { tournaments, dispatch: dispatchTournament } = useTournamentContext();
   const { users } = useUserContext();
   const { user } = useAuthContext();
 
@@ -42,47 +43,49 @@ function PaymentVerify() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       payments: [],
+      messages: "",
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, status) => {
     console.log(data);
-  
-    // To iteratively update each item in the data array and ensure the updates happen sequentially,
-    // we can use a for...of loop instead of map, because map with await will not work as expected.
 
-    for (const d of data) {
+    for (const d of data.payments) {
       try {
-        const response = await fetch(`http://localhost:3002/api/payments/${d}`, { // Assuming d is a payment ID
+        const response = await fetch(`http://localhost:3002/api/payments/${d}`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${user.token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status: "accepted" }) // Assuming you want to update the status
+          body: JSON.stringify({ status, organizer_message: data.messages }),
         });
-  
+
         const json = await response.json();
-  
+
         if (response.ok) {
-          dispatch({ type: "UPDATE_PAYMENT", payload: json });
+          dispatch({ type: "UPDATE_PAYMENT", payload: json.payment });
+          if (status === "accepted") {
+            dispatchTournament({ type: "UPDATE_TOURNAMENT", payload: json.tournament });
+          }
         } else {
-          console.error("Failed to update payment:", json);
+          console.error("Failed to update payment:", json.error);
         }
       } catch (error) {
         console.error("Error updating payment:", error);
       }
     }
+
+    // window.location.reload();
   };
-  
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit((data) => onSubmit(data, "accepted"))} className="space-y-8">
         <FormField
           control={form.control}
           name="payments"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <div className="mb-4">
                 <FormLabel className="text-base">Payment Verification</FormLabel>
@@ -132,11 +135,28 @@ function PaymentVerify() {
                     ))}
                 </div>
               ))}
+              <FormField
+                control={form.control}
+                name="messages"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base">Organizer Message</FormLabel>
+                    <textarea
+                      {...field}
+                      className="w-full border rounded p-2"
+                      placeholder="Enter your message here..."
+                    />
+                  </FormItem>
+                )}
+              />
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <div>
+          <Button type="submit" onClick={form.handleSubmit((data) => onSubmit(data, "accepted"))}>Accept</Button>
+          <Button type="button" onClick={form.handleSubmit((data) => onSubmit(data, "rejected"))}>Reject</Button>
+        </div>
       </form>
     </Form>
   );
