@@ -216,11 +216,16 @@ function TournamentMonitor() {
                     ""
                   )}
                   {tournament.meta.status === "published" ? (
-                    <Button
-                      onClick={() => handleClickStart({ id: tournament._id })}
-                    >
-                      Start
-                    </Button>
+                    <div>
+                      <Button
+                        onClick={() => handleClickStart({ id: tournament._id })}
+                      >
+                        Start
+                      </Button>
+
+                      <Button asChild>
+                      <Link href="/payments/verify/:id">Verify</Link></Button>
+                    </div>
                   ) : (
                     ""
                   )}

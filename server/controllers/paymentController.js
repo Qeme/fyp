@@ -124,10 +124,10 @@ export const verifyPayment = async (req, res) => {
                 return res.status(200).json("Payment Accepted Successfully! Player / Team has been registered");
             }else if(payment.payertype === 'spectator'){
                 
-                // Update the tournament by pushing the user email to spectator_id
+                // Update the tournament by pushing the user id to spectator_id
                 await tournamentDB.findByIdAndUpdate(
                     payment.tournamentid,
-                    { $push: { 'meta.spectator_id': { id: user.email } } }
+                    { $push: { 'meta.spectator_id': { id: user._id } } }
                 );
         
                 return res.status(200).json("Payment Accepted Successfully! Spectator has been registered");

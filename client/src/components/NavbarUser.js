@@ -117,6 +117,15 @@ function Navbar() {
                     History
                   </Link>
                 </MenubarItem>
+                <MenubarSeparator className="border-t border-gray-600" />
+                <MenubarItem>
+                  <Link
+                    to="/payments/verify"
+                    className="block px-4 py-2 text-white hover:bg-gray-600"
+                  >
+                    Verify
+                  </Link>
+                </MenubarItem>
               </MenubarContent>
             </MenubarMenu>
           </>
@@ -142,10 +151,14 @@ function Navbar() {
       {!user ? (
         <div>
           <Button asChild variant="link">
-            <Link to="/login" className="text-white">Login</Link>
+            <Link to="/login" className="text-white">
+              Login
+            </Link>
           </Button>
           <Button asChild variant="link">
-            <Link to="/signup" className="text-white">Signup</Link>
+            <Link to="/signup" className="text-white">
+              Signup
+            </Link>
           </Button>
         </div>
       ) : (
