@@ -8,6 +8,7 @@ import TournamentJoin from "../pages/Tournament/TournamentJoin";
 import TournamentMonitor from "../pages/Tournament/TournamentMonitor";
 import TournamentJoinForm from "../pages/Tournament/TournamentJoinForm";
 import TournamentSetting from "../pages/Tournament/TournamentSetting";
+import TournamentProgress from "src/pages/Tournament/TournamentProgress";
 
 function TournamentRoutes() {
   return (
@@ -19,6 +20,7 @@ function TournamentRoutes() {
       <Route path="monitor" element={<TournamentMonitor />} />
       <Route path="create" element={<TournamentForm />} />
       <Route path="setting" element={<TournamentSetting />} />
+      <Route path="progress/:id" element={<TournamentProgress />} />
       <Route path="upload-image/:id" element={<TournamentImage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

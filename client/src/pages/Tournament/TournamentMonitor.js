@@ -12,7 +12,7 @@ import { useInitialGame } from "src/hooks/useInitialGame";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
 import { Button } from "src/components/ui/button";
 import { format } from "date-fns";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TournamentEditTrigger } from "./TournamentEditTrigger";
 
 function TournamentMonitor() {
@@ -232,8 +232,8 @@ function TournamentMonitor() {
                     ""
                   )}
                   {tournament.meta.status === "running" ? (
-                    <Button asChild>
-                      <Link href="/tournaments/progress">Progress</Link>
+                    <Button onClick={() => navigate(`/tournaments/progress/${tournament._id}`)}>
+                      Progress
                     </Button>
                   ) : (
                     ""
