@@ -107,6 +107,7 @@ export const createTournament = async (req, res) => {
     colored,
     sorting,
     scoring,
+    referee_id
   } = req.body;
   // grab the req.user from the middleware 'requireAuth.js' before we pass it into find argument
   const user = req.user;
@@ -147,6 +148,7 @@ export const createTournament = async (req, res) => {
         notification,
         ticket,
         representative,
+        referee_id
       },
     });
 

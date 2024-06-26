@@ -1,5 +1,6 @@
 // call the express router
 import express from 'express'
+import requireAuth from '../middleware/requireAuth.js'
 const router = express.Router()
 
 // import the functions from the controller
@@ -10,7 +11,7 @@ import {
     deleteUser,
     updateUser,
     competeTournament,
-    spectateTournament,
+    viewTournament,
     monitorTournament,
     loginUser,
     signupUser
@@ -32,10 +33,10 @@ router.post('/signup', signupUser)
 router.post('/login', loginUser)
 
 // put the router API for post('/api/users/compete/:tourid')
-router.post('/compete/:tourid', competeTournament)
+router.post('/compete/:tourid',requireAuth, competeTournament)
 
-// put the router API for post('/api/users/spectate/:tourid')
-router.post('/spectate/:tourid', spectateTournament)
+// put the router API for post('/api/users/view/:tourid')
+router.post('/view/:tourid',requireAuth, viewTournament)
 
 // put the router API for post('/api/users/monitor/:tourid')
 router.post('/monitor/:tourid', monitorTournament)

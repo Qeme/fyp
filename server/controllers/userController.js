@@ -129,8 +129,8 @@ export const competeTournament = async (req,res) => {
 
 }
 
-// post user spectate inside the tournament
-export const spectateTournament = async (req,res) => {
+// post user view inside the tournament
+export const viewTournament = async (req,res) => {
     const {tourid} = req.params
     const {id} = req.body
 
@@ -164,7 +164,7 @@ export const spectateTournament = async (req,res) => {
         }
         
     } catch (error) {
-        res.status(400).json({ error: "Deny Permission: Spectate" });
+        res.status(400).json({ error: "Deny Permission: view" });
     }
 
 }

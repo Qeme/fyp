@@ -14,11 +14,13 @@ import {
 import { ScrollArea } from "src/components/ui/scroll-area";
 import PreviewImage from "src/components/PreviewImage";
 import AvatarProfile from "src/components/AvatarProfile";
+import { useUserContext } from "src/hooks/useUserContext";
 
 const Tournament = () => {
   const { id } = useParams();
   const { tournaments } = useTournamentContext();
   const { games } = useGameContext();
+  const { users } = useUserContext();
   const { venues } = useVenueContext();
 
   const navigate = useNavigate();
@@ -62,6 +64,12 @@ const Tournament = () => {
                     {(venues &&
                       venues.find((v) => v._id === tournament.meta.venue_id)
                         ?.building) || <span>Recently deleted by Admin</span>}
+                  </p>
+                  <p>
+                    Organizer:{" "}
+                    {(users &&
+                      users.find((u) => u._id === tournament.meta.organizer_id)
+                        ?.email) || <span>Recently deleted by Admin</span>}
                   </p>
                 </div>
                 <div>
@@ -234,7 +242,12 @@ const Tournament = () => {
                           onClick={handleJoinCompetitor}
                         />
                         <span className="absolute top-20 left-14 ml-2 text-black ">
-                          RM {tournament.meta.ticket.competitor}
+                          {tournament &&
+                          tournament.meta.ticket.competitor !== 0 ? (
+                            <span>RM {tournament.meta.ticket.competitor.toFixed(2)}</span>
+                          ) : (
+                            <span className="ml-2">FREE</span>
+                          )}
                         </span>
                       </div>
                     </div>
@@ -247,7 +260,11 @@ const Tournament = () => {
                           onClick={handleJoinViewer}
                         />
                         <span className="absolute top-16 left-14 mt-4 ml-2 text-black ">
-                          RM {tournament.meta.ticket.viewer}
+                          {tournament && tournament.meta.ticket.viewer !== 0 ? (
+                            <span>RM {tournament.meta.ticket.viewer.toFixed(2)}</span>
+                          ) : (
+                            <span className="ml-2">FREE</span>
+                          )}
                         </span>
                       </div>
                     </div>

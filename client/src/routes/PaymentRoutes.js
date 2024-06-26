@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import PaymentPage from "../pages/Payment/PaymentPage";
 import NotFound from "../pages/NotFound";
 import PaymentVerify from "../pages/Payment/PaymentVerify";
-import PaymentVerifyOne from "../pages/Payment/PaymentVerifyOne";
+import PaymentVerifyOne from "src/pages/Payment/PaymentVerifyOne";
 
 function PaymentRoutes() {
   return (

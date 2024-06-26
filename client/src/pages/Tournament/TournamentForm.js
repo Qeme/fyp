@@ -27,6 +27,7 @@ import { useGameContext } from "src/hooks/useGameContext";
 import { useVenueContext } from "src/hooks/useVenueContext";
 import { Button } from "src/components/ui/button";
 import BackButton from "src/components/BackButton";
+import { useUserContext } from "src/hooks/useUserContext";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
@@ -36,6 +37,7 @@ const TournamentForm = () => {
   const { dispatch } = useTournamentContext();
   const { games } = useGameContext();
   const { venues } = useVenueContext();
+  const { users } = useUserContext();
   const { user } = useAuthContext();
 
   // set up the useState for 9 properties
@@ -75,6 +77,7 @@ const TournamentForm = () => {
     bye: "",
     tiebreaks: "",
   });
+  const [referee_id, setRefereeID] = useState(null);
 
   // to handle error message, we might use useState as well
   const [error, setError] = useState(null);
@@ -167,6 +170,7 @@ const TournamentForm = () => {
       colored,
       sorting,
       scoring,
+      referee_id,
     };
 
     /*  
@@ -225,6 +229,7 @@ const TournamentForm = () => {
       });
       setColored("");
       setSorting("none");
+      setRefereeID(null);
       setScoring({
         win: "",
         loss: "",
@@ -419,14 +424,14 @@ const TournamentForm = () => {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                            <SelectItem value="none">
-                                Not Applicable
-                              </SelectItem>
                               <SelectItem value="ascending">
                                 Ascending
                               </SelectItem>
                               <SelectItem value="descending">
                                 Descending
+                              </SelectItem>
+                              <SelectItem value="none">
+                                Not Applicable
                               </SelectItem>
                             </SelectGroup>
                           </SelectContent>
@@ -747,6 +752,42 @@ const TournamentForm = () => {
 
               <div>
                 <h2>
+                  <strong>Referee</strong>
+                </h2>
+
+                <div className="w-1/2 flex flex-col space-y-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="referee_id">Name: </Label>
+                    <Select onValueChange={setRefereeID} value={referee_id}>
+                      <SelectTrigger className="border-gray-300 rounded-lg">
+                        <SelectValue
+                          placeholder="-- Choose --"
+                          className="text-center"
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {users &&
+                            users
+                              .filter((user) => user.role === "referee")
+                              .map((referee) => (
+                                <SelectItem
+                                  key={referee._id}
+                                  value={referee._id}
+                                >
+                                  {referee.name}
+                                </SelectItem>
+                              ))}
+                          <SelectItem value={null}>Not Applicable</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h2>
                   <strong>Date</strong>
                 </h2>
 
@@ -829,6 +870,7 @@ const TournamentForm = () => {
                         id="competitor"
                         type="number"
                         min="0"
+                        step="0.01"
                         placeholder="RM 5.50"
                         onChange={(e) =>
                           setTicket({ ...ticket, competitor: e.target.value })
@@ -845,6 +887,7 @@ const TournamentForm = () => {
                         id="viewer"
                         type="number"
                         min="0"
+                        step="0.01"
                         placeholder="RM 2.50"
                         onChange={(e) =>
                           setTicket({ ...ticket, viewer: e.target.value })

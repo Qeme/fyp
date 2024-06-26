@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useTournamentContext } from "src/hooks/useTournamentContext";
 import { Card, CardContent, CardFooter } from "src/components/ui/card";
+import TournamentJoinFree from "./TournamentJoinFree";
 
 function TournamentJoinForm() {
   const { id } = useParams();
@@ -37,7 +38,7 @@ function TournamentJoinForm() {
       <div className="flex justify-center items-center my-20">
         <div>
           <h2 className="text-center">Payment Details</h2>
-          <Card>
+          <Card className="w-80">
             <CardContent>
               <div>
                 <PreviewImage topic={"tour_qr"} tournamentid={tournament._id} />
@@ -74,7 +75,12 @@ function TournamentJoinForm() {
                           <SelectGroup>
                             {teams &&
                               teams
-                                .filter((team) => team.manager === user._id && team.players.length <= tournament.meta.representative.numPlayers)
+                                .filter(
+                                  (team) =>
+                                    team.manager === user._id &&
+                                    team.players.length <=
+                                      tournament.meta.representative.numPlayers
+                                )
                                 .map((team) => (
                                   <SelectItem key={team._id} value={team._id}>
                                     {team.name}
@@ -94,19 +100,36 @@ function TournamentJoinForm() {
 
               <p>Participate as {payertype}</p>
               <p>
-                Amount: RM{" "}
+                Amount:{" "}
                 {payertype === "competitor"
-                  ? tournament.meta.ticket.competitor
-                  : tournament.meta.ticket.viewer}
+                  ? tournament.meta.ticket.competitor !== 0
+                    ? `RM ${tournament.meta.ticket.competitor.toFixed(2)}`
+                    : "FREE"
+                  : tournament.meta.ticket.viewer !== 0
+                  ? `RM ${tournament.meta.ticket.viewer.toFixed(2)}`
+                  : "FREE"}
               </p>
             </CardContent>
-            <CardFooter>
-              <UploadReceipt
-                tournamentid={id}
-                teamid={selectedTeam}
-                payertype={payertype}
-              />
-            </CardFooter>
+            {(payertype === "competitor" &&
+              tournament.meta.ticket.competitor > 0) ||
+            (payertype !== "competitor" &&
+              tournament.meta.ticket.viewer > 0) ? (
+              <CardFooter>
+                <UploadReceipt
+                  tournamentid={id}
+                  teamid={selectedTeam}
+                  payertype={payertype}
+                />
+              </CardFooter>
+            ) : (
+              <CardFooter>
+                <TournamentJoinFree
+                  tournamentid={id}
+                  teamid={selectedTeam}
+                  payertype={payertype}
+                />
+              </CardFooter>
+            )}
           </Card>
         </div>
       </div>

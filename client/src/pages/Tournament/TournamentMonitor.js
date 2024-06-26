@@ -12,7 +12,7 @@ import { useInitialGame } from "src/hooks/useInitialGame";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
 import { Button } from "src/components/ui/button";
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TournamentEditTrigger } from "./TournamentEditTrigger";
 
 function TournamentMonitor() {
@@ -20,6 +20,7 @@ function TournamentMonitor() {
   const { games } = useInitialGame();
   const { venues } = useInitialVenue();
   const { user } = useAuthContext();
+  const navigate = useNavigate();
 
   const monitoredTournament = tournaments?.filter(
     (tournament) => tournament.meta.organizer_id === user._id
@@ -223,8 +224,9 @@ function TournamentMonitor() {
                         Start
                       </Button>
 
-                      <Button asChild>
-                      <Link href="/payments/verify/:id">Verify</Link></Button>
+                      <Button onClick={() => navigate(`/payments/verify/${tournament._id}`)}>
+                        Verify
+                      </Button>
                     </div>
                   ) : (
                     ""

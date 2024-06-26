@@ -24,11 +24,13 @@ import {
 } from "src/components/ui/select";
 import { useVenueContext } from "src/hooks/useVenueContext";
 import { Textarea } from "src/components/ui/textarea";
+import { useUserContext } from "src/hooks/useUserContext";
 
 export function TournamentEditTrigger({ tournament }) {
   const { dispatch } = useTournamentContext();
   const { games } = useGameContext();
   const { venues } = useVenueContext();
+  const { users } = useUserContext();
   const { user } = useAuthContext();
 
   const [tournamentUpdated, setTournamentUpdated] = useState(tournament);
@@ -808,6 +810,52 @@ export function TournamentEditTrigger({ tournament }) {
             </div>
           </div>
 
+          <div>
+            <div className="pt-8">
+              <h3 className="text-left">
+                <strong>Referee</strong>
+              </h3>
+
+              <div className="w-1/2 flex flex-col space-y-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="advanceMethod">Name: </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      setTournamentUpdated({
+                        ...tournamentUpdated,
+                        meta: {
+                          ...tournamentUpdated.meta,
+                          referee_id: value,
+                        },
+                      })
+                    }
+                    value={tournamentUpdated.meta.referee_id}
+                  >
+                    <SelectTrigger className="border-gray-300 rounded-lg">
+                      <SelectValue
+                        placeholder="-- Choose --"
+                        className="text-center"
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {users &&
+                          users
+                            .filter((user) => user.role === "referee")
+                            .map((referee) => (
+                              <SelectItem key={referee._id} value={referee._id}>
+                                {referee.name}
+                              </SelectItem>
+                            ))}
+                        <SelectItem value={null}>Not Applicable</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="pt-8">
             <h3 className="text-left">
               <strong>Notification</strong>
@@ -870,6 +918,7 @@ export function TournamentEditTrigger({ tournament }) {
                   id="competitor"
                   type="number"
                   min="0"
+                  step="0.01"
                   placeholder="RM 12.50"
                   onChange={(e) =>
                     setTournamentUpdated({
@@ -883,7 +932,7 @@ export function TournamentEditTrigger({ tournament }) {
                       },
                     })
                   }
-                  value={tournamentUpdated.meta.ticket.competitor}
+                  value={tournamentUpdated.meta.ticket.competitor.toFixed(2)}
                   className="w-40"
                 ></Input>
               </div>
@@ -894,6 +943,7 @@ export function TournamentEditTrigger({ tournament }) {
                   id="viewer"
                   type="number"
                   min="0"
+                  step="0.01"
                   placeholder="RM 11.00"
                   onChange={(e) =>
                     setTournamentUpdated({
@@ -907,7 +957,7 @@ export function TournamentEditTrigger({ tournament }) {
                       },
                     })
                   }
-                  value={tournamentUpdated.meta.ticket.viewer}
+                  value={tournamentUpdated.meta.ticket.viewer.toFixed(2)}
                   className="w-40"
                 ></Input>
               </div>
@@ -916,7 +966,7 @@ export function TournamentEditTrigger({ tournament }) {
         </div>
 
         <DialogFooter>
-        <div>
+          <div>
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
