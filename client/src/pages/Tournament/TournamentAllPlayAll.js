@@ -41,18 +41,20 @@ function TournamentAllPlayAll({ id }) {
   const [roundGame, setRoundGame] = useState("");
   const [scoresP1, setScoresP1] = useState([]);
   const [scoresP2, setScoresP2] = useState([]);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchTournamentData = async () => {
       try {
-        const tournament = tournaments.find((tournament) => tournament._id === id);
+        const tournament = tournaments.find(
+          (tournament) => tournament._id === id
+        );
         if (!tournament) {
-          throw new Error('Tournament not found');
+          throw new Error("Tournament not found");
         }
-  
+
         setFoundTournament(tournament);
-  
+
         // Fetch ranking list
         const fetchRanking = async () => {
           try {
@@ -65,7 +67,7 @@ function TournamentAllPlayAll({ id }) {
               }
             );
             if (!response.ok) {
-              throw new Error('Failed to fetch ranking');
+              throw new Error("Failed to fetch ranking");
             }
             const json = await response.json();
             // Assign ordinal ranks
@@ -74,11 +76,11 @@ function TournamentAllPlayAll({ id }) {
             });
             setRanking(json);
           } catch (error) {
-            console.error('Error fetching ranking:', error);
+            console.error("Error fetching ranking:", error);
             // Handle error state or retry logic here
           }
         };
-  
+
         // Fetch rounds related to the tournament
         const fetchRounds = async () => {
           try {
@@ -91,37 +93,37 @@ function TournamentAllPlayAll({ id }) {
               }
             );
             if (!response.ok) {
-              throw new Error('Failed to fetch rounds');
+              throw new Error("Failed to fetch rounds");
             }
             const json = await response.json();
             setRounds(json);
           } catch (error) {
-            console.error('Error fetching rounds:', error);
+            console.error("Error fetching rounds:", error);
             // Handle error state or retry logic here
           }
         };
-  
+
         // Organize matches by rounds
         const roundsArray = Array.from(
           { length: tournament.setting.stageOne.rounds },
           () => []
         );
-  
+
         tournament.setting.matches.forEach((match) => {
           if (match.round) {
             roundsArray[match.round - 1].push(match);
           }
         });
-  
+
         await fetchRanking();
         await fetchRounds();
         setMatchesByRound(roundsArray);
       } catch (error) {
-        console.error('Error fetching tournament data:', error);
+        console.error("Error fetching tournament data:", error);
         // Handle error state or retry logic here
       }
     };
-  
+
     fetchTournamentData();
   }, [id, tournaments, user.token]);
 
@@ -191,9 +193,8 @@ function TournamentAllPlayAll({ id }) {
     if (response.ok) {
       dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
       await fetchRoundsAndUpdateForm();
-    }
-    else if(!response.ok){
-      setError(json.error)
+    } else if (!response.ok) {
+      setError(json.error);
     }
   };
 
@@ -251,6 +252,29 @@ function TournamentAllPlayAll({ id }) {
         setScoresP1(foundGame?.scoreP1 || []);
         setScoresP2(foundGame?.scoreP2 || []);
       }
+    }
+  };
+
+  const handleNextRound = async (event) => {
+
+    event.preventDefault();
+
+    const response = await fetch(
+      `http://localhost:3002/api/rounds/next/${foundTournament._id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const json = await response.json();
+
+    if (response.ok) {
+      dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+    } else if (!response.ok) {
+      setError(json.error);
     }
   };
 
@@ -387,6 +411,9 @@ function TournamentAllPlayAll({ id }) {
                 </Select>
                 <div>
                   <Button type="submit">Search</Button>
+                  <Button type="button" onClick={handleNextRound}>
+                    Next Round
+                  </Button>
                   <Button
                     type="button"
                     onClick={() => {

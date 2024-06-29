@@ -159,11 +159,6 @@ export const keyInMatch = async (req, res) => {
                     return res.status(400).json({ error: "Deny Permission. Clear Score First!" });
                 }
 
-                await roundDB.updateOne(
-                    { match_id: id },
-                    { $set: { p1: match.player1.id, p2: match.player2.id, scoreP1: p1score, scoreP2: p2score, status: "locked" } }
-                );
-
                 let p1win = 0, p2win = 0, draw = 0;
 
                 for (let x = 0; x < bestOf; x++) {
@@ -179,19 +174,26 @@ export const keyInMatch = async (req, res) => {
                 }
 
                 const tour = addFetchTournament(tournament);
-                const limit = tour.stageOne.rounds;
-                const continueLimit = tour.players.length / 2;
+                // const limit = tour.stageOne.rounds;
+                // const continueLimit = tour.players.length / 2;
 
                 try {
+                    // enter the result first to evaluate
                     tour.enterResult(id, p1win, p2win, draw);
 
-                    if (["round-robin", "double-round-robin", "swiss"].includes(tour.stageOne.format)) {
-                        const match = tour.matches.find(m => m.id === id);
+                    // if successful, proceed to update the roundDB
+                    await roundDB.updateOne(
+                        { match_id: id },
+                        { $set: { p1: match.player1.id, p2: match.player2.id, scoreP1: p1score, scoreP2: p2score, status: "locked" } }
+                    );
 
-                        if (match && match.round < limit && match.match === continueLimit) {
-                            tour.next();
-                        }
-                    }
+                    // if (["round-robin", "double-round-robin", "swiss"].includes(tour.stageOne.format)) {
+                    //     const match = tour.matches.find(m => m.id === id);
+
+                    //     if (match && match.round < limit && match.match === continueLimit) {
+                    //         tour.next();
+                    //     }
+                    // }
                 } catch (error) {
                     return res.status(400).json({ error: "Unable to key in the result" });
                 }
@@ -208,6 +210,40 @@ export const keyInMatch = async (req, res) => {
 
     } catch (error) {
         return res.status(400).json({ error: "Deny Permission: Key In" });
+    }
+};
+
+
+// nextRound is to proceed to next round especially for round-robin, swiss, double-round-robin
+export const nextRound = async (req, res) => {
+    const { tourid } = req.params;
+
+    try {
+        // Fetch the tournament from the database
+        const tournament = await tournamentDB.findOne({ _id: tourid });
+
+        // Initialize the tournament logic
+        const tour = addFetchTournament(tournament);
+
+        try {
+            // Attempt to proceed to the next round
+            tour.next();
+        } catch (error) {
+            // Handle any errors that occur during the transition to the next round
+            return res.status(400).json({ error: "Can't proceed to next round as there are still active game" });
+        }
+
+        // Update the tournament data in the database
+        const updatedTournament = await updateFetchToDatabase(tour.id, tour);
+
+        // Clean up after updating
+        await removeFetchTournament();
+
+        // Send the updated tournament data as the response
+        res.status(200).json(updatedTournament);
+    } catch (error) {
+        // Handle any errors that occur during the overall process
+        return res.status(400).json({ error: "Deny Permission: Next Round" });
     }
 };
 

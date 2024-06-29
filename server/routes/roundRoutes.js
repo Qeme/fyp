@@ -11,7 +11,8 @@ import {
     clearMatch,
     stageOne,
     stageTwo,
-    advanceBracket
+    advanceBracket,
+    nextRound
 } from '../controllers/roundController.js'
 
 // apply middleware
@@ -33,6 +34,9 @@ router.post('/advance/:tourid', advanceBracket)
 
 // put the router API for get('/api/rounds/stagetwo/:tourid')
 router.get('/stagetwo/:tourid', stageTwo)
+
+// put the router API for post('/api/rounds/next/:tourid')
+router.post('/next/:tourid', nextRound)
 
 // put the router API for post('/api/rounds/:tourid/:id')
 router.post('/:tourid/:id', keyInMatch)
