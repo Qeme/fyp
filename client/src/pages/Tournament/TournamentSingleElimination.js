@@ -3,6 +3,7 @@ import {
   SingleEliminationBracket,
   Match,
   MATCH_STATES,
+  createTheme,
   SVGViewer,
 } from "@g-loot/react-tournament-brackets";
 import { useTournamentContext } from "src/hooks/useTournamentContext";
@@ -14,7 +15,22 @@ function TournamentSingleElimination({id}) {
   const [matches, setMatches] = useState([]);
   const [foundTournament, setfoundTournament] = useState(null);
 
-  console.log(MATCH_STATES);
+  const BracketTheme = createTheme({
+    textColor: { main: "#000000", highlighted: "#07090D", dark: "#3E414D" },
+    matchBackground: { wonColor: "#5C88C4", lostColor: "#9B86BD" },
+    score: {
+      background: { wonColor: "#83B4FF", lostColor: "#E2BBE9" },
+      text: { highlightedWonColor: "#0A6847", highlightedLostColor: "#C73659" },
+    },
+    border: {
+      color: "#98ABEE",
+      highlightedColor: "#535C91",
+    },
+    roundHeaders: { backgroundColor: "#5755FE", fontColor: "#FFAF45" },
+    connectorColor: "#CED1F2",
+    connectorColorHighlight: "#12486B",
+    svgBackground: "#9BB8CD",
+  });
 
   useEffect(() => {
     setfoundTournament(tournaments.find((tournament) => tournament._id === id))
@@ -34,22 +50,15 @@ function TournamentSingleElimination({id}) {
         tournamentRoundText: `${m.round}`,
         startTime: "",
         state: m.active === true ? "PLAYED" : "PLANNED",
-        participants: [
-          {
-            id: m.player1.id,
-            resultText: m.player1.win,
-            isWinner: m.player1.win > m.player1.loss,
-            status: m.player1.id == null ? "NO_SHOW" : "PLAYED",
-            name: users.find((user) => user._id === m.player1.id)?.name || "",
-          },
-          {
-            id: m.player2.id,
-            resultText: m.player2.win,
-            isWinner: m.player2.win > m.player2.loss,
-            status: m.player2.id == null ? "NO_SHOW" : "PLAYED",
-            name: users.find((user) => user._id === m.player2.id)?.name || "",
-          },
-        ],
+        participants: [m.player1, m.player2]
+            .filter((player) => player.id !== null)
+            .map((player) => ({
+              id: player.id,
+              resultText: player.win,
+              isWinner: player.win > player.loss,
+              status: "PLAYED",
+              name: users.find((user) => user._id === player.id)?.name || "",
+            })),
       }));
 
       setMatches(updatedMatches);
@@ -57,7 +66,7 @@ function TournamentSingleElimination({id}) {
   }, [id, tournaments, foundTournament, users]);
 
   return (
-    <>
+    <main>
       <div>TournamentSingleElimination {id}</div>
       {foundTournament && foundTournament.setting.stageOne
         .format === "single-elimination" &&
@@ -65,14 +74,25 @@ function TournamentSingleElimination({id}) {
           <SingleEliminationBracket
             matches={matches}
             matchComponent={Match}
+            theme={BracketTheme}
+            options={{
+              style: {
+                roundHeader: {
+                  backgroundColor: BracketTheme.roundHeaders.backgroundColor,
+                  fontColor: BracketTheme.roundHeaders.fontColor,
+                },
+                connectorColor: BracketTheme.connectorColor,
+                connectorColorHighlight: BracketTheme.connectorColorHighlight,
+              },
+            }}
             svgWrapper={({ children, ...props }) => (
-              <SVGViewer width={1500} height={1000} {...props}>
+              <SVGViewer width={800} height={600} background={BracketTheme.svgBackground} SVGBackground={BracketTheme.svgBackground} {...props}>
                 {children}
               </SVGViewer>
             )}
           />
         )}
-    </>
+    </main>
   );
 }
 

@@ -118,13 +118,17 @@ export const keyInMatch = async (req,res)=>{
                             p1: m.player1.id,
                             p2: m.player2.id,
                             scoreP1: new Array(bestOf).fill(0),
-                            scoreP2: new Array(bestOf).fill(0)
+                            scoreP2: new Array(bestOf).fill(0),
+                            status: "unlocked"
                         })
+                    }
+                    else if(round.status === "locked"){
+                        return res.status(400).json({ error: "Deny Permission. Clear Score First!" });
                     }
                 // update the round collection from database
                 await roundDB.updateOne(
                     { match_id: id },
-                    { $set: { p1: m.player1.id, p2: m.player2.id, scoreP1: p1score, scoreP2: p2score } }
+                    { $set: { p1: m.player1.id, p2: m.player2.id, scoreP1: p1score, scoreP2: p2score, status: "locked" } }
                 );
 
                 // do simple calculation to identify the winner, loser and draw point
@@ -220,8 +224,7 @@ export const clearMatch = async (req,res) => {
                 // Update the score to 0
                 await roundDB.updateOne(
                     { match_id: id },
-                    { $set: { scoreP1: P1score, scoreP2: P2score } },
-                    { new: true }
+                    { $set: { scoreP1: P1score, scoreP2: P2score, status: "unlocked" } }
                 );
             }
         }

@@ -14,8 +14,6 @@ function TournamentDoubleElimination({ id }) {
   const [matches, setMatches] = useState({ upper: [], lower: [] });
   const [foundTournament, setfoundTournament] = useState(null);
 
-  console.log(matches);
-
   const BracketTheme = createTheme({
     textColor: { main: "#000000", highlighted: "#07090D", dark: "#3E414D" },
     matchBackground: { wonColor: "#5C88C4", lostColor: "#9B86BD" },
@@ -102,7 +100,7 @@ function TournamentDoubleElimination({ id }) {
   }, [id, tournaments, users]);
 
   return (
-    <>
+    <main>
       <div>TournamentDoubleElimination {id}</div>
       {foundTournament &&
         foundTournament.setting.stageOne.format === "double-elimination" &&
@@ -123,14 +121,14 @@ function TournamentDoubleElimination({ id }) {
               },
             }}
             svgWrapper={({ children, ...props }) => (
-              <SVGViewer width={800} height={800} background={BracketTheme.svgBackground} SVGBackground={BracketTheme.svgBackground} {...props}>
+              <SVGViewer width={800} height={600} background={BracketTheme.svgBackground} SVGBackground={BracketTheme.svgBackground} {...props}>
                 {children}
               </SVGViewer>
             )}
           />
         )}
       <p>hi</p>
-    </>
+    </main>
   );
 }
 

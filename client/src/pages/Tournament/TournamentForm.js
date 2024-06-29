@@ -75,7 +75,7 @@ const TournamentForm = () => {
     draw: "",
     bestOf: "",
     bye: "",
-    tiebreaks: "",
+    // tiebreaks: "",
   });
   const [referee_id, setRefereeID] = useState(null);
 
@@ -530,7 +530,7 @@ const TournamentForm = () => {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <h3>
                   <strong>3rd Placement: </strong>
                 </h3>
@@ -579,7 +579,7 @@ const TournamentForm = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <div>
@@ -614,9 +614,9 @@ const TournamentForm = () => {
                             <SelectItem value="double-elimination">
                               Double Elimination
                             </SelectItem>
-                            <SelectItem value="stepladder">
+                            {/* <SelectItem value="stepladder">
                               Stepladder
-                            </SelectItem>
+                            </SelectItem> */}
                             <SelectItem value="swiss">Swiss</SelectItem>
                             <SelectItem value="round-robin">
                               Round Robin
@@ -678,9 +678,9 @@ const TournamentForm = () => {
                               <SelectItem value="double-elimination">
                                 Double Elimination
                               </SelectItem>
-                              <SelectItem value="stepladder">
+                              {/* <SelectItem value="stepladder">
                                 Stepladder
-                              </SelectItem>
+                              </SelectItem> */}
                             </SelectGroup>
                           </SelectContent>
                         </Select>

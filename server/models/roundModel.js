@@ -27,7 +27,12 @@ const roundSchema = new Schema({
     scoreP2: [{
         type: Number,
         required: false
-    }]
+    }],
+    status: {
+        type: String,
+        required: false,
+        enum: ["unlocked", "locked"]
+    }
 },{timestamps: true})
 
 // rounds is the name of the collection in DB

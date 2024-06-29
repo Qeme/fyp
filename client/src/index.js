@@ -11,6 +11,7 @@ import { FileContextProvider } from "./context/FileContext";
 import { UserContextProvider } from "./context/UserContext";
 import { TeamContextProvider } from "./context/TeamContext";
 import { PaymentContextProvider } from "./context/PaymentContext";
+import { RoundContextProvider } from "./context/RoundContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,7 +25,9 @@ root.render(
                 <FileContextProvider>
                   <PaymentContextProvider>
                     <TournamentContextProvider>
-                      <App />
+                      <RoundContextProvider>
+                        <App />
+                      </RoundContextProvider>
                     </TournamentContextProvider>
                   </PaymentContextProvider>
                 </FileContextProvider>

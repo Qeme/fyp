@@ -243,6 +243,7 @@ export const startTournament = async (req, res) => {
         p2: match.player2.id,
         scoreP1: new Array(bestOf).fill(0),
         scoreP2: new Array(bestOf).fill(0),
+        status: "unlocked"
       });
     });
 
