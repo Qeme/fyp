@@ -1,5 +1,6 @@
 // call the express router
 import express from 'express'
+import requireAuth from '../middleware/requireAuth.js'
 const router = express.Router()
 
 // import the functions from the controller
@@ -12,6 +13,9 @@ import {
     stageTwo,
     advanceBracket
 } from '../controllers/roundController.js'
+
+// apply middleware
+router.use(requireAuth)
 
 // not that id === match_id and round_id ... there all unique
 

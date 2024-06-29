@@ -27,67 +27,103 @@ import {
 } from "src/components/ui/select";
 import { Button } from "src/components/ui/button";
 import { ScrollArea } from "src/components/ui/scroll-area";
-import { useRoundContext } from "src/hooks/useRoundContext";
 import { Input } from "src/components/ui/input";
 
 function TournamentAllPlayAll({ id }) {
-  const { tournaments } = useTournamentContext();
-  const { rounds } = useRoundContext();
+  const { dispatch, tournaments } = useTournamentContext();
   const { users } = useUserContext();
   const { user } = useAuthContext();
   const [foundTournament, setFoundTournament] = useState(null);
-  const [round, setRounds] = useState(null);
+  const [rounds, setRounds] = useState("");
   const [matchNum, setMatchNum] = useState("");
   const [ranking, setRanking] = useState(null);
   const [matchesByRound, setMatchesByRound] = useState([]);
   const [roundGame, setRoundGame] = useState("");
   const [scoresP1, setScoresP1] = useState([]);
   const [scoresP2, setScoresP2] = useState([]);
+  const [error, setError] = useState("")
 
   useEffect(() => {
-    const tournament = tournaments.find((tournament) => tournament._id === id);
-
-    if (tournament) {
-      setFoundTournament(tournament);
-      setRounds(tournament.setting.stageOne.rounds);
-
-      // Get the ranking list
-      const fetchRanking = async () => {
-        const response = await fetch(
-          `http://localhost:3002/api/tournaments/standing/${tournament._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
+    const fetchTournamentData = async () => {
+      try {
+        const tournament = tournaments.find((tournament) => tournament._id === id);
+        if (!tournament) {
+          throw new Error('Tournament not found');
+        }
+  
+        setFoundTournament(tournament);
+  
+        // Fetch ranking list
+        const fetchRanking = async () => {
+          try {
+            const response = await fetch(
+              `http://localhost:3002/api/tournaments/standing/${tournament._id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error('Failed to fetch ranking');
+            }
+            const json = await response.json();
+            // Assign ordinal ranks
+            json.forEach((rank, index) => {
+              rank.ordinal = getOrdinal(index + 1);
+            });
+            setRanking(json);
+          } catch (error) {
+            console.error('Error fetching ranking:', error);
+            // Handle error state or retry logic here
           }
+        };
+  
+        // Fetch rounds related to the tournament
+        const fetchRounds = async () => {
+          try {
+            const response = await fetch(
+              `http://localhost:3002/api/rounds/stageone/${tournament._id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+              }
+            );
+            if (!response.ok) {
+              throw new Error('Failed to fetch rounds');
+            }
+            const json = await response.json();
+            setRounds(json);
+          } catch (error) {
+            console.error('Error fetching rounds:', error);
+            // Handle error state or retry logic here
+          }
+        };
+  
+        // Organize matches by rounds
+        const roundsArray = Array.from(
+          { length: tournament.setting.stageOne.rounds },
+          () => []
         );
-
-        const json = await response.json();
-
-        if (response.ok) {
-          // Assign ordinal ranks
-          json.forEach((rank, index) => {
-            rank.ordinal = getOrdinal(index + 1);
-          });
-          setRanking(json);
-        }
-      };
-
-      // Organize matches by rounds
-      const roundsArray = Array.from(
-        { length: tournament.setting.stageOne.rounds },
-        () => []
-      );
-      tournament.setting.matches.forEach((match) => {
-        if (match.round) {
-          roundsArray[match.round - 1].push(match);
-        }
-      });
-
-      fetchRanking();
-      setMatchesByRound(roundsArray);
-    }
-  }, [id, tournaments, user, users]);
+  
+        tournament.setting.matches.forEach((match) => {
+          if (match.round) {
+            roundsArray[match.round - 1].push(match);
+          }
+        });
+  
+        await fetchRanking();
+        await fetchRounds();
+        setMatchesByRound(roundsArray);
+      } catch (error) {
+        console.error('Error fetching tournament data:', error);
+        // Handle error state or retry logic here
+      }
+    };
+  
+    fetchTournamentData();
+  }, [id, tournaments, user.token]);
 
   // Function to get ordinal suffix for ranking
   const getOrdinal = (position) => {
@@ -129,15 +165,92 @@ function TournamentAllPlayAll({ id }) {
 
   const handleScoreSubmit = async (event) => {
     event.preventDefault();
+
     // Submit updated scores to the server or handle them as needed
+    console.log("Round:", roundGame);
     console.log("Updated Scores P1:", scoresP1);
     console.log("Updated Scores P2:", scoresP2);
+
+    const response = await fetch(
+      `http://localhost:3002/api/rounds/${id}/${roundGame.match_id}`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          p1score: scoresP1,
+          p2score: scoresP2,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const json = await response.json();
+
+    if (response.ok) {
+      dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+      await fetchRoundsAndUpdateForm();
+    }
+    else if(!response.ok){
+      setError(json.error)
+    }
   };
 
   const handleResetScores = () => {
     if (roundGame) {
       setScoresP1(roundGame.scoreP1 || []);
       setScoresP2(roundGame.scoreP2 || []);
+    }
+  };
+
+  const handleClearScores = async (match_id) => {
+    console.log("WOW", match_id);
+
+    const response = await fetch(
+      `http://localhost:3002/api/rounds/${id}/${match_id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const json = await response.json();
+
+    if (response.ok) {
+      dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+      await fetchRoundsAndUpdateForm();
+    }
+  };
+
+  const fetchRoundsAndUpdateForm = async () => {
+    const response = await fetch(
+      `http://localhost:3002/api/rounds/stageone/${foundTournament._id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const json = await response.json();
+
+    if (response.ok) {
+      setRounds(json);
+
+      const match = foundTournament.setting.matches.find(
+        (match) => match.id === matchNum
+      );
+
+      if (match) {
+        const foundGame =
+          json && json.find((round) => round.match_id === match.id);
+        setRoundGame(foundGame);
+        setScoresP1(foundGame?.scoreP1 || []);
+        setScoresP2(foundGame?.scoreP2 || []);
+      }
     }
   };
 
@@ -278,9 +391,9 @@ function TournamentAllPlayAll({ id }) {
                     type="button"
                     onClick={() => {
                       setMatchNum("");
-                      setRoundGame("")
-                      setScoresP1([])
-                      setScoresP2([])
+                      setRoundGame("");
+                      setScoresP1([]);
+                      setScoresP2([]);
                     }}
                   >
                     Cancel
@@ -301,6 +414,7 @@ function TournamentAllPlayAll({ id }) {
                     <Input
                       key={index}
                       type="number"
+                      min="0"
                       value={score}
                       onChange={(e) =>
                         handleP1ScoreChange(index, e.target.value)
@@ -318,6 +432,7 @@ function TournamentAllPlayAll({ id }) {
                     <Input
                       key={index}
                       type="number"
+                      min="0"
                       value={score}
                       onChange={(e) =>
                         handleP2ScoreChange(index, e.target.value)
@@ -327,18 +442,20 @@ function TournamentAllPlayAll({ id }) {
                   ))}
                 </div>
                 <div className="flex space-x-2">
-                  <Button
-                    type="submit"
-                  >
-                    Update Scores
+                  <Button type="submit">Update Scores</Button>
+                  <Button type="button" onClick={handleResetScores}>
+                    Reset Scores
                   </Button>
                   <Button
                     type="button"
-                    onClick={handleResetScores}
+                    onClick={() => {
+                      handleClearScores(roundGame.match_id);
+                    }}
                   >
-                    Reset Scores
+                    Clear Score
                   </Button>
                 </div>
+                {error && <div>{error}</div>}
               </form>
             )}
           </CardContent>

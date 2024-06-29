@@ -34,21 +34,49 @@ export const getARound = async (req,res)=>{
     res.status(200).json(round)
 }
 
-// get stageOne bracket that consist of many matches
-export const stageOne = async (req,res)=>{
-    const {tourid} = req.params
+// // get stageOne bracket that consist of many matches
+// export const stageOne = async (req,res)=>{
+//     const {tourid} = req.params
 
-        // include refresh roundes as well
-    try{
-        const tournament = await tournamentDB.findById(tourid)
-        const divider = tournament.setting.stageOne.rounds
-        const stageOneMatches = tournament.setting.matches.filter(match => match.round <= divider);
+//         // include refresh roundes as well
+//     try{
+//         const tournament = await tournamentDB.findById(tourid)
+//         const divider = tournament.setting.stageOne.rounds
+//         const stageOneMatches = tournament.setting.matches.filter(match => match.round <= divider);
         
-        res.status(200).json(stageOneMatches)
-    }catch(error){
-        res.status(400).json({error: "Deny Permission: Stage One"})
+//         res.status(200).json(stageOneMatches)
+//     }catch(error){
+//         res.status(400).json({error: "Deny Permission: Stage One"})
+//     }
+//   };
+  
+
+export const stageOne = async (req, res) => {
+    const { tourid } = req.params;
+  
+    try {
+      const tournament = await tournamentDB.findById(tourid);
+      if (!tournament) {
+        return res.status(404).json({ error: "Tournament not found" });
+      }
+  
+      const divider = tournament.setting.stageOne.rounds;
+      const stageOneMatches = tournament.setting.matches.filter(match => match.round <= divider);
+  
+      // Fetch all rounds for the matches and flatten the results
+      const roundPromises = stageOneMatches.map(async match => {
+        const rounds = await roundDB.find({ match_id: match.id });
+        return rounds;
+      });
+      const roundsArrays = await Promise.all(roundPromises);
+      const allRounds = roundsArrays.flat();
+  
+      res.status(200).json(allRounds);
+    } catch (error) {
+      res.status(400).json({ error: "Deny Permission: Stage One" });
     }
-}
+  };
+  
 
 // post advanceBracket from stageOne to stageTwo
 export const advanceBracket = async (req,res)=>{
@@ -82,57 +110,61 @@ export const advanceBracket = async (req,res)=>{
 
 // get stageTwo bracket that consist of many roundes
 export const stageTwo = async (req,res)=>{
-    const {tourid} = req.params
-    
-    // include refresh roundes as well
-    try{
-        const tournament = await tournamentDB.findById(tourid)
-        const divider = tournament.setting.stageOne.rounds
-        const stageTwoMatches = tournament.setting.matches.filter(match => match.round > divider);
-        
-        res.status(200).json(stageTwoMatches)
-    }catch(error){
-        res.status(400).json({error: "Deny Permission: Stage Two"})
+    const { tourid } = req.params;
+  
+    try {
+      const tournament = await tournamentDB.findById(tourid);
+      if (!tournament) {
+        return res.status(404).json({ error: "Tournament not found" });
+      }
+  
+      const divider = tournament.setting.stageOne.rounds;
+      const stageTwoMatches = tournament.setting.matches.filter(match => match.round > divider);
+  
+      // Fetch all rounds for the matches
+      const roundPromises = stageTwoMatches.map(match => roundDB.find({ match_id: match.id }));
+      const rounds = await Promise.all(roundPromises);
+  
+      res.status(200).json(rounds);
+    } catch (error) {
+      res.status(400).json({ error: "Deny Permission: Stage Two" });
     }
 }
 
 // post Match record by inserting individual rounds
-export const keyInMatch = async (req,res)=>{
-    const {tourid, id} = req.params;
-    const {p1score, p2score} = req.body
-    
-    try{
+export const keyInMatch = async (req, res) => {
+    const { tourid, id } = req.params;
+    const { p1score, p2score } = req.body;
 
-        // get the latest id of the players from the matches + rounds in db
-        const tournament = await tournamentDB.findOne({ _id : tourid })
-        
-        tournament.setting.matches.map(async m => {
-            if (m.id === id) {
-                const round = await roundDB.findOne({ match_id : id })
+    try {
+        const tournament = await tournamentDB.findOne({ _id: tourid });
+        const matches = tournament.setting.matches;
+
+        for (const match of matches) {
+            if (match.id === id) {
+                const round = await roundDB.findOne({ match_id: id });
                 const bestOf = tournament.setting.scoring.bestOf;
-                    if (round === null) {
-                        // use .create() to generate and save the data
-                        await roundDB.create({ 
-                            match_id: m.id,
-                            bestOf: tournament.setting.scoring.bestOf,
-                            p1: m.player1.id,
-                            p2: m.player2.id,
-                            scoreP1: new Array(bestOf).fill(0),
-                            scoreP2: new Array(bestOf).fill(0),
-                            status: "unlocked"
-                        })
-                    }
-                    else if(round.status === "locked"){
-                        return res.status(400).json({ error: "Deny Permission. Clear Score First!" });
-                    }
-                // update the round collection from database
+
+                if (round === null) {
+                    await roundDB.create({
+                        match_id: match.id,
+                        bestOf: bestOf,
+                        p1: match.player1.id,
+                        p2: match.player2.id,
+                        scoreP1: new Array(bestOf).fill(0),
+                        scoreP2: new Array(bestOf).fill(0),
+                        status: "unlocked",
+                    });
+                } else if (round.status === "locked") {
+                    return res.status(400).json({ error: "Deny Permission. Clear Score First!" });
+                }
+
                 await roundDB.updateOne(
                     { match_id: id },
-                    { $set: { p1: m.player1.id, p2: m.player2.id, scoreP1: p1score, scoreP2: p2score, status: "locked" } }
+                    { $set: { p1: match.player1.id, p2: match.player2.id, scoreP1: p1score, scoreP2: p2score, status: "locked" } }
                 );
 
-                // do simple calculation to identify the winner, loser and draw point
-                let p1win = 0, p2win = 0, draw = 0; // Declare variables outside of the loop
+                let p1win = 0, p2win = 0, draw = 0;
 
                 for (let x = 0; x < bestOf; x++) {
                     if (p1score[x] !== 0 && p2score[x] !== 0) {
@@ -146,49 +178,39 @@ export const keyInMatch = async (req,res)=>{
                     }
                 }
 
-                // update the round point for p1 and p2 (tournament)
-                const tour = addFetchTournament(tournament)
-                
-                // Define limit and continue values based on tournament settings
+                const tour = addFetchTournament(tournament);
                 const limit = tour.stageOne.rounds;
                 const continueLimit = tour.players.length / 2;
-                
-                // enterResult for the round for that certain round
-                try{
-                    // Enter result for a round
+
+                try {
                     tour.enterResult(id, p1win, p2win, draw);
 
-                    // Check if the tournament format is one of the specified formats
                     if (["round-robin", "double-round-robin", "swiss"].includes(tour.stageOne.format)) {
-                        // Find the match with the specified id
-                        const match = tour.matches.find(match => match.id === id);
+                        const match = tour.matches.find(m => m.id === id);
 
-                        // If round is found and conditions are met, proceed to the next stage
                         if (match && match.round < limit && match.match === continueLimit) {
                             tour.next();
                         }
                     }
-
-                }catch(error){
-                    res.status(400).json({ message: "Unable to key in the result" });
+                } catch (error) {
+                    return res.status(400).json({ error: "Unable to key in the result" });
                 }
 
-                // update the tournament DB based on tournament
                 const updatedTournament = await updateFetchToDatabase(tour.id, tour);
 
-                // after done, remove the tournament fetch data
-                removeFetchTournament()
+                removeFetchTournament();
 
-                res.status(200).json(updatedTournament)
+                return res.status(200).json(updatedTournament);
             }
+        }
 
-        });
-        
-    }catch(error){
-        res.status(400).json({error: "Deny Permission: Key In"})
+        return res.status(404).json({ error: "Match not found" });
+
+    } catch (error) {
+        return res.status(400).json({ error: "Deny Permission: Key In" });
     }
+};
 
-}
 
 // clear the match record
 export const clearMatch = async (req,res) => {
