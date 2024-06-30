@@ -307,21 +307,21 @@ const tournamentSchema = new Schema(
         default: "created",
       },
       register: {
-        open: {
+        from: {
           type: Date,
           required: false,
         },
-        close: {
+        to: {
           type: Date,
           required: false,
         },
       },
       running: {
-        start: {
+        from: {
           type: Date,
           required: false,
         },
-        end: {
+        to: {
           type: Date,
           required: false,
         },

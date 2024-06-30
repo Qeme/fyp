@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,8 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "src/components/ui/select";
-import { DatePickerWithRange } from "src/components/CalendarInput";
-import { addDays, format } from "date-fns";
+import { addDays, format, startOfToday } from "date-fns";
 import { Textarea } from "src/components/ui/textarea";
 import { useTournamentContext } from "src/hooks/useTournamentContext";
 import { useGameContext } from "src/hooks/useGameContext";
@@ -28,9 +27,22 @@ import { useVenueContext } from "src/hooks/useVenueContext";
 import { Button } from "src/components/ui/button";
 import BackButton from "src/components/BackButton";
 import { useUserContext } from "src/hooks/useUserContext";
+import { cn } from "src/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "src/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "src/components/ui/calendar";
+import { toZonedTime, formatInTimeZone } from "date-fns-tz";
+
+const timeZone = "Asia/Kuala_Lumpur";
 
 // create a function to handle tournament creation form
 const TournamentForm = () => {
+  const now = new Date();
+  const zonedNow = toZonedTime(now, timeZone);
   const navigate = useNavigate();
 
   // take the dispatch components from the hooks
@@ -50,12 +62,12 @@ const TournamentForm = () => {
     advance: { method: "all", value: "" },
   });
   const [register, setRegister] = useState({
-    open: format(new Date(), "yyyy-MM-dd"),
-    close: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+    from: formatInTimeZone(zonedNow, timeZone, "yyyy-MM-dd"),
+    to: formatInTimeZone(addDays(zonedNow, 20), timeZone, "yyyy-MM-dd"),
   });
   const [running, setRunning] = useState({
-    start: format(new Date(), "yyyy-MM-dd"),
-    end: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+    from: formatInTimeZone(zonedNow, timeZone, "yyyy-MM-dd"),
+    to: formatInTimeZone(addDays(zonedNow, 20), timeZone, "yyyy-MM-dd"),
   });
   const [checkin, setCheckin] = useState("");
   const [notification, setNotification] = useState({
@@ -87,6 +99,13 @@ const TournamentForm = () => {
   const [disableInput, setDisableInput] = useState(true);
   const [disableInputSort, setDisableInputSort] = useState(true);
   const [disableInputStage, setDisableInputStage] = useState(true);
+
+  useEffect(() => {
+    setRunning((prevState) => ({
+      ...prevState,
+      from: register?.to,
+    }));
+  }, [register?.to]);
 
   // Function to handle changes in representative.repType
   const handleRepresentativeChange = (selectedOption) => {
@@ -210,12 +229,12 @@ const TournamentForm = () => {
         advance: { method: "all", value: "" },
       });
       setRegister({
-        open: format(new Date(), "yyyy-MM-dd"),
-        close: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+        from: format(new Date(), "yyyy-MM-dd"),
+        to: format(addDays(new Date(), 20), "yyyy-MM-dd"),
       });
       setRunning({
-        start: format(new Date(), "yyyy-MM-dd"),
-        end: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+        from: format(new Date(), "yyyy-MM-dd"),
+        to: format(addDays(new Date(), 20), "yyyy-MM-dd"),
       });
       setCheckin("");
       setNotification({
@@ -792,17 +811,95 @@ const TournamentForm = () => {
                 </h2>
 
                 <div>
-                  <Label htmlFor="registerDate">Registration: </Label>
-                  <DatePickerWithRange
-                    value={register}
-                    onChange={setRegister}
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="register_date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-[300px] justify-start text-left font-normal",
+                          !register && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {register?.from ? (
+                          register?.to ? (
+                            <>
+                              {format(register.from, "LLL dd, y")} -{" "}
+                              {format(register.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(register.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={register?.from}
+                        selected={register}
+                        onSelect={setRegister}
+                        numberOfMonths={2}
+                        disabled={{
+                          before: startOfToday(),
+                        }}
+                        // startOfToday(): This function returns the start of the current day.
+                        // Using it as the before value in the disabled prop ensures that all previous dates are disabled.
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
-                <div className="w-full">
+                <div>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="running_date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-[300px] justify-start text-left font-normal",
+                          !running && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {running?.from ? (
+                          running?.to ? (
+                            <>
+                              {format(running.from, "LLL dd, y")} -{" "}
+                              {format(running.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(running.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        initialFocus
+                        mode="range"
+                        defaultMonth={running?.from}
+                        selected={running}
+                        onSelect={setRunning}
+                        numberOfMonths={2}
+                        disabled={{
+                          before: register?.to ? register.to : startOfToday(),
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* <div className="w-full">
                   <Label htmlFor="runningDate">Running: </Label>
                   <DatePickerWithRange value={running} onChange={setRunning} />
-                </div>
+                </div> */}
 
                 <div>
                   <Label htmlFor="checkin" className="w-1/3 text-left">

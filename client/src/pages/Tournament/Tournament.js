@@ -193,11 +193,11 @@ const Tournament = () => {
                     <p>
                       Register Date:{" "}
                       {new Date(
-                        tournament.meta.register.open
+                        tournament.meta.register?.from
                       ).toLocaleDateString()}{" "}
                       to{" "}
                       {new Date(
-                        tournament.meta.register.close
+                        tournament.meta.register?.to
                       ).toLocaleDateString()}
                     </p>
                   </div>
@@ -205,11 +205,11 @@ const Tournament = () => {
                     <p>
                       Running Date:{" "}
                       {new Date(
-                        tournament.meta.running.start
+                        tournament.meta.running?.from
                       ).toLocaleDateString()}{" "}
                       to{" "}
                       {new Date(
-                        tournament.meta.running.end
+                        tournament.meta.running?.to
                       ).toLocaleDateString()}
                     </p>
                     <p>Check In: {tournament.meta.checkin} minutes</p>
