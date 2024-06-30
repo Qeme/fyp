@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "src/components/ui/button";
 import {
   Card,
@@ -13,8 +13,13 @@ import { useLogin } from "src/hooks/useLogin";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [backendError, setBackendError] = useState("");
 
   const { login, isLoading, error } = useLogin();
+
+  useEffect(() => {
+    setBackendError(error);
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +33,7 @@ const Login = () => {
     <div className="flex items-center justify-center my-20">
       <Card className="w-[350px]">
         <CardHeader>
-          <CardTitle>Log In</CardTitle>
+          <CardTitle>Sign In</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -40,7 +45,10 @@ const Login = () => {
                   type="email"
                   placeholder="harrysmitch@gmail.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setBackendError("");
+                  }}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -50,14 +58,17 @@ const Login = () => {
                   type="password"
                   placeholder="Your Password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setBackendError("");
+                  }}
                 />
               </div>
             </div>
             <Button className="w-full mt-6" type="submit" disabled={isLoading}>
-              Log In
+              Sign In
             </Button>
-            {error && <div className="text-red-500 mt-2">{error}</div>}
+            <div className="text-red-500 mt-2">{backendError}</div>
           </form>
         </CardContent>
       </Card>

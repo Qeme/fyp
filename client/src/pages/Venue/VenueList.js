@@ -9,6 +9,17 @@ import {
 import { Button } from "src/components/ui/button";
 import { VenueEditTrigger } from "./VenueEditTrigger";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/components/ui/alert-dialog";
 
 // create a function to handle Listing all venues to user
 const VenueList = () => {
@@ -50,7 +61,7 @@ const VenueList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2 mt-12">
       <h3 className="text-2xl font-bold mb-4 text-left">Venues List:</h3>
       {venues &&
         venues.map((venue) => (
@@ -80,14 +91,32 @@ const VenueList = () => {
               </p>
             </CardContent>
             {user && user.role === "admin" && (
-              <CardFooter className="text-right p-2">
-                <Button
-                  size="sm"
-                  onClick={() => handleClick(venue._id)}
-                  className="mr-4 bg-red-500 hover:bg-red-700"
-                >
-                  Delete
-                </Button>
+              <CardFooter className="text-right p-2 space-x-4">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Delete</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete{" "}
+                        {<span className="font-semibold">{venue.building}</span>}{" "}
+                        and remove this data from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleClick(venue._id)}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
                 <VenueEditTrigger venue={venue} />
               </CardFooter>
             )}

@@ -41,8 +41,16 @@ function TournamentJoinForm() {
           <Card className="w-80">
             <CardContent>
               <div>
-                <PreviewImage topic={"tour_qr"} tournamentid={tournament._id} />
+                {tournament &&
+                  tournament.meta.ticket.competitor !== 0 &&
+                  tournament.meta.ticket.viewer !== 0 && (
+                    <PreviewImage
+                      topic={"tour_qr"}
+                      tournamentid={tournament._id}
+                    />
+                  )}
               </div>
+
               <p>Name: {tournament.name}</p>
               <p>
                 Game:{" "}

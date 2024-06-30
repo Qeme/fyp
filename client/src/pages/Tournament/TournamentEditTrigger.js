@@ -546,7 +546,7 @@ export function TournamentEditTrigger({ tournament }) {
                 </div>
               </div>
 
-              <div className="pt-4">
+              {/* <div className="pt-4">
                 <h4 className="text-left">
                   <strong>3rd Placement</strong>
                 </h4>
@@ -603,7 +603,7 @@ export function TournamentEditTrigger({ tournament }) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -639,7 +639,7 @@ export function TournamentEditTrigger({ tournament }) {
                           <SelectItem value="double-elimination">
                             Double Elimination
                           </SelectItem>
-                          <SelectItem value="stepladder">Stepladder</SelectItem>
+                          {/* <SelectItem value="stepladder">Stepladder</SelectItem> */}
                           <SelectItem value="swiss">Swiss</SelectItem>
                           <SelectItem value="round-robin">
                             Round Robin
@@ -717,9 +717,9 @@ export function TournamentEditTrigger({ tournament }) {
                               <SelectItem value="double-elimination">
                                 Double Elimination
                               </SelectItem>
-                              <SelectItem value="stepladder">
+                              {/* <SelectItem value="stepladder">
                                 Stepladder
-                              </SelectItem>
+                              </SelectItem> */}
                             </SelectGroup>
                           </SelectContent>
                         </Select>

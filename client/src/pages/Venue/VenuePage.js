@@ -5,7 +5,7 @@ import VenueForm from "./VenueForm";
 function VenuePage() {
   return (
     <main>
-      <div className="flex justify-between">
+      <div className="flex justify-between space-x-4">
         <div className="w-3/5">
           <VenueList />
         </div>

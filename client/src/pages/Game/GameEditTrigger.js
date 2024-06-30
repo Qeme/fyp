@@ -66,7 +66,7 @@ export function GameEditTrigger({ game, dispatch }) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          className="bg-blue-500 hover:bg-blue-800 w-30 h-15"
+          variant="secondary"
           onClick={() => setIsDialogOpen(true)}
         >
           Edit

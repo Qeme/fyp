@@ -78,7 +78,7 @@ userSchema.statics.login = async function (email, password) {
   
     // if no, throw an errow
     if(!user){
-      throw Error('Incorrect email inserted')
+      throw Error('Incorrect email inserted / This account has been deleted by admin')
     }
   
     /* 

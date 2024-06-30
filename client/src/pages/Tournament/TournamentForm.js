@@ -229,12 +229,12 @@ const TournamentForm = () => {
         advance: { method: "all", value: "" },
       });
       setRegister({
-        from: format(new Date(), "yyyy-MM-dd"),
-        to: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+        from: formatInTimeZone(zonedNow, timeZone, "yyyy-MM-dd"),
+        to: formatInTimeZone(addDays(zonedNow, 20), timeZone, "yyyy-MM-dd"),
       });
       setRunning({
-        from: format(new Date(), "yyyy-MM-dd"),
-        to: format(addDays(new Date(), 20), "yyyy-MM-dd"),
+        from: formatInTimeZone(zonedNow, timeZone, "yyyy-MM-dd"),
+        to: formatInTimeZone(addDays(zonedNow, 20), timeZone, "yyyy-MM-dd"),
       });
       setCheckin("");
       setNotification({
@@ -984,6 +984,7 @@ const TournamentForm = () => {
                         id="viewer"
                         type="number"
                         min="0"
+                        max={ticket.competitor}
                         step="0.01"
                         placeholder="RM 2.50"
                         onChange={(e) =>

@@ -58,12 +58,7 @@ export function RefereeEditTrigger({ referee }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="bg-blue-500 hover:bg-blue-800 w-30 h-15"
-          onClick={() => setIsDialogOpen(true)}
-        >
-          Edit
-        </Button>
+        <Button variant="secondary" onClick={() => setIsDialogOpen(true)}>Edit</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

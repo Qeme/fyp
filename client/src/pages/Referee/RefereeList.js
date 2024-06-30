@@ -9,6 +9,17 @@ import { Button } from "src/components/ui/button";
 import { RefereeEditTrigger } from "./RefereeEditTrigger";
 import { useAuthContext } from "src/hooks/useAuthContext";
 import { useInitialUser } from "src/hooks/useInitialUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/components/ui/alert-dialog";
 
 // create a function to handle Listing all users to user
 const RefereeList = () => {
@@ -45,7 +56,7 @@ const RefereeList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2 mt-12">
       <h3 className="text-2xl font-bold mb-4 text-left">Referee List:</h3>
       {users &&
         users
@@ -53,9 +64,7 @@ const RefereeList = () => {
           .map((referee) => (
             <Card key={referee._id} className="mb-2 shadow-sm p-4">
               <CardHeader className="p-2">
-                <h4 className="text-lg font-bold">
-                  {referee.name}
-                </h4>
+                <h4 className="text-lg font-bold">{referee.name}</h4>
               </CardHeader>
               <CardContent className="p-2">
                 <p className="text-gray-700 text-sm">
@@ -69,14 +78,46 @@ const RefereeList = () => {
                 </p>
               </CardContent>
               {user && user.role === "admin" && (
-                <CardFooter className="text-right p-2">
-                  <Button
-                    size="sm"
-                    onClick={() => handleClick(referee._id)}
-                    className="mr-4 bg-red-500 hover:bg-red-700"
-                  >
-                    Delete
-                  </Button>
+                <CardFooter className="text-right p-2 space-x-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete referee{" "}
+                          {
+                            <span className="font-semibold">
+                              {referee.name}
+                            </span>
+                          }{" "}
+                          and remove this data from our servers. This will
+                          result in denying access for{" "}
+                          {
+                            <span className="font-semibold">
+                              {referee.name}
+                            </span>
+                          }{" "}
+                          to manage the tournament that is being assigned to
+                          them.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleClick(referee._id)}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
                   <RefereeEditTrigger referee={referee} />
                 </CardFooter>
               )}

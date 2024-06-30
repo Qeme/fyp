@@ -9,6 +9,17 @@ import {
 import { Button } from "src/components/ui/button";
 import { GameEditTrigger } from "./GameEditTrigger";
 import { useInitialGame } from "src/hooks/useInitialGame";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/components/ui/alert-dialog";
 
 // create a function to handle Listing all games to user
 const GameList = () => {
@@ -50,7 +61,7 @@ const GameList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2 mt-12">
       <h3 className="text-2xl font-bold mb-4 text-left">Games List:</h3>
       {games &&
         games.map((game) => (
@@ -70,16 +81,37 @@ const GameList = () => {
               </p>
             </CardContent>
             {user && user.role === "admin" && (
-              <CardFooter className="text-right p-2">
-                <Button
-                  size="sm"
-                  onClick={() => handleClick(game._id)}
-                  className="mr-4 bg-red-500 hover:bg-red-700"
-                >
-                  Delete
-                </Button>
+              <CardFooter className="text-right p-2 space-x-4">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Delete</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete{" "}
+                        {<span className="font-semibold">{game.name}</span>}{" "}
+                        game and remove this data from our servers. This{" "}
+                        {<span className="font-semibold">{game.name}</span>}{" "}
+                        game can't be searched by user anymore after the
+                        deletion.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleClick(game._id)}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
                 {/* pass the dispatch function to the GameEditTrigger component */}
-                <GameEditTrigger game={game} dispatch={dispatch}/> 
+                <GameEditTrigger game={game} dispatch={dispatch} />
               </CardFooter>
             )}
           </Card>

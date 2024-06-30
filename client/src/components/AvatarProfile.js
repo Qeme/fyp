@@ -46,7 +46,9 @@ function AvatarProfile({ participant }) {
   return (
     <Avatar>
       <AvatarImage src={imageUrl} alt="user profile" />
-      <AvatarFallback>{participant.name.slice(0, 2)}</AvatarFallback>
+      <AvatarFallback className="bg-orange-600">
+        <span className="text-white">{participant?.name.slice(0, 2).toUpperCase()}</span>
+      </AvatarFallback>
     </Avatar>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSignup } from "../../hooks/useSignup";
 import { Button } from "src/components/ui/button";
 import {
@@ -14,15 +14,31 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [backendError, setBackendError] = useState("");
 
   const { signup, isLoading, error } = useSignup();
+
+  useEffect(() => {
+    setBackendError(error);
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // console.log({name,password,email})
-    // need sometimes to fetch the data
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    setPasswordError("");
     await signup(name, email, password);
+  };
+
+  const clearErrors = () => {
+    setPasswordError("");
+    setBackendError("");
   };
 
   return (
@@ -41,7 +57,10 @@ const Signup = () => {
                   type="text"
                   placeholder="Harry Smitch"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    clearErrors();
+                  }}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -51,7 +70,10 @@ const Signup = () => {
                   type="email"
                   placeholder="harrysmitch@gmail.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    clearErrors();
+                  }}
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
@@ -61,14 +83,32 @@ const Signup = () => {
                   type="password"
                   placeholder="Complex Password Combination"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    clearErrors();
+                  }}
+                />
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    clearErrors();
+                  }}
                 />
               </div>
             </div>
+            {passwordError && (
+              <div className="text-red-500 mt-2">{passwordError}</div>
+            )}
             <Button className="w-full mt-6" type="submit" disabled={isLoading}>
               Sign Up
             </Button>
-            {error && <div className="text-red-500 mt-2">{error}</div>}
+            <div className="text-red-500 mt-2">{backendError}</div>
           </form>
         </CardContent>
       </Card>

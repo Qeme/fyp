@@ -28,10 +28,9 @@ function TournamentSetting() {
                 <CardHeader>
                   <div>
                     <CardTitle>{game.name}</CardTitle>
-                    <CardDescription>{game._id}</CardDescription>
                   </div>
                 </CardHeader>
-                <CardContent className="flex justify-between">
+                <CardContent className="flex justify-between mt-4">
                   {game.platform === "online" ? (
                     <Badge variant={"platform_online"}>{game.platform}</Badge>
                   ) : game.platform === "physical" ? (
@@ -60,7 +59,6 @@ function TournamentSetting() {
                 <CardHeader>
                   <div>
                     <CardTitle>{venue.building}</CardTitle>
-                    <CardDescription>{venue._id}</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="divide-y divide-gray-200">

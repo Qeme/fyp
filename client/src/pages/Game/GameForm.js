@@ -63,61 +63,73 @@ const GameForm = () => {
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Register Game</h2>
-        <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Enter name of the game"
-                    {...field}
-                    className="border-gray-300 rounded-lg"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <div>
+      <h2 className="text-2xl font-bold mb-2 text-center">Register Game</h2>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full bg-white p-6 rounded-lg shadow-md"
+        >
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter name of the game"
+                      {...field}
+                      className="border-gray-300 rounded-lg"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="platform"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Platform</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="border-gray-300 rounded-lg">
-                      <SelectValue placeholder="-- Choose --" className="text-center" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="online">Online</SelectItem>
-                        <SelectItem value="physical">Physical</SelectItem>
-                        <SelectItem value="hybrid">Hybrid (Online + Physical)</SelectItem>
-                        <SelectItem value="to be announced">To Be Announced</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="platform"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Platform</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="border-gray-300 rounded-lg">
+                        <SelectValue
+                          placeholder="-- Choose --"
+                          className="text-center"
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="online">Online</SelectItem>
+                          <SelectItem value="physical">Physical</SelectItem>
+                          <SelectItem value="hybrid">
+                            Hybrid (Online + Physical)
+                          </SelectItem>
+                          <SelectItem value="to be announced">
+                            To Be Announced
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <Button className="w-full mt-6" type="submit">
-          Submit
-        </Button>
-      </form>
-    </Form>
+          <Button className="w-full mt-6" type="submit">
+            Submit
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
 };
 

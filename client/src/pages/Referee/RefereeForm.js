@@ -35,8 +35,8 @@ const RefereeForm = () => {
 
     // add role: referee to values
     values.role = "referee";
-    console.log(values)
-    
+    console.log(values);
+
     // call the fetch API
     const response = await fetch("http://localhost:3002/api/users", {
       method: "POST",
@@ -48,13 +48,13 @@ const RefereeForm = () => {
 
     // grab the json data
     const json = await response.json();
-    console.log(json)
-    
+    console.log(json);
+
     if (response.ok) {
       dispatch({ type: "CREATE_USER", payload: json });
       form.reset();
-    }else{
-        setError(json.error);
+    } else {
+      setError(json.error);
     }
   };
 
@@ -64,82 +64,84 @@ const RefereeForm = () => {
     defaultValues: {
       name: "",
       email: "",
-      password: ""
+      password: "",
     },
   });
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full bg-white p-6 rounded-lg shadow-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Register Referee</h2>
-        <div className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="John Vladmir"
-                    {...field}
-                    className="border-gray-300 rounded-lg"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <div>
+      <h2 className="text-2xl font-bold mb-2 text-center">Register Referee</h2>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full bg-white p-6 rounded-lg shadow-md"
+        >
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="John Vladmir"
+                      {...field}
+                      className="border-gray-300 rounded-lg"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="johnvladmir@gmail.com"
-                    {...field}
-                    className="border-gray-300 rounded-lg"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="johnvladmir@gmail.com"
+                      {...field}
+                      className="border-gray-300 rounded-lg"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Remember & Pass"
-                    {...field}
-                    className="border-gray-300 rounded-lg"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Remember & Pass"
+                      {...field}
+                      className="border-gray-300 rounded-lg"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <Button className="w-full mt-6" type="submit">
-          Submit
-        </Button>
-        {error && <div className="text-red-500 mt-2">{error}</div>}
-      </form>
-    </Form>
+          <Button className="w-full mt-6" type="submit">
+            Submit
+          </Button>
+          {error && <div className="text-red-500 mt-2">{error}</div>}
+        </form>
+      </Form>
+    </div>
   );
 };
 

@@ -14,6 +14,17 @@ import { useInitialTournament } from "src/hooks/useInitialTournament";
 import { useInitialGame } from "src/hooks/useInitialGame";
 import { useInitialVenue } from "src/hooks/useInitialVenue";
 import { useInitialUser } from "src/hooks/useInitialUser";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "src/components/ui/alert-dialog";
 
 const TournamentList = () => {
   const { tournaments, dispatch } = useInitialTournament();
@@ -74,10 +85,10 @@ const TournamentList = () => {
             <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Stage Two
             </TableHead>
-            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Participants
             </TableHead>
-            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Created Date
             </TableHead>
             <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -121,16 +132,51 @@ const TournamentList = () => {
                 <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {tournament.setting.stageTwo.format}
                 </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {tournament.setting.players.length}
                 </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {format(new Date(tournament.createdAt), "dd/MM/yyyy")}
                 </TableCell>
                 <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                  <Button onClick={() => handleClick({ id: tournament._id })}>
-                    Delete
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete{" "}
+                          {
+                            <span className="font-semibold">
+                              {tournament.name}
+                            </span>
+                          }{" "}
+                          tournament and remove this data from our servers. If{" "}
+                          {
+                            <span className="font-semibold">
+                              {tournament.name}
+                            </span>
+                          }{" "}
+                          tournament is currently running, it will automatically
+                          stop the tournament and remove all the brackets and
+                          participants from this tournament.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleClick({ id: tournament._id })}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}
