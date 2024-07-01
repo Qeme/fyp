@@ -36,6 +36,11 @@ import {
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "src/components/ui/calendar";
 import { toZonedTime, formatInTimeZone } from "date-fns-tz";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "src/components/ui/hover-card";
 
 const timeZone = "Asia/Kuala_Lumpur";
 
@@ -533,9 +538,28 @@ const TournamentForm = () => {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label htmlFor="bye" className="w-1/3 text-left">
-                      Bye:{" "}
-                    </Label>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="bye" className="w-1/3 text-left mr-1">
+                        Bye:{" "}
+                      </Label>
+                      <HoverCard>
+                        <HoverCardTrigger>
+                          <Button
+                            variant="link"
+                            className="p-3 text-orange-400 hover:text-orange-600"
+                          >
+                            ?
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                          <span className="font-medium">Bye</span> refers to a
+                          situation where a participant advances to the next
+                          round of competition without competing against an
+                          opponent. Usually it happens for odd number of
+                          participants.
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
                     <Input
                       id="bye"
                       type="number"
@@ -549,9 +573,29 @@ const TournamentForm = () => {
                   </div>
 
                   <div className="flex items-center space-x-4 col-span-2 md:col-span-1">
-                    <Label htmlFor="bestOf" className="w-1/3 text-left">
-                      Best Of:{" "}
-                    </Label>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="bestOf" className="text-left mr-2">
+                        BestOf:
+                      </Label>
+                      <HoverCard>
+                        <HoverCardTrigger>
+                          <Button
+                            variant="link"
+                            className="p-0 text-orange-400 hover:text-orange-600"
+                          >
+                            ?
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                          <span className="font-medium">BestOf</span> refers to
+                          the number of games or matches a participant needs to
+                          win in order to advance or win the series.{" "}
+                          <span className="font-medium">"Best of 3"</span>{" "}
+                          format (often written as BO3), the first participant
+                          to win 2 matches out of the possible 3 wins the series
+                        </HoverCardContent>
+                      </HoverCard>
+                    </div>
                     <Input
                       id="bestOf"
                       type="number"
@@ -560,7 +604,7 @@ const TournamentForm = () => {
                       onChange={(e) =>
                         setScoring({ ...scoring, bestOf: e.target.value })
                       }
-                      className="w-2/3"
+                      className="w-full"
                     />
                   </div>
                 </div>
@@ -625,7 +669,7 @@ const TournamentForm = () => {
                 </div>
 
                 <div>
-                  <div className="text-center pb-2">
+                  <div className="text-center">
                     <h4 className="font-medium text-sm uppercase text-orange-400">
                       stage one
                     </h4>
@@ -633,7 +677,56 @@ const TournamentForm = () => {
 
                   <div className="flex space-x-4">
                     <div className="w-1/2">
-                      <Label htmlFor="stageOneFormat">Format: </Label>
+                      <Label htmlFor="stageOneFormat" className="mr-2">
+                        Format:{" "}
+                      </Label>
+                      <HoverCard>
+                        <HoverCardTrigger>
+                          <Button
+                            variant="link"
+                            className="p-0 text-orange-400 hover:text-orange-600"
+                          >
+                            ?
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                          <div>
+                            <div>
+                              <p>
+                                <span className="font-medium">
+                                  Elimination Round
+                                </span>{" "}
+                                refers to participants are progressively
+                                eliminated from the tournament after losing
+                                matches until only one participant remains as
+                                the winner.{" "}
+                              </p>
+                              <ol className="mt-2">
+                                <li>1. Single Elimination</li>
+                                <li>2. Double Elimination</li>
+                              </ol>
+                            </div>
+                            <div>
+                              <p>
+                                <span className="font-medium">
+                                  All-Play-All Round
+                                </span>{" "}
+                                refers to each participant competes against
+                                every other participant in the tournament. This
+                                ensures that all participants have a chance to
+                                compete against each other, typically resulting
+                                in a ranking or cumulative score determining the
+                                winner rather than direct elimination.{" "}
+                              </p>
+                              <ol className="mt-2">
+                                <li>1. Swiss</li>
+                                <li>2. Round Robin</li>
+                                <li>3. Double Round Robin</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
                       <Select
                         onValueChange={handleStageChange}
                         value={stageOne.format}
@@ -668,7 +761,31 @@ const TournamentForm = () => {
                     </div>
 
                     <div className="w-1/2">
-                      <Label htmlFor="maxPlayers">Max Players: </Label>
+                      <Label htmlFor="maxPlayers" className="text-left mr-2">
+                        Max Players:
+                      </Label>
+                      <HoverCard>
+                        <HoverCardTrigger>
+                          <Button
+                            variant="link"
+                            className="p-0 text-orange-400 hover:text-orange-600"
+                          >
+                            ?
+                          </Button>
+                        </HoverCardTrigger>
+                        <HoverCardContent>
+                          <div>
+                            <p>
+                              This parameter defines the maximum number of
+                              participants allowed to compete in the tournament.
+                              Setting it to{" "}
+                              <span className="font-semibold">0</span> removes
+                              any restrictions on the number of players who can
+                              join and participate.
+                            </p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
                       <Input
                         id="maxPlayers"
                         type="number"
@@ -837,7 +954,7 @@ const TournamentForm = () => {
 
                 <div className="flex justify-between space-x-2">
                   <div>
-                  <Label>Register: </Label>
+                    <Label>Register: </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -882,7 +999,7 @@ const TournamentForm = () => {
                   </div>
 
                   <div>
-                  <Label>Running: </Label>
+                    <Label>Running: </Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -931,9 +1048,7 @@ const TournamentForm = () => {
                 </div> */}
 
                 <div>
-                  <Label htmlFor="checkin">
-                    Check In Time (minutes):{" "}
-                  </Label>
+                  <Label htmlFor="checkin">Check In Time (minutes): </Label>
                   <Input
                     id="checkin"
                     type="number"
@@ -947,7 +1062,7 @@ const TournamentForm = () => {
               </div>
 
               <div>
-              <div className="text-center py-4">
+                <div className="text-center py-4">
                   <h3 className="font-semibold uppercase text-orange-500">
                     notification
                   </h3>
@@ -986,7 +1101,7 @@ const TournamentForm = () => {
               </div>
 
               <div>
-              <div className="text-center py-4">
+                <div className="text-center py-4">
                   <h3 className="font-semibold uppercase text-orange-500">
                     ticket price
                   </h3>
@@ -995,7 +1110,34 @@ const TournamentForm = () => {
                 <div className="flex">
                   <div className="w-1/2 pr-4">
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="competitor">Competitor: </Label>
+                      <div>
+                        <Label htmlFor="competitor" className="text-left mr-4">
+                          Competitor:
+                        </Label>
+                        <HoverCard>
+                          <HoverCardTrigger>
+                            <Button
+                              variant="link"
+                              className="p-0 text-orange-400 hover:text-orange-600"
+                            >
+                              ?
+                            </Button>
+                          </HoverCardTrigger>
+                          <HoverCardContent>
+                            <div>
+                              <p>
+                                This specifies the entry fee required for
+                                participants to join as competitor in the
+                                tournament. Each transaction must be verified
+                                before granting automatic entry. Setting the fee
+                                to <span className="font-semibold">0</span>{" "}
+                                indicates that participation is free of charge
+                              </p>
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </div>
+
                       <Input
                         id="competitor"
                         type="number"
@@ -1012,7 +1154,34 @@ const TournamentForm = () => {
 
                   <div className="w-1/2 pr-4">
                     <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="viewer">Viewer: </Label>
+                      <div>
+                        <Label htmlFor="viewer" className="text-left mr-4">
+                          Viewer:
+                        </Label>
+                        <HoverCard>
+                          <HoverCardTrigger>
+                            <Button
+                              variant="link"
+                              className="p-0 text-orange-400 hover:text-orange-600"
+                            >
+                              ?
+                            </Button>
+                          </HoverCardTrigger>
+                          <HoverCardContent>
+                            <div>
+                              <p>
+                                This specifies the entry fee required for
+                                participants to join as viewer in the tournament
+                                to support their member or team. Each
+                                transaction must be verified before granting
+                                automatic entry. Setting the fee to{" "}
+                                <span className="font-semibold">0</span>{" "}
+                                indicates that participation is free of charge
+                              </p>
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                      </div>
                       <Input
                         id="viewer"
                         type="number"
@@ -1030,7 +1199,9 @@ const TournamentForm = () => {
                 </div>
               </div>
             </div>
-            <Button className="my-4 w-full bg-orange-500 hover:bg-orange-600">Submit</Button>
+            <Button className="my-4 w-full bg-orange-500 hover:bg-orange-600">
+              Submit
+            </Button>
           </form>
           <BackButton className="text-white font-bold py-2 px-4 w-full" />
         </CardContent>
