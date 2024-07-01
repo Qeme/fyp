@@ -274,15 +274,26 @@ const TournamentForm = () => {
     <div className="flex items-center justify-center my-20">
       <Card className="w-[500px]">
         <CardHeader>
-          <CardTitle>Create tournament</CardTitle>
-          <CardDescription>
-            Generate the tournament based on your imagination. Feel free to
-            invite your friends or rivals for the epic fight.
+          <CardTitle className="text-center">
+            <h2 className="uppercase font-bold text-orange-500">
+              Create tournament
+            </h2>
+          </CardTitle>
+          <CardDescription className="text-center">
+            Organize a compelling tournament by inviting peers, friends, or
+            competitors to participate in a professionally structured event.
+            Ensure clarity in rules and a well-defined schedule to deliver a
+            memorable and competitive experience for all involved.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="grid w-full items-center gap-4">
+              <div className="text-center">
+                <h3 className="font-semibold uppercase text-orange-500">
+                  information
+                </h3>
+              </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -338,9 +349,11 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <h2>
-                  <strong>Representative: </strong>
-                </h2>
+                <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    representative
+                  </h3>
+                </div>
 
                 <div className="flex">
                   <div className="w-1/2 pr-4">
@@ -388,16 +401,18 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <div>
-                  <h2>
-                    <strong>Basic Configuration: </strong>
-                  </h2>
+                <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    basic configuration
+                  </h3>
                 </div>
 
                 <div>
-                  <h3>
-                    <strong>Order & Sorting: </strong>
-                  </h3>
+                  <div className="text-center pb-4">
+                    <h4 className="font-medium text-sm uppercase text-orange-400">
+                      order & sorting
+                    </h4>
+                  </div>
 
                   <div className="flex">
                     <div className="w-1/2 pr-4">
@@ -462,9 +477,11 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <h3>
-                  <strong>Score Value: </strong>
-                </h3>
+                <div className="text-center py-4">
+                  <h4 className="font-medium text-sm uppercase text-orange-400">
+                    score value
+                  </h4>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center space-x-4">
@@ -601,16 +618,18 @@ const TournamentForm = () => {
               </div> */}
 
               <div>
-                <div>
-                  <h2>
-                    <strong>Stages</strong>
-                  </h2>
+                <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    stages advance
+                  </h3>
                 </div>
 
                 <div>
-                  <h3>
-                    <strong>Stage One:</strong>
-                  </h3>
+                  <div className="text-center pb-2">
+                    <h4 className="font-medium text-sm uppercase text-orange-400">
+                      stage one
+                    </h4>
+                  </div>
 
                   <div className="flex space-x-4">
                     <div className="w-1/2">
@@ -668,9 +687,11 @@ const TournamentForm = () => {
                 </div>
 
                 <div>
-                  <h3>
-                    <strong>Stage Two:</strong>
-                  </h3>
+                  <div className="text-center py-4">
+                    <h4 className="font-medium text-sm uppercase text-orange-400">
+                      stage two
+                    </h4>
+                  </div>
 
                   <div className="flex space-x-4">
                     <div className="w-1/2">
@@ -770,11 +791,13 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <h2>
-                  <strong>Referee</strong>
-                </h2>
+                <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    referee
+                  </h3>
+                </div>
 
-                <div className="w-1/2 flex flex-col space-y-4">
+                <div className="space-y-4 items-center">
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="referee_id">Name: </Label>
                     <Select onValueChange={setRefereeID} value={referee_id}>
@@ -806,94 +829,100 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <h2>
-                  <strong>Date</strong>
-                </h2>
-
-                <div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="register_date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-[300px] justify-start text-left font-normal",
-                          !register && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {register?.from ? (
-                          register?.to ? (
-                            <>
-                              {format(register.from, "LLL dd, y")} -{" "}
-                              {format(register.to, "LLL dd, y")}
-                            </>
-                          ) : (
-                            format(register.from, "LLL dd, y")
-                          )
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={register?.from}
-                        selected={register}
-                        onSelect={setRegister}
-                        numberOfMonths={2}
-                        disabled={{
-                          before: startOfToday(),
-                        }}
-                        // startOfToday(): This function returns the start of the current day.
-                        // Using it as the before value in the disabled prop ensures that all previous dates are disabled.
-                      />
-                    </PopoverContent>
-                  </Popover>
+                <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    date & time
+                  </h3>
                 </div>
 
-                <div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id="running_date"
-                        variant={"outline"}
-                        className={cn(
-                          "w-[300px] justify-start text-left font-normal",
-                          !running && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {running?.from ? (
-                          running?.to ? (
-                            <>
-                              {format(running.from, "LLL dd, y")} -{" "}
-                              {format(running.to, "LLL dd, y")}
-                            </>
+                <div className="flex justify-between space-x-2">
+                  <div>
+                  <Label>Register: </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="register_date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-[220px] justify-start text-left font-normal",
+                            !register && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {register?.from ? (
+                            register?.to ? (
+                              <>
+                                {format(register.from, "LLL dd, y")} -{" "}
+                                {format(register.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(register.from, "LLL dd, y")
+                            )
                           ) : (
-                            format(running.from, "LLL dd, y")
-                          )
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={running?.from}
-                        selected={running}
-                        onSelect={setRunning}
-                        numberOfMonths={2}
-                        disabled={{
-                          before: register?.to ? register.to : startOfToday(),
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={register?.from}
+                          selected={register}
+                          onSelect={setRegister}
+                          numberOfMonths={2}
+                          disabled={{
+                            before: startOfToday(),
+                          }}
+                          // startOfToday(): This function returns the start of the current day.
+                          // Using it as the before value in the disabled prop ensures that all previous dates are disabled.
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div>
+                  <Label>Running: </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="running_date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-[220px] justify-start text-left font-normal",
+                            !running && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {running?.from ? (
+                            running?.to ? (
+                              <>
+                                {format(running.from, "LLL dd, y")} -{" "}
+                                {format(running.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(running.from, "LLL dd, y")
+                            )
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={running?.from}
+                          selected={running}
+                          onSelect={setRunning}
+                          numberOfMonths={2}
+                          disabled={{
+                            before: register?.to ? register.to : startOfToday(),
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
 
                 {/* <div className="w-full">
@@ -902,7 +931,7 @@ const TournamentForm = () => {
                 </div> */}
 
                 <div>
-                  <Label htmlFor="checkin" className="w-1/3 text-left">
+                  <Label htmlFor="checkin">
                     Check In Time (minutes):{" "}
                   </Label>
                   <Input
@@ -912,15 +941,17 @@ const TournamentForm = () => {
                     placeholder="Eg: 10"
                     onChange={(e) => setCheckin(e.target.value)}
                     value={checkin}
-                    className="border border-gray-300 rounded p-2 w-1/4 mr-2"
+                    className="border border-gray-300 rounded p-2 w-[220px] mr-2"
                   ></Input>
                 </div>
               </div>
 
               <div>
-                <h2>
-                  <strong>Notification</strong>
-                </h2>
+              <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    notification
+                  </h3>
+                </div>
 
                 <div>
                   <div>
@@ -955,9 +986,11 @@ const TournamentForm = () => {
               </div>
 
               <div>
-                <h2>
-                  <strong>Ticket Price</strong>
-                </h2>
+              <div className="text-center py-4">
+                  <h3 className="font-semibold uppercase text-orange-500">
+                    ticket price
+                  </h3>
+                </div>
 
                 <div className="flex">
                   <div className="w-1/2 pr-4">
@@ -997,9 +1030,9 @@ const TournamentForm = () => {
                 </div>
               </div>
             </div>
-            <Button className="my-4 w-full">Submit</Button>
+            <Button className="my-4 w-full bg-orange-500 hover:bg-orange-600">Submit</Button>
           </form>
-          <BackButton className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full" />
+          <BackButton className="text-white font-bold py-2 px-4 w-full" />
         </CardContent>
         <CardFooter>{error && <div className="error">{error}</div>}</CardFooter>
       </Card>

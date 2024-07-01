@@ -27,7 +27,6 @@ import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useFileContext } from "src/hooks/useFileContext";
-import { useInitialFiles } from "src/hooks/useInitialFiles";
 
 // create a Navbar function
 function Navbar() {
@@ -35,7 +34,7 @@ function Navbar() {
   const { logout } = useLogout();
   // call for the user context from useAuthContext to show the email of the user if he has logged in
   const { users, dispatch } = useUserContext();
-  const { files, dispatch: dispatchFiles } = useInitialFiles();
+  const { files, dispatch: dispatchFiles } = useFileContext();
   const { user } = useAuthContext();
 
   const [showSheet, setShowSheet] = useState(false);
