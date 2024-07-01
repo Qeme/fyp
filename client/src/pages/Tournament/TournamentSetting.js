@@ -4,7 +4,6 @@ import { useInitialVenue } from "src/hooks/useInitialVenue";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,

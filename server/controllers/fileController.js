@@ -151,9 +151,9 @@ export const uploadFile = (req, res) => {
 
 // delete an file
 export const deleteFile = async (req, res) => {
-    const {id} = req.params;
+    const {_id} = req.params;
     try {
-        await gfs.delete(new ObjectId(id)); // Ensure _id is converted to an ObjectId
+        await gfs.delete(new ObjectId(_id)); // Ensure _id is converted to an ObjectId
         res.status(200).json({ message: 'Successfully deleted the file' });
 
         // if file is receipt, delete payment inside paymentDB
