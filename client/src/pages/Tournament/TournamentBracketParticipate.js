@@ -1,6 +1,6 @@
 "use client";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useVenueContext } from "../../hooks/useVenueContext";
 import { useGameContext } from "../../hooks/useGameContext";
@@ -15,6 +15,12 @@ import { ScrollArea } from "src/components/ui/scroll-area";
 import PreviewImage from "src/components/PreviewImage";
 import AvatarProfile from "src/components/AvatarProfile";
 import { useUserContext } from "src/hooks/useUserContext";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "src/components/ui/accordion";
 
 const Tournament = () => {
   const { id } = useParams();
@@ -23,19 +29,8 @@ const Tournament = () => {
   const { users } = useUserContext();
   const { venues } = useVenueContext();
 
-  const navigate = useNavigate();
-
   // find the tournament
   const tournament = tournaments.find((tournament) => tournament._id === id);
-
-  // function for handleJoin
-  const handleJoinCompetitor = () => {
-    navigate(`/tournaments/join/${id}?payertype=competitor`);
-  };
-
-  const handleJoinViewer = () => {
-    navigate(`/tournaments/join/${id}?payertype=viewer`);
-  };
 
   return (
     <main>
@@ -198,9 +193,7 @@ const Tournament = () => {
                             <span>Participants</span>
                             {tournament &&
                             tournament.setting.stageOne.maxPlayers === 0 ? (
-                              <span className="capitalize">
-                                no limit
-                              </span>
+                              <span className="capitalize">no limit</span>
                             ) : (
                               <span className="capitalize">
                                 {tournament.setting.stageOne.maxPlayers} players
@@ -324,107 +317,172 @@ const Tournament = () => {
                     </ScrollArea>
                   </div>
                 </div>
-
-                <div>
-                  <div className="p-4 mt-8 text-center">
-                    <h3 className="text-xl font-bold uppercase">ticket</h3>
-                  </div>
-                  <div className="flex justify-evenly">
-                    <div>
-                      <p className="text-center">Competitor</p>
-                      <div className="relative w-48 cursor-pointer">
-                        <img
-                          src="/images/blue_ticket.png"
-                          alt="competitor ticket"
-                          onClick={handleJoinCompetitor}
-                        />
-                        <span className="absolute top-20 left-14 ml-2 text-black ">
-                          {tournament &&
-                          tournament.meta.ticket.competitor !== 0 ? (
-                            <span>
-                              RM {tournament.meta.ticket.competitor.toFixed(2)}
-                            </span>
-                          ) : (
-                            <span className="ml-2">FREE</span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-center">Viewer</p>
-                      <div className="relative w-48 cursor-pointer">
-                        <img
-                          src="/images/yellow_ticket.png"
-                          alt="viewer ticket"
-                          onClick={handleJoinViewer}
-                        />
-                        <span className="absolute top-16 left-14 mt-4 ml-2 text-black ">
-                          {tournament && tournament.meta.ticket.viewer !== 0 ? (
-                            <span>
-                              RM {tournament.meta.ticket.viewer.toFixed(2)}
-                            </span>
-                          ) : (
-                            <span className="ml-2">FREE</span>
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-        <div className="flex flex-col w-2/5 space-y-4">
-          <Card
-            key={tournament._id}
-            className="flex flex-col justify-between overflow-hidden shadow-md"
-          >
-            <PreviewImage topic={"tour_banner"} tournamentid={tournament._id} />
 
-            <CardContent>
-              <div>
-                <div className="my-2">
-                  <p>Participants: </p>
+        <div className="flex flex-col w-2/5 space-y-4">
+          <div>
+            <Card
+              key={tournament._id}
+              className="flex flex-col justify-between overflow-hidden shadow-md"
+            >
+              <PreviewImage
+                topic={"tour_banner"}
+                tournamentid={tournament._id}
+              />
+
+              <CardContent>
+                <div>
+                  <div className="my-2">
+                    <p>Participants: </p>
+                  </div>
+                  {tournament && tournament.setting.players.length > 0 ? (
+                    <div className="grid grid-cols-8 gap-4">
+                      {tournament.setting.players.map((player) => {
+                        const user = users.find(
+                          (user) => user._id === player.id
+                        );
+                        return user ? (
+                          <AvatarProfile participant={user} key={user.id} />
+                        ) : null;
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <p className="text-gray-400">No Participants In Record</p>
+                    </div>
+                  )}
                 </div>
-                {tournament && tournament.setting.players.length > 0 ? (
-                  <div className="grid grid-cols-8 gap-4">
-                    {tournament.setting.players.map((player) => {
-                      const user = users.find((user) => user._id === player.id);
-                      return user ? (
-                        <AvatarProfile participant={user} key={user.id} />
-                      ) : null;
-                    })}
+                <div className="mt-8">
+                  <div className="my-2">
+                    <p>Spectators: </p>
                   </div>
-                ) : (
-                  <div className="text-center">
-                    <p className="text-gray-400">No Participants In Record</p>
-                  </div>
-                )}
-              </div>
-              <div className="mt-8">
-                <div className="my-2">
-                  <p>Spectators: </p>
+                  {tournament && tournament.meta.spectator_id.length > 0 ? (
+                    <div className="grid grid-cols-8 gap-4">
+                      {tournament.meta.spectator_id.map((spectator) => {
+                        const user = users.find(
+                          (user) => user._id === spectator.id
+                        );
+                        return user ? (
+                          <AvatarProfile participant={user} key={user.id} />
+                        ) : null;
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <p className="text-gray-400">No Spectators In Record</p>
+                    </div>
+                  )}
                 </div>
-                {tournament && tournament.meta.spectator_id.length > 0 ? (
-                  <div className="grid grid-cols-8 gap-4">
-                    {tournament.meta.spectator_id.map((spectator) => {
-                      const user = users.find(
-                        (user) => user._id === spectator.id
-                      );
-                      return user ? (
-                        <AvatarProfile participant={user} key={user.id} />
-                      ) : null;
-                    })}
+              </CardContent>
+            </Card>
+          </div>
+          <div>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-base">Stage One Preview</AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    {tournament &&
+                    tournament.setting.stageOne.format ===
+                      "single-elimination" ? (
+                      <>
+                        <img
+                          src="/images/single-elimination.png"
+                          alt="single elimination"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Single Elimination Tournament
+                        </figcaption>
+                      </>
+                    ) : tournament.setting.stageOne.format ===
+                      "double-elimination" ? (
+                      <>
+                        <img
+                          src="/images/double-elimination.png"
+                          alt="double elimination"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Double Elimination Tournament
+                        </figcaption>
+                      </>
+                    ) : tournament.setting.stageOne.format === "swiss" ? (
+                      <>
+                        <img
+                          src="/images/swiss.png"
+                          alt="swiss"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Swiss Tournament
+                        </figcaption>
+                      </>
+                    ) : tournament.setting.stageOne.format === "round-robin" ||
+                      tournament.setting.stageOne.format ===
+                        "double-round-robin" ? (
+                      <>
+                        <img
+                          src="/images/round-robin.png"
+                          alt="round robin / double round robin"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Round Robin Tournament
+                        </figcaption>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center">
-                    <p className="text-gray-400">No Spectators In Record</p>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-base">Stage Two Preview</AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    {tournament &&
+                    tournament.setting.stageTwo.format ===
+                      "single-elimination" ? (
+                      <>
+                        <img
+                          src="/images/single-elimination.png"
+                          alt="single elimination"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Single Elimination Tournament
+                        </figcaption>
+                      </>
+                    ) : tournament.setting.stageTwo.format ===
+                      "double-elimination" ? (
+                      <>
+                        <img
+                          src="/images/double-elimination.png"
+                          alt="double elimination"
+                          className="rounded-md object-cover aspect-w-3 aspect-h-2"
+                        />
+
+                        <figcaption className="text-center mt-2 text-sm text-gray-600">
+                          Double Elimination Tournament
+                        </figcaption>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </div>
       </div>
     </main>

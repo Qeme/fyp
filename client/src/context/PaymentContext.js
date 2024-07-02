@@ -20,16 +20,25 @@ export const paymentReducer = (state, action) => {
       return {
         ...state, //please do not forget to spread the state
         payments: action.payload, //this part basically SETTING UP the payments value
-      }; 
+      };
+    case "CREATE_PAYMENT":
+      return {
+        ...state,
+        payments: [action.payload, ...state.payments],
+      };
     case "UPDATE_PAYMENT":
       return {
         ...state,
-        payments: [action.payload, ...state.payments], // ...state.payments is basically set up the current value (if not mentioned, it will completely replaced the original one)
+        payments: state.payments.map((payment) =>
+          payment._id === action.payload._id ? action.payload : payment
+        ),
       };
     case "REMOVE_PAYMENT":
       return {
         ...state,
-        payments: state.payments.filter((payment) => payment._id !== action.payload._id),  // the payments value will be replaced by using filter->only take the payments that id is not same with the id that is being
+        payments: state.payments.filter(
+          (payment) => payment._id !== action.payload._id
+        ), // the payments value will be replaced by using filter->only take the payments that id is not same with the id that is being
       };
     default:
       return state; // send back the state if no case is run (ESSENTIAL)
@@ -41,7 +50,6 @@ export const paymentReducer = (state, action) => {
   export it as well, take the children argument and insert it into <Provider> tag
 */
 export const PaymentContextProvider = ({ children }) => {
-
   // apply useReducer(the function, the initial value for the state)
   const [state, dispatch] = useReducer(paymentReducer, { payments: [] });
 
@@ -49,7 +57,7 @@ export const PaymentContextProvider = ({ children }) => {
   return (
     // we then put value argument -> state: the current value here -> dispatch: the funct that will help sending the {type,payload}
     <PaymentContext.Provider value={{ ...state, dispatch }}>
-      {children} 
+      {children}
     </PaymentContext.Provider>
   );
 };

@@ -280,9 +280,9 @@ const TournamentForm = () => {
       <Card className="w-[500px]">
         <CardHeader>
           <CardTitle className="text-center">
-            <h2 className="uppercase font-bold text-orange-500">
+            <span className="uppercase font-bold text-orange-500 text-3xl">
               Create tournament
-            </h2>
+            </span>
           </CardTitle>
           <CardDescription className="text-center">
             Organize a compelling tournament by inviting peers, friends, or

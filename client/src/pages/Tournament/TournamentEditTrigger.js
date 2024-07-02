@@ -932,7 +932,7 @@ export function TournamentEditTrigger({ tournament }) {
                       },
                     })
                   }
-                  value={tournamentUpdated.meta.ticket.competitor.toFixed(2)}
+                  value={tournamentUpdated.meta.ticket.competitor}
                   className="w-40"
                 ></Input>
               </div>
@@ -943,6 +943,7 @@ export function TournamentEditTrigger({ tournament }) {
                   id="viewer"
                   type="number"
                   min="0"
+                  max={tournamentUpdated.meta.ticket.competitor}
                   step="0.01"
                   placeholder="RM 11.00"
                   onChange={(e) =>
@@ -957,7 +958,7 @@ export function TournamentEditTrigger({ tournament }) {
                       },
                     })
                   }
-                  value={tournamentUpdated.meta.ticket.viewer.toFixed(2)}
+                  value={tournamentUpdated.meta.ticket.viewer}
                   className="w-40"
                 ></Input>
               </div>

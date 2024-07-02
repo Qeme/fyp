@@ -75,9 +75,9 @@ const PaymentList = ({ onSelectPayment }) => {
                         );
                         if (tournament && payment.payertype) {
                           return payment.payertype === "competitor"
-                            ? tournament.meta.ticket.competitor
+                            ? tournament.meta.ticket.competitor.toFixed(2)
                             : payment.payertype === "viewer"
-                            ? tournament.meta.ticket.viewer
+                            ? tournament.meta.ticket.viewer.toFixed(2)
                             : "N/A"; // Handle other cases or default
                         }
                         return "N/A";

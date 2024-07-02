@@ -83,13 +83,14 @@ export function RefereeEditTrigger({ referee }) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="email" className="text-right">
-              Name
+              Email
             </Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled="true"
               className="col-span-3"
             />
           </div>

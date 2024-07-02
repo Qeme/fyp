@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { AspectRatio } from "./ui/aspect-ratio";
-import { useFileContext } from "src/hooks/useFileContext";
+import { useInitialFiles } from "src/hooks/useInitialFiles";
 
 function PreviewReceipt({ receiptid }) {
   const [imageUrl, setImageUrl] = useState("");
   const { user } = useAuthContext();
-  const { files } = useFileContext();
+  const { files } = useInitialFiles();
 
   useEffect(() => {
     const foundFile = files.find((file) => file.fileId === receiptid);

@@ -16,7 +16,7 @@ import {
     getAFile,
     getAnImage,
     uploadFile,
-    deleteFile
+    deleteFile,
 } from '../controllers/fileController.js'
 
 // Create storage engine
@@ -53,6 +53,9 @@ router.get('/image/:filename',getAnImage)
 
 // put the router API for post('/api/files/') -> 'file' depends on the name="file" in the form input
 router.post('/', uploadFile)
+
+// // put the router API for post('/api/files/multiple/:_id') -> 'files' depends on the array name="files" in the form input
+// router.post('/multiple/:_id', uploadFiles)
 
 // put the router API for delete('/api/files/del/:_id')
 router.delete('/del/:_id', deleteFile)

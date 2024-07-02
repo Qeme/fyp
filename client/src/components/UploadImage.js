@@ -2,22 +2,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useFileContext } from "../hooks/useFileContext";
-import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 function UploadImage({ tournamentid, topic }) {
-  // call for file context
   const { dispatch } = useFileContext();
-  // have a state to handle that particular file
   const [file, setFile] = useState(null);
   const { user } = useAuthContext();
 
-  // console.log to see the details of the uploaded image
-  // only choose the first file, if the user puts too many files
   const fileSelectedHandler = (e) => {
     e.preventDefault();
-    // console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   };
 
@@ -32,13 +26,11 @@ function UploadImage({ tournamentid, topic }) {
       return;
     }
 
-    // construct a formData which you need to pass it to axios, make sure the properties file is equal to backend file
     const fd = new FormData();
     fd.append("file", file, file.name);
     fd.append("tournamentid", tournamentid);
     fd.append("topic", topic);
 
-    // Set up the headers
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -53,13 +45,12 @@ function UploadImage({ tournamentid, topic }) {
       },
     };
 
-    // use Axios to handle that file upload
-    // first argument is the URL API, pass the fd data, third argument would be the progress of uploading the file
     axios
       .post("http://localhost:3002/api/files", fd, config)
       .then((res) => {
-        console.log(res);
-        dispatch({ type: "UPLOAD_FILE", payload: res.data });
+        console.log(res.data);
+        const { file } = res.data;
+        dispatch({ type: "UPLOAD_FILE", payload: file });
         setFile(null);
       })
       .catch((error) => {
@@ -69,25 +60,12 @@ function UploadImage({ tournamentid, topic }) {
 
   return (
     <div className="grid w-full max-w-sm gap-1.5">
-      <Label htmlFor="picture">File/Picture</Label>
       <div className="flex items-center">
-        <Input id="picture" type="file" onChange={fileSelectedHandler} className="flex-1" />
-        <Button onClick={fileUploadHandler} className="ml-2">Upload</Button>
+        <Input id="picture" type="file" onChange={fileSelectedHandler} className="flex-1 my-2" />
+        <Button type="button" onClick={fileUploadHandler} className="ml-2">Upload</Button>
       </div>
     </div>
   );
-  
-
-  // return (
-  //   <div>
-  //     {/* input has:
-  //           1. type of file, as we uploading file
-  //           2. onChange means whenever the user change the file, we can see it (fileSelectedHandler)*/}
-  //     <p>Hi</p>
-  //     <input type="file" onChange={fileSelectedHandler} />
-  //     <button onClick={fileUploadHandler}>Upload</button>
-  //   </div>
-  // );
 }
 
 export default UploadImage;

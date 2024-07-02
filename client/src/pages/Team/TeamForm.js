@@ -16,6 +16,7 @@ import { Button } from "src/components/ui/button";
 import { useAuthContext } from "src/hooks/useAuthContext";
 import { useTeamContext } from "src/hooks/useTeamContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string().min(1, "Required field"),
@@ -37,6 +38,7 @@ const TeamForm = () => {
   const { dispatch } = useTeamContext();
   const [error, setError] = useState(null);
   const [numPlayers, setNumPlayers] = useState(1);
+  const navigate = useNavigate();
 
   const onSubmit = async (values) => {
     // console.log(values);
@@ -79,6 +81,7 @@ const TeamForm = () => {
       dispatch({ type: "CREATE_TEAM", payload: json });
       form.reset();
       setNumPlayers(1);
+      navigate("/teams/monitor")
     } else {
       setError(json.error);
       setNumPlayers(1);

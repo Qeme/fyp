@@ -10,12 +10,11 @@ import {
 import { Card, CardContent } from "src/components/ui/card";
 import { Badge } from "src/components/ui/badge";
 import PreviewImage from "src/components/PreviewImage";
-import { differenceInDays } from "date-fns";
 import { useGameContext } from "src/hooks/useGameContext";
 import { useVenueContext } from "src/hooks/useVenueContext";
 import { useNavigate } from "react-router-dom";
 
-function TournamentCard({ tournaments, title }) {
+function TournamentCardJoin({ tournaments, title }) {
   const { games } = useGameContext();
   const { venues } = useVenueContext();
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ function TournamentCard({ tournaments, title }) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const handleClick = (tourid) => {
-    navigate(`/tournaments/${tourid}`);
+    navigate(`/tournaments/bracket/${tourid}`);
   };
 
   // set up each of the page only has 8 cards (can be editted later)
@@ -60,14 +59,22 @@ function TournamentCard({ tournaments, title }) {
                   topic={"tour_banner"}
                   tournamentid={tournament._id}
                 />
-                {differenceInDays(new Date(), new Date(tournament.createdAt)) <
-                  7 && (
+                {tournament && tournament.meta.status === "published" ? (
                   <Badge
-                    variant={"newly"}
+                    variant={"published"}
                     className="absolute top-0 right-0 mt-2 mr-2"
                   >
-                    NEW
+                    PENDING
                   </Badge>
+                ) : tournament && tournament.meta.status === "running" ? (
+                  <Badge
+                    variant={"running"}
+                    className="absolute top-0 right-0 mt-2 mr-2"
+                  >
+                    RUNNING
+                  </Badge>
+                ) : (
+                  ""
                 )}
                 <CardContent>
                   <div className="m-2 text-center">
@@ -128,4 +135,4 @@ function TournamentCard({ tournaments, title }) {
   );
 }
 
-export default TournamentCard;
+export default TournamentCardJoin;

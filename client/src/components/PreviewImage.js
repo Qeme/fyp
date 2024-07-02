@@ -2,22 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { useInitialFiles } from "src/hooks/useInitialFiles";
-import { useTournamentContext } from "src/hooks/useTournamentContext";
+import { useInitialTournament } from "src/hooks/useInitialTournament";
 
 function PreviewImage({ topic, tournamentid }) {
   const [imageUrl, setImageUrl] = useState("");
-  const { tournaments } = useTournamentContext();
+  const { tournaments } = useInitialTournament();
   const { user } = useAuthContext();
   const { files } = useInitialFiles();
 
   const tournament = tournaments.find(
-    (tournament) => tournament._id === tournamentid
+    (tournament) => tournament?._id === tournamentid
   );
 
   useEffect(() => {
     const foundFile = files.find(
       (file) =>
-        file.metadata.tournamentid === tournament._id &&
+        file.metadata.tournamentid === tournament?._id &&
         file.metadata.topic === topic
     );
 

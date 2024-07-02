@@ -9,12 +9,14 @@ import TournamentMonitor from "../pages/Tournament/TournamentMonitor";
 import TournamentJoinForm from "../pages/Tournament/TournamentJoinForm";
 import TournamentSetting from "../pages/Tournament/TournamentSetting";
 import TournamentProgress from "src/pages/Tournament/TournamentProgress";
+import TournamentBracketParticipate from "src/pages/Tournament/TournamentBracketParticipate";
 
 function TournamentRoutes() {
   return (
     <Routes>
       <Route index element={<TournamentList />} />
       <Route path=":id" element={<Tournament />} />
+      <Route path="/bracket/:id" element={<TournamentBracketParticipate />} />
       <Route path="join" element={<TournamentJoin />} />
       <Route path="join/:id" element={<TournamentJoinForm />} />
       <Route path="monitor" element={<TournamentMonitor />} />

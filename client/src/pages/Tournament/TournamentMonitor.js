@@ -126,6 +126,29 @@ function TournamentMonitor() {
     }
   };
 
+  // end the tournament
+  const handleClickEnd = async ({ id }) => {
+    const response = await fetch(
+      `http://localhost:3002/api/tournaments/end/${id}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const json = await response.json();
+
+    if (response.ok) {
+      dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+    }
+
+    if (!response.ok) {
+      console.error("Error ending the tournaments:", json.error);
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md my-12">
       <h2 className="text-2xl font-bold mb-6 text-center">Tournaments List</h2>
@@ -150,7 +173,7 @@ function TournamentMonitor() {
             <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Participants
             </TableHead>
-            <TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </TableHead>
             <TableHead className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -191,7 +214,7 @@ function TournamentMonitor() {
                 <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {tournament.setting.players.length}
                 </TableCell>
-                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                   {tournament.meta.status}
                 </TableCell>
                 <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
@@ -201,149 +224,154 @@ function TournamentMonitor() {
                   {format(new Date(tournament.createdAt), "dd/MM/yyyy")}
                 </TableCell>
                 <TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive">Delete</Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete your tournament and remove your data from our
-                          servers. Some of the participants can't view this
-                          tournament after deletion happens.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
+                  <div className="flex flex-row space-x-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive">Delete</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your tournament and remove your data from our
+                            servers. Some of the participants can't view this
+                            tournament after deletion happens.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() =>
+                              handleClickDelete({ id: tournament._id })
+                            }
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+
+                    {tournament.meta.status === "created" && (
+                      <div className="flex flex-row space-x-2">
+                        <TournamentEditTrigger tournament={tournament} />
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="publishing">Publish</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. Publishing the
+                                tournament will notify all active users. Please
+                                note that further modifications on the
+                                tournament will not be possible after this
+                                point.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleClickPublish({ id: tournament._id })
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
+
+                    {tournament.meta.status === "published" && (
+                      <div className="flex flex-row space-x-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="starting">Start</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This action will
+                                start the tournament and generate the brackets
+                                based on the number of participants that have
+                                joined. Registration will be closed as well.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleClickStart({ id: tournament._id })
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        <Button
+                          variant="verifying"
                           onClick={() =>
-                            handleClickDelete({ id: tournament._id })
+                            navigate(`/payments/verify/${tournament._id}`)
                           }
                         >
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          Verify
+                        </Button>
+                      </div>
+                    )}
 
-                  {tournament.meta.status === "created" ? (
-                    <div>
-                      <TournamentEditTrigger tournament={tournament} />
-
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="primary">Publish</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. Publishing the
-                              tournament will notify all active users. Please
-                              note that further modifications on the tournament
-                              will not be possible after this point.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                handleClickPublish({ id: tournament._id })
-                              }
-                            >
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {tournament.meta.status === "published" ? (
-                    <div>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="secondary">Start</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This action will
-                              start the tournament and generate the brackets
-                              based on the number of participants that have
-                              joined. Registration will be closed as well.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                handleClickStart({ id: tournament._id })
-                              }
-                            >
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-
-                      <Button
-                        onClick={() =>
-                          navigate(`/payments/verify/${tournament._id}`)
-                        }
-                      >
-                        Verify
-                      </Button>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                  {tournament.meta.status === "running" ? (
-                    <div>
-                      <Button
-                        onClick={() =>
-                          navigate(`/tournaments/progress/${tournament._id}`)
-                        }
-                      >
-                        Progress
-                      </Button>
-
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="secondary">End</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This action will
-                              immediately conclude the tournament. Ending the
-                              tournament will prevent score entry and halt any
-                              further stages.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  ) : (
-                    ""
-                  )}
+                    {tournament.meta.status === "running" && (
+                      <div className="flex flex-row space-x-2">
+                        <Button
+                          variant="progressing"
+                          onClick={() =>
+                            navigate(`/tournaments/progress/${tournament._id}`)
+                          }
+                        >
+                          Progress
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="default">End</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This action will
+                                immediately conclude the tournament. Ending the
+                                tournament will prevent score entry and halt any
+                                further stages.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleClickEnd({ id: tournament._id })
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

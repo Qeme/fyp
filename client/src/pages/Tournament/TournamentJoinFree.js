@@ -2,10 +2,13 @@ import { useAuthContext } from "src/hooks/useAuthContext";
 import CancelButton from "src/components/CancelButton";
 import { Button } from "src/components/ui/button";
 import { useTournamentContext } from "src/hooks/useTournamentContext";
+import { useNavigate } from "react-router-dom";
 
 function TournamentJoinFree({ tournamentid, teamid, payertype }) {
   const { user } = useAuthContext();
   const { dispatch } = useTournamentContext();
+
+  const navigate = useNavigate();
 
   const handleClick = async () => {
 
@@ -30,6 +33,7 @@ function TournamentJoinFree({ tournamentid, teamid, payertype }) {
 
       if (response.ok) {
         dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+        navigate("/tournaments/join")
       }
     }
     else if(payertype === "viewer"){
@@ -49,6 +53,7 @@ function TournamentJoinFree({ tournamentid, teamid, payertype }) {
 
       if (response.ok) {
         dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
+        navigate("/tournaments/join")
       }
     }
 

@@ -23,7 +23,8 @@ function TournamentProgress() {
         )}
       {tournament &&
         (tournament.setting.stageOne.format === "round-robin" ||
-          tournament.setting.stageOne.format === "double-round-robin") && (
+          tournament.setting.stageOne.format === "double-round-robin" ||
+          tournament.setting.stageOne.format === "swiss") && (
           <TournamentAllPlayAll id={id} />
         )}
     </div>

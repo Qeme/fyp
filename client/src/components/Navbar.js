@@ -46,7 +46,7 @@ function Navbar() {
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    const currentUser = users.find((us) => us._id === user._id);
+    const currentUser = users.find((us) => us._id === user?._id);
     if (currentUser) {
       setEditUser({
         name: currentUser.name,
@@ -55,7 +55,7 @@ function Navbar() {
 
       setUserAvatar(currentUser);
     }
-  }, [users, user._id]);
+  }, [users, user?._id]);
 
   const handleSheetToggle = () => {
     setShowSheet(!showSheet);
@@ -91,12 +91,12 @@ function Navbar() {
           (file) =>
             file.metadata.topic === "profile" &&
             (file.metadata.uploader?.$oid || file.metadata.uploader) ===
-            user._id
+              user._id
         );
 
         if (existingProfileFile) {
           // Delete the existing profile image file
-          const response = await fetch(
+          const deleteResponse = await fetch(
             `http://localhost:3002/api/files/del/${existingProfileFile.fileId}`,
             {
               method: "DELETE",
@@ -106,13 +106,19 @@ function Navbar() {
             }
           );
 
-          const json = await response.json();
+          // const deleteJson = await deleteResponse.json();
+          // console.log("LOL", existingProfileFile)
 
-          if (response.ok) {
-            dispatchFiles({ type: "REMOVE_FILE", payload: json });
-          }
-          if (!response.ok) {
-            console.log("WOW", existingProfileFile);
+          if (deleteResponse.ok) {
+            dispatchFiles({
+              type: "REMOVE_FILE",
+              payload: existingProfileFile,
+            });
+          } else {
+            console.log(
+              "Error deleting existing profile file",
+              existingProfileFile
+            );
             return;
           }
         }
@@ -137,18 +143,19 @@ function Navbar() {
           },
         };
 
-        // use Axios to handle that file upload
-        // first argument is the URL API, pass the fd data, third argument would be the progress of uploading the file
-        axios
-          .post("http://localhost:3002/api/files", fd, config)
-          .then((res) => {
-            console.log(res);
-            dispatchFiles({ type: "UPLOAD_FILE", payload: res.data });
-            setProfileImage(null);
-          })
-          .catch((error) => {
-            console.error("Error uploading file:", error);
-          });
+        // Use Axios to handle the file upload
+        try {
+          const uploadResponse = await axios.post(
+            "http://localhost:3002/api/files",
+            fd,
+            config
+          );
+          const { file } = uploadResponse.data;
+          dispatchFiles({ type: "UPLOAD_FILE", payload: file });
+          setProfileImage(null);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
       }
     }
   };

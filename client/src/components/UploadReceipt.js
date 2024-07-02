@@ -6,9 +6,11 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import CancelButton from "./CancelButton";
 import { useNavigate } from "react-router-dom";
+import { usePaymentContext } from "../hooks/usePaymentContext";
 
 function UploadReceipt({ tournamentid, payertype, teamid }) {
   const { dispatch } = useFileContext();
+  const { dispatch: dispatchPayment } = usePaymentContext();
   const [file, setFile] = useState(null);
   const { user } = useAuthContext();
   const navigate = useNavigate();
@@ -53,11 +55,16 @@ function UploadReceipt({ tournamentid, payertype, teamid }) {
     axios
       .post("http://localhost:3002/api/files", fd, config)
       .then((res) => {
-        console.log(res);
-        dispatch({ type: "UPLOAD_FILE", payload: res.data });
+        console.log(res.data);
+        const { file, payment } = res.data;
+        if (file) {
+          dispatch({ type: "UPLOAD_FILE", payload: file });
+        }
+        if (payment) {
+          dispatchPayment({ type: "CREATE_PAYMENT", payload: payment });
+        }
         setFile(null);
-        window.location.reload(); // Force page reload
-        navigate("/payments/history" ,{replace: true});
+        navigate("/payments/history");
       })
       .catch((error) => {
         console.error("Error uploading file:", error);
@@ -74,7 +81,9 @@ function UploadReceipt({ tournamentid, payertype, teamid }) {
           className="flex-1"
         />
 
-        <Button onClick={fileUploadHandler} className="w-full my-2">Submit</Button>
+        <Button onClick={fileUploadHandler} className="w-full my-2">
+          Submit
+        </Button>
         <CancelButton />
       </div>
     </div>

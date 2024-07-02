@@ -145,9 +145,26 @@ function TournamentAllPlayAll({ id }) {
     if (match) {
       const foundGame =
         rounds && rounds.find((round) => round.match_id === match.id);
-      setRoundGame(foundGame);
-      setScoresP1(foundGame?.scoreP1 || []);
-      setScoresP2(foundGame?.scoreP2 || []);
+      console.log(foundGame);
+      if (foundGame) {
+        setRoundGame(foundGame);
+        setScoresP1(foundGame?.scoreP1 || []);
+        setScoresP2(foundGame?.scoreP2 || []);
+      }else {
+        setRoundGame({
+          match_id: match.id,
+          bestOf: foundTournament.setting.scoring.bestOf,
+          p1: match.player1.id,
+          p2: match.player2.id,
+          status: "unlocked"
+        });
+      
+        const initialScores = Array.from({ length: foundTournament.setting.scoring.bestOf }, () => 0);
+        setScoresP1(initialScores);
+        setScoresP2(initialScores);
+      }
+      
+      console.log(roundGame);
     } else {
       console.log("Match not found");
     }
@@ -256,7 +273,6 @@ function TournamentAllPlayAll({ id }) {
   };
 
   const handleNextRound = async (event) => {
-
     event.preventDefault();
 
     const response = await fetch(

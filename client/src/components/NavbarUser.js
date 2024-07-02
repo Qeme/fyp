@@ -28,8 +28,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useFileContext } from "src/hooks/useFileContext";
 
-// create a Navbar function
-function Navbar() {
+// create a NavbarUser function
+function NavbarUser() {
   // call for the logout function
   const { logout } = useLogout();
   // call for the user context from useAuthContext to show the email of the user if he has logged in
@@ -96,7 +96,7 @@ function Navbar() {
 
         if (existingProfileFile) {
           // Delete the existing profile image file
-          const response = await fetch(
+          const deleteResponse = await fetch(
             `http://localhost:3002/api/files/del/${existingProfileFile.fileId}`,
             {
               method: "DELETE",
@@ -106,23 +106,26 @@ function Navbar() {
             }
           );
 
-          const json = await response.json();
+          // const deleteJson = await deleteResponse.json();
+          // console.log("LOL", existingProfileFile)
 
-          if (response.ok) {
-            dispatchFiles({ type: "REMOVE_FILE", payload: json });
-          }
-          if (!response.ok) {
-            console.log("WOW", existingProfileFile);
+          if (deleteResponse.ok) {
+            dispatchFiles({ type: "REMOVE_FILE", payload: existingProfileFile });
+          } else {
+            console.log(
+              "Error deleting existing profile file",
+              existingProfileFile
+            );
             return;
           }
         }
 
-        // construct a formData which you need to pass it to axios, make sure the properties file is equal to backend file
+        // Construct FormData
         const fd = new FormData();
         fd.append("file", profileImage, profileImage.name);
         fd.append("topic", "profile");
 
-        // Set up the headers
+        // Set up Axios config
         const config = {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -137,18 +140,19 @@ function Navbar() {
           },
         };
 
-        // use Axios to handle that file upload
-        // first argument is the URL API, pass the fd data, third argument would be the progress of uploading the file
-        axios
-          .post("http://localhost:3002/api/files", fd, config)
-          .then((res) => {
-            console.log(res);
-            dispatchFiles({ type: "UPLOAD_FILE", payload: res.data });
-            setProfileImage(null);
-          })
-          .catch((error) => {
-            console.error("Error uploading file:", error);
-          });
+        // Use Axios to handle the file upload
+        try {
+          const uploadResponse = await axios.post(
+            "http://localhost:3002/api/files",
+            fd,
+            config
+          );
+          const { file } = uploadResponse.data;
+          dispatchFiles({ type: "UPLOAD_FILE", payload: file });
+          setProfileImage(null);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
       }
     }
   };
@@ -372,5 +376,5 @@ function Navbar() {
   );
 }
 
-// export Navbar
-export default Navbar;
+// export NavbarUser
+export default NavbarUser;
