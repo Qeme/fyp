@@ -546,6 +546,7 @@ const TournamentForm = () => {
                         <HoverCardTrigger>
                           <Button
                             variant="link"
+                            disabled={true}
                             className="p-3 text-orange-400 hover:text-orange-600"
                           >
                             ?
@@ -581,6 +582,7 @@ const TournamentForm = () => {
                         <HoverCardTrigger>
                           <Button
                             variant="link"
+                            disabled={true}
                             className="p-0 text-orange-400 hover:text-orange-600"
                           >
                             ?
@@ -684,6 +686,7 @@ const TournamentForm = () => {
                         <HoverCardTrigger>
                           <Button
                             variant="link"
+                            disabled={true}
                             className="p-0 text-orange-400 hover:text-orange-600"
                           >
                             ?
@@ -768,6 +771,7 @@ const TournamentForm = () => {
                         <HoverCardTrigger>
                           <Button
                             variant="link"
+                            disabled={true}
                             className="p-0 text-orange-400 hover:text-orange-600"
                           >
                             ?
@@ -1118,6 +1122,7 @@ const TournamentForm = () => {
                           <HoverCardTrigger>
                             <Button
                               variant="link"
+                              disabled={true}
                               className="p-0 text-orange-400 hover:text-orange-600"
                             >
                               ?
@@ -1162,6 +1167,7 @@ const TournamentForm = () => {
                           <HoverCardTrigger>
                             <Button
                               variant="link"
+                              disabled={true}
                               className="p-0 text-orange-400 hover:text-orange-600"
                             >
                               ?

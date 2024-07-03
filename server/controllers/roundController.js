@@ -237,7 +237,7 @@ export const nextRound = async (req, res) => {
         const updatedTournament = await updateFetchToDatabase(tour.id, tour);
 
         // Clean up after updating
-        await removeFetchTournament();
+        removeFetchTournament();
 
         // Send the updated tournament data as the response
         res.status(200).json(updatedTournament);

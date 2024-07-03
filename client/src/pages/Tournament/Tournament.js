@@ -198,9 +198,7 @@ const Tournament = () => {
                             <span>Participants</span>
                             {tournament &&
                             tournament.setting.stageOne.maxPlayers === 0 ? (
-                              <span className="capitalize">
-                                no limit
-                              </span>
+                              <span className="capitalize">no limit</span>
                             ) : (
                               <span className="capitalize">
                                 {tournament.setting.stageOne.maxPlayers} players
@@ -340,9 +338,10 @@ const Tournament = () => {
                         />
                         <span className="absolute top-20 left-14 ml-2 text-black ">
                           {tournament &&
-                          tournament.meta.ticket.competitor !== 0 ? (
+                          tournament.meta.ticket.competitor !== 0 &&
+                          tournament.meta.ticket.competitor !== null ? (
                             <span>
-                              RM {tournament.meta.ticket.competitor.toFixed(2)}
+                              RM {tournament.meta.ticket.competitor?.toFixed(2)}
                             </span>
                           ) : (
                             <span className="ml-2">FREE</span>
@@ -359,9 +358,11 @@ const Tournament = () => {
                           onClick={handleJoinViewer}
                         />
                         <span className="absolute top-16 left-14 mt-4 ml-2 text-black ">
-                          {tournament && tournament.meta.ticket.viewer !== 0 ? (
+                          {tournament &&
+                          tournament.meta.ticket.viewer !== 0 &&
+                          tournament.meta.ticket.viewer !== null ? (
                             <span>
-                              RM {tournament.meta.ticket.viewer.toFixed(2)}
+                              RM {tournament.meta.ticket.viewer?.toFixed(2)}
                             </span>
                           ) : (
                             <span className="ml-2">FREE</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTournamentContext } from "../../hooks/useTournamentContext";
 import { useVenueContext } from "../../hooks/useVenueContext";
 import { useGameContext } from "../../hooks/useGameContext";
@@ -382,7 +382,9 @@ const Tournament = () => {
           <div>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
-                <AccordionTrigger className="text-base">Stage One Preview</AccordionTrigger>
+                <AccordionTrigger className="text-base">
+                  Stage One Preview
+                </AccordionTrigger>
                 <AccordionContent>
                   <div>
                     {tournament &&
@@ -398,6 +400,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Single Elimination Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/single/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : tournament.setting.stageOne.format ===
                       "double-elimination" ? (
@@ -411,6 +420,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Double Elimination Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/double/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : tournament.setting.stageOne.format === "swiss" ? (
                       <>
@@ -423,6 +439,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Swiss Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/playall/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : tournament.setting.stageOne.format === "round-robin" ||
                       tournament.setting.stageOne.format ===
@@ -437,6 +460,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Round Robin Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/playall/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : (
                       ""
@@ -445,7 +475,9 @@ const Tournament = () => {
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
-                <AccordionTrigger className="text-base">Stage Two Preview</AccordionTrigger>
+                <AccordionTrigger className="text-base">
+                  Stage Two Preview
+                </AccordionTrigger>
                 <AccordionContent>
                   <div>
                     {tournament &&
@@ -461,6 +493,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Single Elimination Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/single/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : tournament.setting.stageTwo.format ===
                       "double-elimination" ? (
@@ -474,6 +513,13 @@ const Tournament = () => {
                         <figcaption className="text-center mt-2 text-sm text-gray-600">
                           Double Elimination Tournament
                         </figcaption>
+                        <div className="text-center p-4">
+                          <Link
+                            to={`/tournaments/preview/double/${tournament._id}`}
+                          >
+                            Watch Bracket Live Here
+                          </Link>
+                        </div>
                       </>
                     ) : (
                       ""

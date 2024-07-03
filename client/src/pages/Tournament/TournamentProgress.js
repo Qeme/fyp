@@ -12,7 +12,6 @@ function TournamentProgress() {
 
   return (
     <div>
-      <div>TournamentProgress {id}</div>
       {tournament &&
         tournament.setting.stageOne.format === "single-elimination" && (
           <TournamentSingleElimination id={id} />

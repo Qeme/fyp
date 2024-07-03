@@ -25,12 +25,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "src/components/ui/alert-dialog";
+import { useState } from "react";
 
 function TournamentMonitor() {
   const { tournaments, dispatch } = useInitialTournament();
   const { games } = useInitialGame();
   const { venues } = useInitialVenue();
   const { user } = useAuthContext();
+  const [error, setError] = useState("")
   const navigate = useNavigate();
 
   const monitoredTournament = tournaments?.filter(
@@ -121,6 +123,10 @@ function TournamentMonitor() {
       if (response.ok) {
         dispatch({ type: "UPDATE_TOURNAMENT", payload: json });
       }
+      
+      if(!response.ok){
+        setError(json.error)
+      }
     } catch (error) {
       console.error("Error starting tournaments:", error.message);
     }
@@ -146,12 +152,14 @@ function TournamentMonitor() {
 
     if (!response.ok) {
       console.error("Error ending the tournaments:", json.error);
+      setError(json.error)
     }
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md my-12">
       <h2 className="text-2xl font-bold mb-6 text-center">Tournaments List</h2>
+      {error && <div className="text-red-500">{error}</div>}
       <Table className="min-w-full divide-y divide-gray-200">
         <TableHeader className="bg-gray-50">
           <TableRow>

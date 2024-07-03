@@ -49,6 +49,7 @@ function TournamentAllPlayAll({ id }) {
         const tournament = tournaments.find(
           (tournament) => tournament._id === id
         );
+        console.log("HEH", tournament);
         if (!tournament) {
           throw new Error("Tournament not found");
         }
@@ -109,11 +110,13 @@ function TournamentAllPlayAll({ id }) {
           () => []
         );
 
-        tournament.setting.matches.forEach((match) => {
-          if (match.round) {
-            roundsArray[match.round - 1].push(match);
-          }
-        });
+        tournament.setting.matches
+          .filter((match) => match.round <= tournament.setting.stageOne.rounds)
+          .forEach((match) => {
+            if (match.round) {
+              roundsArray[match.round - 1].push(match);
+            }
+          });
 
         await fetchRanking();
         await fetchRounds();
@@ -150,20 +153,23 @@ function TournamentAllPlayAll({ id }) {
         setRoundGame(foundGame);
         setScoresP1(foundGame?.scoreP1 || []);
         setScoresP2(foundGame?.scoreP2 || []);
-      }else {
+      } else {
         setRoundGame({
           match_id: match.id,
           bestOf: foundTournament.setting.scoring.bestOf,
           p1: match.player1.id,
           p2: match.player2.id,
-          status: "unlocked"
+          status: "unlocked",
         });
-      
-        const initialScores = Array.from({ length: foundTournament.setting.scoring.bestOf }, () => 0);
+
+        const initialScores = Array.from(
+          { length: foundTournament.setting.scoring.bestOf },
+          () => 0
+        );
         setScoresP1(initialScores);
         setScoresP2(initialScores);
       }
-      
+
       console.log(roundGame);
     } else {
       console.log("Match not found");
@@ -296,62 +302,72 @@ function TournamentAllPlayAll({ id }) {
 
   return (
     <main>
-      <div>TournamentAllPlayAll {id}</div>
-      <div className="flex justify-between space-x-12 p-2">
-        <div className="w-3/5">
-          {foundTournament &&
-            matchesByRound.map((roundMatches, roundIndex) => (
-              <div key={roundIndex}>
-                <h3 className="text-gray-500">Round {roundIndex + 1}</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20 bg-gray-300">Match#</TableHead>
-                      <TableHead className=" bg-gray-300">P1</TableHead>
-                      <TableHead className=" bg-gray-300">P2</TableHead>
-                      <TableHead className="text-center w-24 bg-gray-300">
-                        P1 Wins
-                      </TableHead>
-                      <TableHead className="text-center w-24  bg-gray-300">
-                        P2 Wins
-                      </TableHead>
-                      <TableHead className="text-center w-24  bg-gray-300">
-                        Draw
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {roundMatches.map((match) => (
-                      <TableRow key={match.id}>
-                        <TableCell className="w-20 text-center">
-                          {match.match}
-                        </TableCell>
-                        <TableCell>
-                          {users &&
-                            users.find((user) => user._id === match.player1.id)
-                              ?.name}
-                        </TableCell>
-                        <TableCell>
-                          {users &&
-                            users.find((user) => user._id === match.player2.id)
-                              ?.name}
-                        </TableCell>
-                        <TableCell className="text-center w-24 bg-gray-200">
-                          {match.player1.win}
-                        </TableCell>
-                        <TableCell className="text-center w-24 bg-gray-200">
-                          {match.player2.win}
-                        </TableCell>
-                        <TableCell className="text-center w-24 bg-gray-200">
-                          {match.player1.draw}
-                        </TableCell>
+      <div className="text-center p-4 my-4">
+        <span className="uppercase text-3xl font-semibold font-serif">
+          {foundTournament && foundTournament.setting.stageOne.format}
+        </span>
+      </div>
+      <div className="flex justify-stretch space-x-12 p-2">
+        <ScrollArea className="max-h-[600px] w-3/5">
+          <div>
+            {foundTournament &&
+              matchesByRound.map((roundMatches, roundIndex) => (
+                <div key={roundIndex}>
+                  <h3 className="text-gray-500">Round {roundIndex + 1}</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-20 bg-gray-300">
+                          Match#
+                        </TableHead>
+                        <TableHead className=" bg-gray-300">P1</TableHead>
+                        <TableHead className=" bg-gray-300">P2</TableHead>
+                        <TableHead className="text-center w-24 bg-gray-300">
+                          P1 Wins
+                        </TableHead>
+                        <TableHead className="text-center w-24  bg-gray-300">
+                          P2 Wins
+                        </TableHead>
+                        <TableHead className="text-center w-24  bg-gray-300">
+                          Draw
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            ))}
-        </div>
+                    </TableHeader>
+                    <TableBody>
+                      {roundMatches.map((match) => (
+                        <TableRow key={match.id}>
+                          <TableCell className="w-20 text-center">
+                            {match.match}
+                          </TableCell>
+                          <TableCell>
+                            {users &&
+                              users.find(
+                                (user) => user._id === match.player1.id
+                              )?.name}
+                          </TableCell>
+                          <TableCell>
+                            {users &&
+                              users.find(
+                                (user) => user._id === match.player2.id
+                              )?.name}
+                          </TableCell>
+                          <TableCell className="text-center w-24 bg-gray-200">
+                            {match.player1.win}
+                          </TableCell>
+                          <TableCell className="text-center w-24 bg-gray-200">
+                            {match.player2.win}
+                          </TableCell>
+                          <TableCell className="text-center w-24 bg-gray-200">
+                            {match.player1.draw}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ))}
+          </div>
+        </ScrollArea>
 
         <div className="w-2/5">
           {ranking && (
@@ -376,7 +392,7 @@ function TournamentAllPlayAll({ id }) {
                           : rank.ordinal === "2nd"
                           ? "bg-gray-400"
                           : rank.ordinal === "3rd"
-                          ? "bg-amber-700"
+                          ? "bg-amber-600"
                           : "bg-gray-200";
 
                       return (
@@ -398,112 +414,131 @@ function TournamentAllPlayAll({ id }) {
           )}
         </div>
       </div>
-      <div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Updating matches</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit}>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="matchNum">Select Match: </Label>
-                <Select onValueChange={setMatchNum} value={matchNum}>
-                  <SelectTrigger className="border-gray-300 rounded-lg">
-                    <SelectValue
-                      placeholder="-- Choose --"
-                      className="text-center"
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {foundTournament &&
-                        foundTournament.setting.matches.map((match) => (
-                          <SelectItem key={match.id} value={match.id}>
-                            Round {match.round} - Match {match.match}
-                          </SelectItem>
-                        ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <div>
-                  <Button type="submit">Search</Button>
-                  <Button type="button" onClick={handleNextRound}>
-                    Next Round
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setMatchNum("");
-                      setRoundGame("");
-                      setScoresP1([]);
-                      setScoresP2([]);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </form>
-
-            {roundGame && (
-              <form onSubmit={handleScoreSubmit}>
-                <h4>Score Details</h4>
-                <div>
-                  <Label htmlFor="scoreP1">
-                    {users.find((user) => user._id === roundGame.p1)?.name}{" "}
-                    Scores
+      {foundTournament && foundTournament.setting.status === "stage-one" ? (
+        <div className="py-12 w-1/2">
+          <Card>
+            <CardHeader className="text-center">
+              <CardTitle>Updating Matches</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit}>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="matchNum">
+                    <h4>Select Match</h4>
                   </Label>
-                  {scoresP1.map((score, index) => (
-                    <Input
-                      key={index}
-                      type="number"
-                      min="0"
-                      value={score}
-                      onChange={(e) =>
-                        handleP1ScoreChange(index, e.target.value)
-                      }
-                      className="border rounded p-1 mb-2"
-                    />
-                  ))}
+                  <Select onValueChange={setMatchNum} value={matchNum}>
+                    <SelectTrigger className="border-gray-300 rounded-lg">
+                      <SelectValue
+                        placeholder="-- Choose --"
+                        className="text-center"
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {foundTournament &&
+                          foundTournament.setting.matches.map((match) => (
+                            <SelectItem key={match.id} value={match.id}>
+                              Round {match.round} - Match {match.match}
+                            </SelectItem>
+                          ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <div className="flex justify-center">
+                    <div className="flex space-x-2">
+                      <Button type="submit">Search</Button>
+                      <Button type="button" onClick={handleNextRound}>
+                        Next Round
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setMatchNum("");
+                          setRoundGame("");
+                          setScoresP1([]);
+                          setScoresP2([]);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="scoreP2">
-                    {users.find((user) => user._id === roundGame.p2)?.name}{" "}
-                    Scores
-                  </Label>
-                  {scoresP2.map((score, index) => (
-                    <Input
-                      key={index}
-                      type="number"
-                      min="0"
-                      value={score}
-                      onChange={(e) =>
-                        handleP2ScoreChange(index, e.target.value)
-                      }
-                      className="border rounded p-1 mb-2"
-                    />
-                  ))}
-                </div>
-                <div className="flex space-x-2">
-                  <Button type="submit">Update Scores</Button>
-                  <Button type="button" onClick={handleResetScores}>
-                    Reset Scores
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      handleClearScores(roundGame.match_id);
-                    }}
-                  >
-                    Clear Score
-                  </Button>
-                </div>
-                {error && <div>{error}</div>}
               </form>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+
+              {roundGame && (
+                <div className="py-8">
+                  <form onSubmit={handleScoreSubmit}>
+                    <h4>Score Details</h4>
+                    <div className="flex justify-center space-x-14">
+                      <div className="w-1/3 text-center">
+                        <Label htmlFor="scoreP1">
+                          {
+                            users.find((user) => user._id === roundGame.p1)
+                              ?.name
+                          }
+                        </Label>
+                        {scoresP1.map((score, index) => (
+                          <Input
+                            key={index}
+                            type="number"
+                            min="0"
+                            value={score}
+                            onChange={(e) =>
+                              handleP1ScoreChange(index, e.target.value)
+                            }
+                            className="border rounded p-1 mb-2"
+                          />
+                        ))}
+                      </div>
+                      <div className="w-1/3 text-center">
+                        <Label htmlFor="scoreP2">
+                          {
+                            users.find((user) => user._id === roundGame.p2)
+                              ?.name
+                          }
+                        </Label>
+                        {scoresP2.map((score, index) => (
+                          <Input
+                            key={index}
+                            type="number"
+                            min="0"
+                            value={score}
+                            onChange={(e) =>
+                              handleP2ScoreChange(index, e.target.value)
+                            }
+                            className="border rounded p-1 mb-2"
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center mt-2">
+                      <div className="flex space-x-2">
+                        <Button type="submit">Update Scores</Button>
+                        <Button type="button" onClick={handleResetScores}>
+                          Reset Scores
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            handleClearScores(roundGame.match_id);
+                          }}
+                        >
+                          Clear Score
+                        </Button>
+                      </div>
+                    </div>
+                    {error && <div className="text-red-500">{error}</div>}
+                  </form>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        ""
+      )}
     </main>
   );
 }
